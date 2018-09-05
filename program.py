@@ -25,7 +25,6 @@ auth.set_access_token(access_token, access_secret)
 api = tweepy.API(auth)
 tweets = api.user_timeline(screen_name="mmda",count=200,include_rts=False)
 
-# Declaring variables that won't be refreshed
 DatabaseLocationStrings = {}
 ListDirection = ['NB','SB','EB','WB']
 ListDirectionCheck = [' NB ', ' SB ', ' EB ', ' WB ']
