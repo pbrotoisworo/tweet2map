@@ -8,13 +8,7 @@ import tweepy
 import re
 import csv
 import time
-#from functions import*
-
-
-# # Code Scratchspace Below
-
-# In[9]:
-
+from functions_list import *
 
 print('MMDA Tweet2Map Version 0.5')
 print('Panji Brotoisworo')
@@ -71,10 +65,10 @@ print(f'Location Database loaded! {len(DatabaseLocationStrings)} entries.\n')
 print(f'Tweet Data:\n')
 
 # Tweepy Settings
-consumer_key = 'YRoCykGzWaoZJ5ehnPxQ0Hubc'
-consumer_secret = 'XwTweV1RdrMyEqDFfuKX5eS8COSEOahNbK87wJJX4YFoLNF8Vg'
-access_token = '225641768-97zmIlo1bOeVSE3nSWvWA4bLuMswbu20mD1wcPkk'
-access_secret = 'YmBBHQ6vSmf4GeiX7GKx2Tx2a9E7hv7xAxTtWV6mODOuN'
+consumer_key = 'blah'
+consumer_secret = 'blah'
+access_token = 'blah'
+access_secret = 'blah'
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_secret)
 api = tweepy.API(auth)
@@ -220,8 +214,6 @@ for info in reversed(tweets):
                     TwtLatitude = DatabaseLocationStrings[TwtLocation][0]
                 except KeyError:
                     #User input to check if location string is correct
-                    #if it is correct,, type YES to add it, if not, type NO to manual fix
-                    
                     print(f'\nNew location detected! {TwtLocation} is not recognized.')
                     print(f'\nChoose number from list:')
                     print('1 - Add new location and new coordinates')
@@ -239,7 +231,7 @@ for info in reversed(tweets):
                             break
                             
                         elif UserLocChoice == '1':
-                            print('Enter decimal degrees coordinates in this format: LATITUDE,LONGITUDE')
+                            print('Enter decimal degrees coordinates in this format: LATITUDE, LONGITUDE')
                             UserInputCoord = input('Enter coordinates:')
                             UserInputCoord = UserInputCoord.replace(' ','')
                             TwtLatitude = UserInputCoord.split(',')[0]
@@ -260,6 +252,8 @@ for info in reversed(tweets):
                                 continue
                             elif UserAppendDatabaseLoc == 'BREAK':
                                 break
+                            else:
+                                continue
                         
                         elif UserLocChoice == '2':
                             UserSearchInput = input('Search database for existing location: ').upper()
