@@ -1,4 +1,8 @@
 def string_clean(x):
+    '''
+    Cleans location strings and converts names into a standard format.
+    Input TwtLoc variable.
+    '''
     x = x.replace('AT ','')
     x = x.replace(' AS OF','')
     x = x.replace('TIRE ', '')
@@ -22,4 +26,5 @@ def string_clean(x):
     x = x.replace('P TUAZON','P. TUAZON')
     x = x.replace('C.P','C.P.')
     x = x.replace(' CP ',' C.P. ')
+    x = x.replace('..','.')
     return x
