@@ -1,9 +1,6 @@
 
 # coding: utf-8
 
-# In[2]:
-
-
 import tweepy
 import re
 import csv
@@ -123,32 +120,7 @@ for info in reversed(tweets):
             for match in matches:
                 TwtLocation = match.group(0)
                 # Location String Cleaning
-                #string_clean(TwtLocation)
-                TwtLocation = TwtLocation.replace('AT ','')
-                TwtLocation = TwtLocation.replace(' AS OF','')
-                TwtLocation = TwtLocation.replace('TIRE ', '')
-                TwtLocation = TwtLocation.replace('F/O','FLYOVER')
-                TwtLocation = TwtLocation.replace(' FO ',' FLYOVER ')
-                TwtLocation = TwtLocation.replace('AVE ','AVE. ')
-                TwtLocation = TwtLocation.replace('AVE,','AVE.')
-                TwtLocation = TwtLocation.replace(' AVENUE ','AVE.')
-                TwtLocation = TwtLocation.replace('BLVD','BLVD.')
-                TwtLocation = TwtLocation.replace(' BOULEVARD ',' BLVD. ')
-                TwtLocation = TwtLocation.replace(' SCT ',' SCT. ')
-                TwtLocation = TwtLocation.replace('COR','')
-                TwtLocation = TwtLocation.replace('..','.')
-                TwtLocation = TwtLocation.replace('COR.','')
-                TwtLocation = TwtLocation.replace('OLD BALARA','MATANDANG BALARA')
-                TwtLocation = TwtLocation.replace('SGT.ESGUERRA','SGT. ESGUERRA')
-                TwtLocation = TwtLocation.replace('SVC.','SERVICE')
-                TwtLocation = TwtLocation.replace(' SVC ',' SERVICE ')
-                TwtLocation = TwtLocation.replace('P.TUAZON','P. TUAZON')
-                TwtLocation = TwtLocation.replace('B.SERRANO','B. SERRANO')
-                TwtLocation = TwtLocation.replace('MC ARTHUR','MCARTHUR')
-                TwtLocation = TwtLocation.replace('P TUAZON','P. TUAZON')
-                TwtLocation = TwtLocation.replace('C.P','C.P.')
-                TwtLocation = TwtLocation.replace(' CP ',' C.P. ')
-                TwtLocation = TwtLocation.replace('HI-WAY','HIGHWAY')
+                string_clean(TwtLocation)
                 
                 # ELLIPTICAL ROAD in QC can confuse parser sometimes
                 if 'ELLIPTICAL' not in TwtLocation:
