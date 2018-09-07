@@ -15,6 +15,7 @@ def string_clean(x):
     x = x.replace(' BOULEVARD ',' BLVD. ')
     x = x.replace(' SCT ',' SCT. ')
     x = x.replace('COR','')
+    x = x.replace('..','.')
     x = x.replace('COR.','')
     x = x.replace('OLD BALARA','MATANDANG BALARA')
     x = x.replace('SGT.ESGUERRA','SGT. ESGUERRA')
@@ -26,5 +27,6 @@ def string_clean(x):
     x = x.replace('P TUAZON','P. TUAZON')
     x = x.replace('C.P','C.P.')
     x = x.replace(' CP ',' C.P. ')
-    x = x.replace('..','.')
+    x = x.replace('HI-WAY','HIGHWAY')
+    x = x.replace('ROBINSON','ROBINSONS')
     return x
