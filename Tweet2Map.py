@@ -47,8 +47,6 @@ try:
             DataRow = row
             DataRow = DataRow.replace('\r\n','')
             ListDuplicateCheck.append(DataRow.split(',')[-1])
-            #print('Debug LOAD CSV TO CHECK DUPLICATES')
-            print(DataRow)
             if idx == 200:
                 break
         
