@@ -138,7 +138,7 @@ for info in reversed(tweets):
                     TwtLocation = TwtLocation.split('INVOLVING')[0].strip(' ')
                     #TwtDirection = TwtLocation.rsplit(' ',1)[1]
                     TwtLocation = TwtLocation.rsplit(' ',1)[0]
-                    print(f'DEBUG: Checkpoint Get Location')
+                    #print(f'DEBUG: Checkpoint Get Location')
                     print(f'Location: {TwtLocation}')
                     
                     # Get direction
@@ -167,7 +167,7 @@ for info in reversed(tweets):
                         TwtParticipant = TwtParticipant.rstrip(' ')
                         TwtParticipant = TwtParticipant.lstrip(' ')
                         print(f'Participants: {TwtParticipant}')
-                    print(f'DEBUG: TwtLocation is {TwtLocation}')
+                    #print(f'DEBUG: TwtLocation is {TwtLocation}')
                     print(f'Participants: {TwtParticipant}')
                     print(f'Location: {TwtLocation}')
                     print(f'Direction: {TwtDirection}')
@@ -185,7 +185,7 @@ for info in reversed(tweets):
             
             #Check location with database
             try:
-                print(f'DEBUG: TwtLocation is {TwtLocation}')
+                #print(f'DEBUG: TwtLocation is {TwtLocation}')
                 TwtLatitude = DatabaseLocationStrings[TwtLocation].split(',')[0]
                 TwtLongitude = DatabaseLocationStrings[TwtLocation].split(',')[1]
                 print(f'Latitude: {TwtLatitude}')
@@ -317,24 +317,29 @@ for info in reversed(tweets):
 
     with open ('data_mmda_traffic_alerts.csv','r', newline='') as csv_file:
         reader = csv.reader(csv_file)
-        header_check = next(reader)
-        
-        if header_check != []:
+        try:
+            header_check = next(reader)
+        except StopIteration:
+            pass
+        if len(header_check) > 0:
+            # There is data
             if TwtId not in ListDuplicateCheck:
                 #print(f'TwtId is {TwtId}')
                 with open('data_mmda_traffic_alerts.csv','a',newline='', encoding='utf-8') as CsvFile:
                     dict_writer = csv.DictWriter(CsvFile, keys)
                     dict_writer.writerow(WriteCombinedDict)
             else:
-                # Then this is just an empty CSV file so we use write
-                print(f'\nNo data in the CSV! Adding header to CSV file')
-                with open('data_mmda_traffic_alerts.csv','w',newline='', encoding='utf-8') as CsvFile:
-                    dict_writer = csv.DictWriter(CsvFile, keys)
-                    dict_writer.writeheader()
-                    dict_writer.writerow(WriteCombinedDict)
+                print('Duplicate data! Skipping to next tweet.')
+                continue
+
         else:
-            print('Duplicate data! Skipping to next tweet.')
-            continue
+            # Then this is just an empty CSV file so we use write
+            print(f'\nNo data in the CSV! Adding header to CSV file')
+            with open('data_mmda_traffic_alerts.csv','w',newline='', encoding='utf-8') as CsvFile:
+                dict_writer = csv.DictWriter(CsvFile, keys)
+                dict_writer.writeheader()
+                dict_writer.writerow(WriteCombinedDict)
+            
 
 print('Updating location database...')
 f_DBLocationStrings = open('dictionary_database.txt','w')
