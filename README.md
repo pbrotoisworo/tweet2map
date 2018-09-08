@@ -1,5 +1,5 @@
 # MMDA Tweet2Map
-MMDA Tweet2Map converts MMDA tweets into a usable database for traffic accident research.
+MMDA Tweet2Map converts MMDA tweets into a usable database for traffic accident research in Metro Manila.
 
 You need your own unique Twitter API code in order to use this script.
 
@@ -10,6 +10,7 @@ MMDA Twitter Page here:
 https://twitter.com/MMDA
 
 To do:
+- Fix some bugs with location and direction parsing
 - Spell checker and auto-correct for location strings
 - More user options for what to do with new locations
 - More locations in the database
