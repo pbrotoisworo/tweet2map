@@ -315,16 +315,13 @@ for info in reversed(tweets):
 
     keys = WriteCombinedDict.keys()
 
-    with open('data_mmda_traffic_alerts.csv', 'r') as Csvfile:
-        csv_dict = [row for row in csv.DictReader(Csvfile)]
-        header_check = True
-        if len(csv_dict) == 0:
-            print('CSV file is empty')
-            header_check = False
-        if TwtId not in ListDuplicateCheck:
-            #print(f'TwtId is {TwtId}')
-            if header_check == True:
-                # There is data already, just append
+    with open ('data_mmda_traffic_alerts.csv','r', newline='') as csv_file:
+        reader = csv.reader(csv_file)
+        header_check = next(reader)
+        
+        if header_check != []:
+            if TwtId not in ListDuplicateCheck:
+                #print(f'TwtId is {TwtId}')
                 with open('data_mmda_traffic_alerts.csv','a',newline='', encoding='utf-8') as CsvFile:
                     dict_writer = csv.DictWriter(CsvFile, keys)
                     dict_writer.writerow(WriteCombinedDict)
