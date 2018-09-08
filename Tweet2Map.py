@@ -3,6 +3,7 @@ import tweepy
 import re
 import time
 import csv
+import pandas as pd
 from functions_list import *
 
 print('MMDA Tweet2Map Version 0.5')
@@ -18,10 +19,13 @@ ListDirection = ['NB','SB','EB','WB']
 ListDirectionCheck = [' NB ', ' SB ', ' EB ', ' WB ']
 ListTweets = []
 ListDuplicateCheck = []
+UserBreak = False
+FileLocations = 'dictionary_database.txt'
+FileDataset = 'data_mmda_traffic_alerts.csv'
 
 # Load database of string locations or create one if it doesn't exist
 try:
-    f_DBLocationStrings = open('dictionary_database.txt','r')
+    f_DBLocationStrings = open(FileLocations,'r')
     for line in f_DBLocationStrings:
         x = line.split("/")
         x[1] = x[1].replace('\n','')
@@ -31,11 +35,11 @@ try:
 except FileNotFoundError:
     print('Database not detected. Creating new txt file')
     # Create file for read and write
-    f_DBLocationStrings = open('dictionary_database.txt','x+')
+    f_DBLocationStrings = open(FileLocations,'x+')
         
 # Load last set of tweets to check for duplicates
 try:
-    with open('data_mmda_traffic_alerts.csv','r',newline='') as CsvFile:
+    with open(FileDataset,'r',newline='') as CsvFile:
         #print('Writing to CSV File')
         reader = csv.reader(CsvFile)
 
@@ -43,11 +47,14 @@ try:
             DataRow = row
             DataRow = DataRow.replace('\r\n','')
             ListDuplicateCheck.append(DataRow.split(',')[-1])
+            #print('Debug LOAD CSV TO CHECK DUPLICATES')
+            print(DataRow)
             if idx == 200:
                 break
+        
 except FileNotFoundError:
     print('CSV file not detected. Creating new CSV file')
-    with open('data_mmda_traffic_alerts.csv','x',newline='') as CsvFile:
+    with open(FileDataset,'x',newline='') as CsvFile:
         #reader = csv.reader(CsvFile)
         for idx, row in enumerate(reversed(list(CsvFile))):
             DataRow = row
@@ -55,7 +62,7 @@ except FileNotFoundError:
             ListDuplicateCheck.append(DataRow.split(',')[-1])
             if idx == 200:
                 break
-    
+
 print(f'Location Database loaded! {len(DatabaseLocationStrings)} entries.\n')
 print(f'Tweet Data:\n')
 
@@ -348,5 +355,10 @@ for x,y in DatabaseLocationStrings.items():
 #     print(type(x),type(y))
     f_DBLocationStrings.writelines(x + '/' + y + '\n')
 f_DBLocationStrings.close()
+
+# Drop empty rows generated
+df = pd.read_csv(FileDataset)
+df.dropna(axis=0,subset=['Source'], inplace=True)
+df.to_csv(FileDataset, index=False)
 
 print('Tweet analysis finished.')
