@@ -14,3 +14,4 @@ To do:
 - Spell checker and auto-correct for location strings
 - More user options for what to do with new locations
 - More locations in the database
+- Streamline main script by utilizing more classes and functions
