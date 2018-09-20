@@ -9,6 +9,13 @@ MMDA Twitter Page here:
 
 https://twitter.com/MMDA
 
+# **Upcoming:**
+- Fix some bugs with location and direction parsing
+- Spell checker and auto-correct for location strings
+  - Possible full automation of the script if auto-correct is accurate
+- More locations in the database
+- Streamline main script by utilizing more classes and functions
+
 # **Changelog:**
 
 0.6 (September 15, 2018)
@@ -18,9 +25,3 @@ https://twitter.com/MMDA
 0.5
 - Added options on what to do with new locations to streamline parsing
 
-# **Upcoming:**
-- Fix some bugs with location and direction parsing
-- Spell checker and auto-correct for location strings
-  - Possible full automation of the script if auto-correct is accurate
-- More locations in the database
-- Streamline main script by utilizing more classes and functions
