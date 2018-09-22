@@ -66,10 +66,10 @@ print(f'Location Database loaded! {len(file_location_strings)} entries.\n')
 print(f'Tweet Data:\n')
 
 # Tweepy Settings
-consumer_key = 'YRoCykGzWaoZJ5ehnPxQ0Hubc'
-consumer_secret = 'XwTweV1RdrMyEqDFfuKX5eS8COSEOahNbK87wJJX4YFoLNF8Vg'
-access_token = '225641768-97zmIlo1bOeVSE3nSWvWA4bLuMswbu20mD1wcPkk'
-access_secret = 'YmBBHQ6vSmf4GeiX7GKx2Tx2a9E7hv7xAxTtWV6mODOuN'
+consumer_key = ''
+consumer_secret = ''
+access_token = ''
+access_secret = ''
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_secret)
 api = tweepy.API(auth)
