@@ -18,6 +18,11 @@ https://twitter.com/MMDA
 
 # **Changelog:**
 
+0.7 (September 22, 2018)
+- Fixed some bugs with the location parsing
+- Added more words to the `location_string_clean()` function
+- Added more locations to the database
+
 0.6 (September 15, 2018)
 - Created the `tweetParse` class to streamline parts of the code in `Tweet2Map.py`
 - Some small bug fixes to take into account MMDA alerts for rallyists.
