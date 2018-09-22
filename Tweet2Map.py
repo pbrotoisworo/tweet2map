@@ -1,4 +1,5 @@
 # Encoding: utf-8
+
 import tweepy
 import re
 import time
@@ -7,13 +8,11 @@ import pandas as pd
 from function_list import location_string_clean
 from tweetparse import tweetParse
 
-print('MMDA Tweet2Map Version 0.6')
+print('MMDA Tweet2Map Version 0.7')
 print('Panji Brotoisworo')
-print('E-mail: panji.p.broto@gmail.com')
-print('Website: https://panjib.wixsite.com')
+print('Contact: panji.p.broto@gmail.com')
+print('Website: https://panjib.wixsite.com/blog/mmdatweet2map')
 print(f'\nStarting application...\n')
-
-time.sleep(2)
 
 file_location_strings = {}
 ListDirection = ['NB', 'SB', 'EB', 'WB']
@@ -67,10 +66,10 @@ print(f'Location Database loaded! {len(file_location_strings)} entries.\n')
 print(f'Tweet Data:\n')
 
 # Tweepy Settings
-consumer_key = 'XXXXXXXXXXXXXXXXXXXX'
-consumer_secret = 'XXXXXXXXXXXXXXXX'
-access_token = 'XXXXXXXXXXXX'
-access_secret = 'XXXXXXXXXX'
+consumer_key = 'YRoCykGzWaoZJ5ehnPxQ0Hubc'
+consumer_secret = 'XwTweV1RdrMyEqDFfuKX5eS8COSEOahNbK87wJJX4YFoLNF8Vg'
+access_token = '225641768-97zmIlo1bOeVSE3nSWvWA4bLuMswbu20mD1wcPkk'
+access_secret = 'YmBBHQ6vSmf4GeiX7GKx2Tx2a9E7hv7xAxTtWV6mODOuN'
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_secret)
 api = tweepy.API(auth)
@@ -93,6 +92,7 @@ for info in reversed(tweets):
     twt_latitude = ''
     twt_longitude = ''
     check_location_add = False
+    duplicate_check = False
 
     # Only look at their MMDA ALERT tweets
     if 'MMDA ALERT' in info.text.upper():
@@ -101,6 +101,7 @@ for info in reversed(tweets):
         twt_id = 'https://twitter.com/mmda/status/' + str(info.id)
         if twt_id in lst_duplicate_check:
             print('Duplicate Data! Skipping to next tweet.')
+            duplicate_check = True
             continue
         else:
             # Get date and text
@@ -122,7 +123,7 @@ for info in reversed(tweets):
             twt_lane = twt.lane(twt_text)
 
             # Get location, participants, and direction
-            pattern = re.compile(r'AT\s[a-zA-Z\Ñ\'\.\,\-0-9\/\s]+(AS OF)')
+            pattern = re.compile(r' AT\s[a-zA-Z\Ñ\'\.\,\-0-9\/\s]+(AS OF)')
             matches = pattern.finditer(info)
             for match in matches:
                 twt_location = match.group(0)
@@ -131,7 +132,20 @@ for info in reversed(tweets):
 
                 # ELLIPTICAL ROAD in QC can confuse parser sometimes
                 if 'ELLIPTICAL' not in twt_location:
-                    # If there are participants INVOLVED, get the participants
+                    # Get direction then remove direction
+                    # twt_location = twt.strip_direction(twt_text)
+                    pattern = re.compile(r'( SB | NB | WB | EB )')
+                    matches = pattern.finditer(info)
+                    for match in matches:
+                        twt_direction = match.group(0)
+                        twt_direction = twt_direction.replace(' ', '')
+                        twt_location = twt_location.replace(' NB', '')
+                        twt_location = twt_location.replace(' EB', '')
+                        twt_location = twt_location.replace(' SB', '')
+                        twt_location = twt_location.replace(' WB', '')
+                    print(f'Direction: {twt_direction}')
+
+                    # Get participants
                     if len(twt_location.split(' INVOLVING')) > 1:
                         twt_participant = twt_location.split(' INVOLVING')[1]
                         twt_participant = twt_participant.rstrip(' ')
@@ -139,25 +153,8 @@ for info in reversed(tweets):
                         if len(twt_participant) > 0:
                             print(f'Participants: {twt_participant}')
 
-                    # Get location
                     twt_location = twt_location.split('INVOLVING')[0].strip(' ')
-                    #twt_direction = twt_location.rsplit(' ',1)[1]
-                    twt_location = twt_location.rsplit(' ', 1)[0]
-                    twt_location = twt_location.replace(' NB ', ' ')
-                    twt_location = twt_location.replace(' EB ', ' ')
-                    twt_location = twt_location.replace(' SB ', ' ')
-                    twt_location = twt_location.replace(' WB ', ' ')
-                    if len(twt_location) > 0:
-                        print(f'Location: {twt_location}')
-
-                    # Get direction
-                    # if len(twt_direction) < 1 or twt_direction not in ListDirectionCheck:
-                    pattern = re.compile(r'( SB | NB | WB | EB )')
-                    matches = pattern.finditer(info)
-                    for match in matches:
-                        twt_direction = match.group(0)
-                        twt_direction = twt_direction.replace(' ', '')
-                    print(f'Direction: {twt_direction}')
+                    print(f'Location: {twt_location}')
 
                 if 'ELLIPTICAL' in twt_location:
 
@@ -167,16 +164,20 @@ for info in reversed(tweets):
                         twt_location = 'ELLIPTICAL ROAD QUEZON AVE.'
                     elif 'ELLIPTICAL' and 'VISAYAS' in twt_location:
                         twt_location = 'ELLIPTICAL ROAD VISAYAS AVE.'
+                    elif 'ELLIPTICAL' and 'EAST AVE' in twt_location:
+                        twt_location = 'ELLIPTICAL ROAD EAST AVE.'
+                    elif 'ELLIPTICAL' and ' DAR ' in twt_location:
+                        twt_location = 'ELLIPTICAL ROAD DAR'
                     else:
-                        twt_location = input('Enter location:')
-                    #twt_participant = input('TEMPORARY. Enter participants:')
+                        twt_location = input('Enter elliptical road location:')
+                    # twt_participant = input('TEMPORARY. Enter participants:')
                     # Get participants
                     if len(twt_location.split(' INVOLVING')) > 1:
                         twt_participant = twt_location.split(' INVOLVING')[1]
                         twt_participant = twt_participant.rstrip(' ')
                         twt_participant = twt_participant.lstrip(' ')
                         print(f'Participants: {twt_participant}')
-                    #print(f'DEBUG: twt_location is {twt_location}')
+                    # print(f'DEBUG: twt_location is {twt_location}')
                     print(f'Participants: {twt_participant}')
                     print(f'Location: {twt_location}')
                     print(f'Direction: {twt_direction}')
@@ -209,6 +210,7 @@ for info in reversed(tweets):
                 print(f'\nChoose number from list:')
                 print('1 - Add new location and new coordinates')
                 print(f'2 - Add new location based on existing coordinates\n')
+                # print(f'3 - Rename location then use existing coordinates\n')
                 #print(f'3 - Auto recommend (BETA)')
 
                 user_loc_choice = input('Enter number to proceed:')
@@ -302,36 +304,38 @@ for info in reversed(tweets):
     if UserBreak == True:
         break
 
-    WriteCombinedDict = {'Date': twt_date, 'Time': twt_time, 'Location': twt_location, 'Latitude': twt_latitude,
-                         'Longitude': twt_longitude, 'Direction': twt_direction, 'Type': twt_type,
-                         'Lanes Blocked': twt_lane, 'Involved': twt_participant, 'Tweet': twt_text, 'Source': twt_id}
+    if duplicate_check == False:
 
-    keys = WriteCombinedDict.keys()
+        WriteCombinedDict = {'Date': twt_date, 'Time': twt_time, 'Location': twt_location, 'Latitude': twt_latitude,
+                             'Longitude': twt_longitude, 'Direction': twt_direction, 'Type': twt_type,
+                             'Lanes Blocked': twt_lane, 'Involved': twt_participant, 'Tweet': twt_text, 'Source': twt_id}
 
-    if twt_id in lst_duplicate_check:
-        print('Duplicate data! Skipping to next tweet.')
-        continue
+        keys = WriteCombinedDict.keys()
 
-    elif twt_id not in lst_duplicate_check:
+        if twt_id in lst_duplicate_check:
+            print('Duplicate data! Skipping to next tweet.')
+            continue
 
-        with open(file_dataset, 'r', newline='') as csv_file:
-            reader = csv.reader(csv_file)
-            try:
-                header_check = next(reader)
-            except StopIteration:
-                header_check = []
+        elif twt_id not in lst_duplicate_check:
 
-            if header_check != []:
-                with open(file_dataset, 'a', newline='', encoding='utf-8') as CsvFile:
-                    dict_writer = csv.DictWriter(CsvFile, keys)
-                    dict_writer.writerow(WriteCombinedDict)
-            else:
-                # Then this is just an empty CSV file so we use write
-                print(f'\nNo data in the CSV! Adding header to CSV file')
-                with open(file_dataset, 'w', newline='', encoding='utf-8') as CsvFile:
-                    dict_writer = csv.DictWriter(CsvFile, keys)
-                    dict_writer.writeheader()
-                    dict_writer.writerow(WriteCombinedDict)
+            with open(file_dataset, 'r', newline='') as csv_file:
+                reader = csv.reader(csv_file)
+                try:
+                    header_check = next(reader)
+                except StopIteration:
+                    header_check = []
+
+                if header_check != []:
+                    with open(file_dataset, 'a', newline='', encoding='utf-8') as CsvFile:
+                        dict_writer = csv.DictWriter(CsvFile, keys)
+                        dict_writer.writerow(WriteCombinedDict)
+                else:
+                    # Then this is just an empty CSV file so we use write
+                    print(f'\nNo data in the CSV! Adding header to CSV file')
+                    with open(file_dataset, 'w', newline='', encoding='utf-8') as CsvFile:
+                        dict_writer = csv.DictWriter(CsvFile, keys)
+                        dict_writer.writeheader()
+                        dict_writer.writerow(WriteCombinedDict)
 
 
 print(f'\nUpdating location database...')
@@ -349,3 +353,5 @@ df.dropna(axis=0, subset=['Source'], inplace=True)
 df.to_csv(file_dataset, index=False)
 
 print('Tweet analysis finished.')
+
+program_exit = input('Press ENTER to finish ')
