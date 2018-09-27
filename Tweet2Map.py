@@ -116,7 +116,7 @@ for info in reversed(tweets):
             print(f'Date: {twt_date}')
             print(f'URL: {twt_id}')
 
-            # Call on the TweetParse class
+            # Create the tweetParse object
             twt = tweetParse(twt_text)
             twt_time = twt.time(twt_text)
             twt_type = twt.inc_type(twt_text)
