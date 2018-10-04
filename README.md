@@ -1,13 +1,7 @@
 # MMDA Tweet2Map
-MMDA Tweet2Map is a python script that converts MMDA tweets into a usable database for traffic accident research in Metro Manila. Please take note that you need your own unique Twitter API code in order to use this script. This script uses the **tweepy library** in order to connect with the Twitter API.
+MMDA Tweet2Map is a python script that converts MMDA Tweets ([@mmda](https://twitter.com/MMDA)) into a usable database for traffic accident research in Metro Manila. Please take note that you need your own unique Twitter API code in order to use this script. This script uses the **tweepy library** in order to connect with the Twitter API. For more information regarding this script please visit the project page on my [blog](https://panjib.wixsite.com/blog/mmdatweet2map).
 
-For more information regarding this script please visit the project page on my blog:
-
-https://panjib.wixsite.com/blog/mmdatweet2map
-
-MMDA Twitter Page here:
-
-https://twitter.com/MMDA
+I'm open to suggestions and comments! This is my first major coding project since I started self-learning Python.
 
 # **Upcoming:**
 - Fix some bugs with location and direction parsing
@@ -29,4 +23,3 @@ https://twitter.com/MMDA
 
 0.5
 - Added options on what to do with new locations to streamline parsing
-
