@@ -18,12 +18,14 @@ class tweetParse:
         Extract time from the MMDA tweet. Output is string.
         tweet_text: full text of twitter post
         """
-        pattern = re.compile(r'\d+\D\d\d[\s(AM|PM)]')
+        pattern = re.compile(r'\d+\D\d\d[\s(AM|PM)]+')
         matches = pattern.finditer(self.string)
         for match in matches:
             tweet_text = match.group(0)
             tweet_text = tweet_text.replace('.', '')
             tweet_text = tweet_text.replace(';', ':')
+        if len(tweet_text) > 10:
+            tweet_text = ''
         print(f'Time: {tweet_text}')
         return tweet_text
 
@@ -53,6 +55,7 @@ class tweetParse:
         matches = pattern.finditer(self.string)
         for match in matches:
             tweet_text = match.group(0)
+            # print(f'DEBUG: CLASS inc_type {tweet_text}')
             tweet_text = tweet_text.replace('MMDA ALERT: ', '')
             tweet_text = tweet_text.replace(' AT ', '')
         print(f'Type: {tweet_text}')
@@ -107,17 +110,17 @@ class tweetParse:
             print(f'Participants: {tweet_text}')
         return tweet_text
 
-#     def strip_direction(self, tweet_text):
-#         """
-#         Remove direction text from tweet
-#         """
-#         pattern = re.compile(r'( SB | NB | WB | EB )')
-#         matches = pattern.finditer(self.string)
-#         for match in matches:
-#             tweet_text = match.group(0)
-#             tweet_text = tweet_text.replace(' ', '')
-#             tweet_text = tweet_text.replace(' NB', '')
-#             tweet_text = tweet_text.replace(' EB', '')
-#             tweet_text = tweet_text.replace(' SB', '')
-#             tweet_text = tweet_text.replace(' WB', '')
+    def strip_direction(self, tweet_text):
+        """
+        Remove direction text from tweet
+        """
+        pattern = re.compile(r'( SB | NB | WB | EB )')
+        matches = pattern.finditer(self.string)
+        for match in matches:
+            tweet_text = match.group(0)
+            tweet_text = tweet_text.replace(' ', '')
+            tweet_text = tweet_text.replace(' NB', '')
+            tweet_text = tweet_text.replace(' EB', '')
+            tweet_text = tweet_text.replace(' SB', '')
+            tweet_text = tweet_text.replace(' WB', '')
         return tweet_text
