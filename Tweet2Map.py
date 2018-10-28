@@ -23,10 +23,10 @@ userConnection = False
 while userConnection == False:
     try:
         # Tweepy Settings
-        consumer_key = 'YRoCykGzWaoZJ5ehnPxQ0Hubc'
-        consumer_secret = 'XwTweV1RdrMyEqDFfuKX5eS8COSEOahNbK87wJJX4YFoLNF8Vg'
-        access_token = '225641768-97zmIlo1bOeVSE3nSWvWA4bLuMswbu20mD1wcPkk'
-        access_secret = 'YmBBHQ6vSmf4GeiX7GKx2Tx2a9E7hv7xAxTtWV6mODOuN'
+        consumer_key = ''
+        consumer_secret = ''
+        access_token = ''
+        access_secret = ''
         auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
         auth.set_access_token(access_token, access_secret)
         api = tweepy.API(auth)
@@ -464,5 +464,3 @@ copy(file_dataset, gis_dataset)
 print(f'Twitter analysis finished.')
 print(f'Analyzed {tweetCounter} new tweets')
 print(f'Executing ArcPy script... This may take a few minutes depending on your computer\n')
-
-# program_exit = input('Press ENTER to finish ')
