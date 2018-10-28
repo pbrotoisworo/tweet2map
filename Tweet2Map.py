@@ -7,24 +7,36 @@ print('Website: https://panjib.wixsite.com/blog/mmdatweet2map')
 print(f'\nStarting application...\n')
 
 print('Initializing Libraries...')
-print('tweepy')
 import tweepy
-print('re')
 import re
-print('time')
 import time
-print('csv')
 import csv
-print('pandas')
-from pandas import read_csv
-print('location_string_clean')
 from function_list import location_string_clean
-print('numpy')
+import time
 import numpy as np
-print('shutil')
 from shutil import copy
-print(f'tweetParse\n')
 from tweetparse import tweetParse
+import pandas as pd
+
+# Initial connection check
+userConnection = False
+while userConnection == False:
+    try:
+        # Tweepy Settings
+        consumer_key = 'YRoCykGzWaoZJ5ehnPxQ0Hubc'
+        consumer_secret = 'XwTweV1RdrMyEqDFfuKX5eS8COSEOahNbK87wJJX4YFoLNF8Vg'
+        access_token = '225641768-97zmIlo1bOeVSE3nSWvWA4bLuMswbu20mD1wcPkk'
+        access_secret = 'YmBBHQ6vSmf4GeiX7GKx2Tx2a9E7hv7xAxTtWV6mODOuN'
+        auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+        auth.set_access_token(access_token, access_secret)
+        api = tweepy.API(auth)
+        tweets = api.user_timeline(screen_name="mmda", count=200, include_rts=False)
+        # If it can connect, then get out of the while loop
+        userConnection = True
+    except:
+        print('Connection attempt failed!')
+        print('Retrying in 60 seconds')
+        time.sleep(60)
 
 file_location_strings = {}
 ListDirection = ['NB', 'SB', 'EB', 'WB']
@@ -32,9 +44,11 @@ ListDirectionCheck = [' NB ', ' SB ', ' EB ', ' WB ']
 lst_tweets = []
 lst_duplicate_check = []
 UserBreak = False
+userClose = False
+tweetCounter = 0
 file_locations = 'dictionary_database.txt'
 file_dataset = 'data_mmda_traffic_alerts.csv'
-gis_dataset = 'C:\GIS\Data Files\Work Files\MMDA Tweet2Map\input\data_mmda_traffic_alerts.csv'
+gis_dataset = r'C:\GIS\Data Files\Work Files\MMDA Tweet2Map\input\data_mmda_traffic_alerts.csv'
 
 # Load database of string locations or create one if it doesn't exist
 try:
@@ -76,17 +90,8 @@ except FileNotFoundError:
                 break
 
 print(f'Location Database loaded! {len(file_location_strings)} entries.\n')
-print(f'Tweet Data:\n')
 
-# Tweepy Settings
-consumer_key = ''
-consumer_secret = ''
-access_token = ''
-access_secret = ''
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_secret)
-api = tweepy.API(auth)
-tweets = api.user_timeline(screen_name="mmda", count=200, include_rts=False)
+print(f'Tweet Data:\n')
 
 # Main loop that processes each tweet
 for info in reversed(tweets):
@@ -121,6 +126,7 @@ for info in reversed(tweets):
             duplicate_check = True
             continue
         else:
+            tweetCounter += 1
             # Get date and text
             twt_date = info.created_at
             twt_date = twt_date.strftime("%m-%d-%Y")
@@ -420,11 +426,6 @@ for info in reversed(tweets):
                     with open(file_dataset, 'a', newline='', encoding='utf-8') as CsvFile:
                         dict_writer = csv.DictWriter(CsvFile, keys)
                         dict_writer.writerow(WriteCombinedDict)
-
-                    # Update version in ArcGIS folder
-                    with open(gis_dataset, 'a', newline='', encoding='utf-8') as CsvFile:
-                        dict_writer = csv.DictWriter(CsvFile, keys)
-                        dict_writer.writerow(WriteCombinedDict)
                 else:
                     # Then this is just an empty CSV file so we use write
                     print(f'\nNo data in the CSV! Adding header to CSV file')
@@ -439,20 +440,29 @@ if UserBreak == True:
 print(f'\nUpdating location database...')
 f_DBLocationStrings = open(file_locations, 'w')
 for x, y in file_location_strings.items():
-    #     print(x,y)
-    #     print(type(x),type(y))
     f_DBLocationStrings.writelines(x + '/' + y + '\n')
 f_DBLocationStrings.close()
 
 # Drop empty rows generated
-df_1 = read_csv(file_dataset)
+# Clean data for ArcGIS
+df_1 = pd.read_csv(file_dataset)
+# df_1['Latitude'].replace(' ', np.nan, inplace=True)
+# df_1['Longitude'].replace(' ', '', inplace=True)
+
+df_1['Longitude'] = df_1['Longitude'].astype(str)
+df_1['Longitude'] = df_1['Longitude'].str.rstrip(' ')
+df_1['Longitude'] = df_1['Longitude'].str.replace('\t', '')
+df_1['Longitude'] = df_1['Longitude'].str.replace('\n', '')
 df_1.replace('None', np.nan, inplace=True)
 df_1.dropna(axis=0, subset=['Source'], inplace=True)
+# df_1['Longitude'] = df_1['Longitude'].astype(float)
 df_1.to_csv(file_dataset, index=False)
 
 # Update dataset in GIS workspace
 copy(file_dataset, gis_dataset)
 
-print(f'Tweet analysis finished.\n')
+print(f'Twitter analysis finished.')
+print(f'Analyzed {tweetCounter} new tweets')
+print(f'Executing ArcPy script... This may take a few minutes depending on your computer\n')
 
 # program_exit = input('Press ENTER to finish ')
