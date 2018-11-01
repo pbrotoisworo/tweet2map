@@ -6,31 +6,44 @@
 # Description: 
 # ---------------------------------------------------------------------------
 
-print('Initializing arcpy script')
+from configparser import ConfigParser
+
+config.read(r'C:\Users\Panji\Documents\Python Scripts\Non-Jupyter Py Scripts\Scratch\OOP Testing\config.ini')
+config.read('config.ini')
+if parser.getboolean('settings', 'parser_error') == True:
+    print('Error Detected!')
+    try:
+        program_exit = str(input('Press ENTER to close'))
+    except:
+        exit()
+    exit()
+
+print('Initializing ArcPy script...')
 
 # Import arcpy module
 import arcpy
 
 # Local variables:
-data_all_csv = INPUT CSV FILE FROM Tweet2Map
+data_all_csv = "C:\\GIS\\Data Files\\Work Files\\MMDA Tweet2Map\\input\\data_mmda_traffic_alerts.csv"
 data_all = data_all_csv
-data_all_dbf = OUTPUT DBF FILE FROM Table to Table
-output_gdb = LOCATION OF GEODATABASE
+data_all_dbf = r'C:\GIS\Data Files\Work Files\MMDA Tweet2Map\output\output.gdb\data_all'
+output_gdb = "C:\\GIS\\Data Files\\Work Files\\MMDA Tweet2Map\\output\\output.gdb"
 data_all_Layer = "data_all_Layer"
-boundary_ncr_shp = METRO MANILA BOUNDARY SHAPE FILE
-data_all_join = OUTPUT OF Spatial Join SHAPEFILE
+boundary_ncr_shp = "C:\\GIS\\Data Files\\Work Files\\MMDA Tweet2Map\\boundary\\boundary_ncr.shp"
+data_all_join = "C:\\GIS\\Data Files\\Work Files\\MMDA Tweet2Map\\output\\output.gdb\\data_all_join"
 data_all_join__2_ = data_all_join
 data_all_join__3_ = data_all_join__2_
-data_all_csv__2_ = OUTPUT OF TableToCSV
+data_all_csv__2_ = "C:\\Users\\Panji\\Documents\\Python Scripts\\Non-Jupyter Py Scripts\\MMDA Tweet2Map\\data_all.csv"
 Delete_succeeded = "true"
 Delete_succeeded__2_ = "true"
-spRef = arcpy.SpatialReference(GCS PROJECTION FILE HERE)
+spRef = arcpy.SpatialReference("C:\GIS\Data Files\Work Files\MMDA Tweet2Map\input\GCS_WGS_1984.prj")
 
 # Process: Set workspace environment
 print('Set workspace environment')
 arcpy.env.workspace = r'C:\GIS\Data Files\Work Files\MMDA Tweet2Map'
 print('Set output coordinate system')
 arcpy.env.outputCoordinateSystem = spRef
+arcpy.env.overwriteOutput = True
 
 # Process: Table to Table
 try:
@@ -72,8 +85,9 @@ try:
     arcpy.TableToCSV_tableconversion(data_all_join__3_, data_all_csv__2_, "COMMA")
 except arcpy.ExecuteError:
     print('TableToCSV - Rewriting existing .csv file')
-    arcpy.Delete_management(data_all_csv__2_, "")
+    arcpy.Delete_management(r'C:\Users\Panji\Documents\Python Scripts\Non-Jupyter Py Scripts\MMDA Tweet2Map\data_all.csv', "")
     arcpy.TableToCSV_tableconversion(data_all_join__3_, data_all_csv__2_, "COMMA")
+    # print(arcpy.GetMessages(2))
 
 # Process: Delete
 print('Delete database .dbf file')
@@ -85,5 +99,8 @@ arcpy.Delete_management(data_all_Layer, "")
 
 print('')
 print('Analysis done')
-program_exit = input('Press ENTER to close')
+try:
+    program_exit = str(input('Press ENTER to close'))
+except:
+    exit()
 exit()
