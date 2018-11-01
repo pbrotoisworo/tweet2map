@@ -52,7 +52,7 @@ lst_duplicate_check = []
 UserBreak = False
 userClose = False
 tweetCounter = 0
-file_locations = 'modules\dictionary_database.txt'
+file_locations = r'modules\dictionary_database.txt'
 file_dataset = 'data_mmda_traffic_alerts.csv'
 gis_dataset = r'C:\GIS\Data Files\Work Files\MMDA Tweet2Map\input\data_mmda_traffic_alerts.csv'
 
