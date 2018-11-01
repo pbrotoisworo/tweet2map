@@ -1,4 +1,9 @@
 # Encoding: utf-8
+#
+# TESTING ENVIRONMENT
+# TESTING ENVIRONMENT
+# TESTING ENVIRONMENT
+# TESTING ENVIRONMENT
 
 print('MMDA Tweet2Map Version 0.8')
 print('Panji Brotoisworo')
@@ -18,6 +23,7 @@ import numpy as np
 from shutil import copy
 import pandas as pd
 from configparser import ConfigParser
+import traceback
 
 # Create RunConfig object for settings
 config = RunConfig('config.ini')
@@ -52,7 +58,7 @@ lst_duplicate_check = []
 UserBreak = False
 userClose = False
 tweetCounter = 0
-file_locations = 'dictionary_database.txt'
+file_locations = r'modules\dictionary_database.txt'
 file_dataset = 'data_mmda_traffic_alerts.csv'
 gis_dataset = r'C:\GIS\Data Files\Work Files\MMDA Tweet2Map\input\data_mmda_traffic_alerts.csv'
 
@@ -441,11 +447,16 @@ try:
                             dict_writer = csv.DictWriter(CsvFile, keys)
                             dict_writer.writeheader()
                             dict_writer.writerow(WriteCombinedDict)
-except:
+
+except Exception as error:
+    traceback.print_exc()
     config.error()
     exit()
+
 if UserBreak == True:
     print('User terminated script.')
+    config.error()
+    exit()
 
 print(f'\nUpdating location database...')
 f_DBLocationStrings = open(file_locations, 'w')
