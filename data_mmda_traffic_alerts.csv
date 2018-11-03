@@ -98,8 +98,8 @@ Date,Time,Location,Latitude,Longitude,Direction,Type,Lanes Blocked,Involved,Twee
 8/23/2018,8:48 PM,EDSA TRINOMA,14.652928,121.031852,NB,VEHICULAR ACCIDENT,2.0,SUV AND TAXI,MMDA ALERT: Vehicular accident at  EDSA Trinoma NB involving SUV and Taxi as of 8:48 PM. 2 lanes occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1032613850552528897
 8/23/2018,9:10 PM,EDSA P. TUAZON,14.652928,121.052548,WB,VEHICULAR ACCIDENT,1.0,2 MC,MMDA ALERT: Vehicular accident at  EDSA P.Tuazon Intersection WB involving 2 MC  as of 9:10 PM. 1 lanes occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1032620455327219712
 8/23/2018,10:23 PM,EDSA AYALA LOADING BAY,14.550028,121.029058,SB,VEHICULAR ACCIDENT,1.0,2 BUSES,MMDA ALERT: Vehicular accident at EDSA Ayala loading bay SB involving 2 buses as of 10:23 PM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1032637543009812482
-8/23/2018,10:42 PM,QUEZON AVENUE ARANETA TUNNEL,14.550028,121.013365,WB,MULTIPLE COLLISION,1.0,"
- 2 CARS AND SUV","MMDA ALERT: Multiple collision at Quezon Ave. tunnel WB involving 
+8/23/2018,10:42 PM,QUEZON AVENUE ARANETA TUNNEL,14.550028,121.013365,WB,MULTIPLE COLLISION,1.0,"
+ 2 CARS AND SUV","MMDA ALERT: Multiple collision at Quezon Ave. tunnel WB involving 
  2 cars and SUV as of 10:42 PM. 1 lane occupied. MMDA on site. #mmda",https://twitter.com/mmda/status/1032654398864773121
 8/23/2018,12:00 AM,EDSA AYALA,14.550028,121.029058,NB,STALLED VEHICLE,1.0,TANKER,MMDA ALERT: Stalled vehicle at EDSA before Ayala Tunnel NB involving Tanker as of 12:00 AM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1032667851738370049
 8/23/2018,6:23 AM,MARCOS HIGHWAY TAYUG,14.61864,121.092133,WB,STALLED DUMP TRUCK DUE TO MECHANICAL PROBLEM,1.0,DUMP TRUCK,MMDA ALERT: Stalled dump truck due to mechanical problem at Marcos highway tayug WB as of 6:23 AM. 1 lane occupied.… https://t.co/2Bv2Lm9GAb,https://twitter.com/mmda/status/1032758589197234176
@@ -1734,8 +1734,8 @@ Date,Time,Location,Latitude,Longitude,Direction,Type,Lanes Blocked,Involved,Twee
 10/13/2018,1:07 PM,MINDANAO ST. CHARBEL,14.680369,121.032073,SB,VEHICULAR ACCIDENT,1.0,MIXER AND CAR,MMDA ALERT: Vehicular accident at Mindanao St. Charbel SB involving mixer and car as of 1:07 PM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1050977522962202625
 10/13/2018,2:08 PM,C5 MIRIAM KATIPUNAN,14.644291,121.074626,NB,VEHICULAR ACCIDENT,2.0,TRUCK AND CAR,MMDA ALERT: Vehicular accident at C5 Miriam Katipunan NB involving truck and car as of 2:08 PM. 2 lanes occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1050994762965110784
 10/13/2018,2:17 PM,MINDANAO AVE. TANDANG SORA,14.677102,121.03219,SB,VEHICULAR ACCIDENT,1.0,MIXER,MMDA ALERT: Vehicular accident at Mindanao Ave. Tandang Sora SB involving mixer as of 2:17 PM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1050997126186954752
-10/13/2018,2:40 PM,"C5 C.P. 
-GARCIA KATIPUNAN",14.648274,121.074353,SB,VEHICULAR ACCIDENT,2.0,VAN AND CAR,"MMDA ALERT: Vehicular accident at C5 CP 
+10/13/2018,2:40 PM,"C5 C.P. 
+GARCIA KATIPUNAN",14.648274,121.074353,SB,VEHICULAR ACCIDENT,2.0,VAN AND CAR,"MMDA ALERT: Vehicular accident at C5 CP 
 Garcia Katipunan SB involving van and car as of 2:40 PM. 2 lanes occupied. MMDA on site. #mmda",https://twitter.com/mmda/status/1051001792471883776
 10/13/2018,3:14 PM,C5 LIBIS,14.603015,121.079256,SB,VEHICULAR ACCIDENT,2.0,TRUCK AND CAR,MMDA ALERT: Vehicular accident at C5 Libis SB involving truck and car as of 3:14 PM. 2 lanes occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1051009254381867008
 10/13/2018,3:51 PM,C5 LANUZA,14.577625,121.073462,NB,STALLED TRUCK DUE TO MECHANICAL PROBLEM,1.0,TRUCK,MMDA ALERT: Stalled truck due to mechanical problem at  C5 before Lanuza NB as of 3:51 PM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1051019744512335872
@@ -1752,8 +1752,8 @@ Garcia Katipunan SB involving van and car as of 2:40 PM. 2 lanes occupied. MMDA 
 10/13/2018,8:10 PM,EDSA SANTOLAN,14.609768,121.055583,NB,VEHICULAR ACCIDENT,2.0,AUV AND CAR,MMDA ALERT: Vehicular accident at EDSA Santolan NB involving AUV and car as of 8:10 PM. 2 lanes occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1051084978426015744
 10/13/2018,8:35 PM,EDSA ROCKWELL,14.559818,121.040737,SB,VEHICULAR ACCIDENT,1.0,SUV AND VAN,MMDA ALERT: Vehicular accident at EDSA Rockwell SB involving SUV and van as of 8:35 PM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1051090206206509056
 10/13/2018,8:35 PM,C5 GREENMEADOWS,14.601442,121.079351,NB,VEHICULAR ACCIDENT,1.0,CAR AND VAN,MMDA ALERT: Vehicular accident at C5 Greenmeadows NB involving car and van as of 8:35 PM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1051091166312194048
-10/13/2018,9:05 PM,"EDSA 
-BEFORE CONNECTICUT",,nan,SB,VEHICULAR ACCIDENT,1.0,CAR AND AUV,"MMDA ALERT: Vehicular accident at EDSA 
+10/13/2018,9:05 PM,"EDSA 
+BEFORE CONNECTICUT",,nan,SB,VEHICULAR ACCIDENT,1.0,CAR AND AUV,"MMDA ALERT: Vehicular accident at EDSA 
 before Connecticut SB involving car and AUV as of 9:05 PM. 1 lane occupied. MMDA on site. #mmda",https://twitter.com/mmda/status/1051101491644182528
 10/13/2018,9:31 PM,COMMONWEALTH LITEX,14.699664000000002,121.087118,WB,VEHICULAR ACCIDENT,1.0,BUS AND AUV,MMDA ALERT: Vehicular accident at Commonwealth Litex WB involving bus and AUV as of 9:31 PM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1051105273526403072
 10/14/2018,11:38 AM,EDSA MEGAMALL,14.584488,121.055562,NB,VEHICULAR ACCIDENT,1.0,2 BUSES,MMDA ALERT: Vehicular accident at EDSA Megamall NB involving 2 buses as of 11:38 AM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1051317789393223680
@@ -2390,3 +2390,211 @@ before Connecticut SB involving car and AUV as of 9:05 PM. 1 lane occupied. MMDA
 11-01-2018,2:16 PM,C5 BAGONG ILOG,14.564141,121.069619,SB,VEHICULAR ACCIDENT,1.0,MOTORCYCLE,MMDA ALERT: Vehicular accident at C5 after Bagong Ilog SB involving motorcycle as of 2:16 PM. 1 lane occupied. MMDA enforcer on site. #mmda,https://twitter.com/mmda/status/1057881102226939905
 11-01-2018,,COMMONWEALTH DILIMAN DOCTORS HOSPITAL,14.668893,121.075699,EB,VEHICULAR ACCIDENT,,TRUCK AND CAR,MMDA ALERT: Vehicular accident at Commonwealth front of Diliman Doctors Hospital EB involving truck and car as of 4… https://t.co/RN5TCfiO3Z,https://twitter.com/mmda/status/1057912449364455424
 11-01-2018,4:52 PM,EDSA TIMOG FLYOVER,14.63291,121.044944,NB,STALLED CAR  DUE TO MECHANICAL DEFECT,1.0,CAR,MMDA ALERT: Stalled car  due to mechanical defect at EDSA Timog flyover NB as of 4:52 PM. 1 lane occupied. MMDA enforcer on site. #mmda,https://twitter.com/mmda/status/1057923251618242560
+11-01-2018,5:23 PM,EDSA AYALA,14.550028,121.029058,SB,STALLED BUS DUE TO MECHANICAL PROBLEM,1.0,BUS,MMDA ALERT: Stalled bus due to mechanical problem at EDSA Ayala SB as of 5:23 PM. 1 lane occupied. MMDA enforcer on site. #mmda,https://twitter.com/mmda/status/1057928513548767232
+11-01-2018,5:25 PM,EDSA CENTRAL,14.579778,121.052512,NB,VEHICULAR ACCIDENT,2.0,CAR AND BUS,MMDA ALERT: Vehicular accident at EDSA Central NB involving car and bus as of 5:25 PM. 2 lanes occupied. MMDA enforcer on site. #mmda,https://twitter.com/mmda/status/1057929195370606593
+11-01-2018,10:16 PM,EAST AVE.,14.641866,121.04706000000002,EB,VEHICULAR ACCIDENT,1.0,MC,MMDA ALERT: Vehicular accident at East Ave. EB involving MC as of 10:16 PM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058000855813615617
+11-01-2018,11:20 PM,EDSA GEN. TINIO,14.657243,120.990183,NB,VEHICULAR ACCIDENT,1.0,BUS AND BICYCLE,MMDA ALERT: Vehicular accident at EDSA Gen. Tinio NB involving bus and bicycle as of 11:20 PM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058017805117743105
+11-01-2018,11:41 PM,COMMONWEALTH TANDANG SORA,14.66371,121.068008,EB,VEHICULAR ACCIDENT,1.0,CAR AND MC,MMDA ALERT: Vehicular accident at Commonwealth Tandang Sora  EB involving car and MC as of 11:41 PM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058024058569117696
+11-01-2018,4:00AM,EDSA AYALA,14.550028,121.029058,,VEHICULAR ACCIDENT,1.0,BUS AND HI-ACE VAN,MMDA ALERT: Vehicular accident at EDSA Ayala Intersection involving bus and hi-ace van as of 4:00AM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058089237927481344
+11-01-2018,4:22 AM,KATIPUNAN TUNNEL,14.61474,121.07068500000001,SB,VEHICULAR ACCIDENT,1.0,MOTORCYCLE,MMDA ALERT: Vehicular accident at Katipunan tunnel SB involving Motorcycle as of 4:22 AM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058095636141273089
+11-01-2018,4:27 AM,EDSA GATE 3,,nan,NB,STALLED BUS DUE TO MECHANICAL PROBLEM,1.0,BUS,MMDA ALERT: Stalled Bus due to mechanical problem at EDSA gate 3 NB as of 4:27 AM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058098407787524096
+11-01-2018,5:05 AM,C5 ORTIGAS FLYOVER,14.589706,121.079945,NB,STALLED TRAILER TRUCK DUE TO MECHANICAL PROBLEM,1.0,TRAILER TRUCK,MMDA ALERT: Stalled trailer truck due to mechanical problem at C5 before Ortigas F/O NB as of 5:05 AM.  1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058106119426498560
+11-01-2018,6:25 AM,MARCOS HIGHWAY EVANGELISTA,14.623918,121.084722,EB,VEHICULAR ACCIDENT,1.0,MC AND TAXI,MMDA ALERT: Vehicular accident at Marcos Highway Evangelista EB involving MC and taxi as of 6:25 AM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058124933413318656
+11-01-2018,6:42 AM,EDSA CENTRAL,14.579778,121.05251200000001,NB,VEHICULAR ACCIDENT,1.0,2 CARS,MMDA ALERT: Vehicular accident at EDSA Central NB involving 2 cars as of 6:42 AM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058128639466729472
+11-01-2018,7:15 AM,EDSA AURORA CUBAO,14.621564000000001,121.050149,NB,STALLED BUS DUE TO MECHANICAL PROBLEM,1.0,BUS,MMDA ALERT: Stalled bus due to mechanical problem at EDSA Aurora Cubao service road NB as of 7:15 AM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058137056835133440
+11-02-2018,9:07 AM,EDSA GUADALUPE SOGO,14.563882000000001,121.044545,NB,VEHICULAR ACCIDENT,1.0,BUS AND PEDESTRIAN,MMDA ALERT: Vehicular accident at EDSA Guadalupe Sogo NB involving bus and pedestrian as of 9:07 AM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058165411944980481
+11-02-2018,9:17 AM,ROXAS QUIRINO,14.564310999999998,120.98505700000001,NB,VEHICULAR ACCIDENT,1.0,SUV AND MC,MMDA ALERT: Vehicular accident at Roxas Quirino NB involving SUV and MC as of 9:17 AM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058167789880365056
+11-02-2018,9:27 AM,COMMONWEALTH INTRAMUROS VILLAGE,14.667767999999999,121.074075,WB,MULTIPLE COLLISION,,SUV TAXI AND CAR,"MMDA ALERT: Multiple collision at Commonwealth Intramuros Village WB involving SUV, taxi and car as of 9:27 AM. 2 l… https://t.co/1xqA58Md5Y",https://twitter.com/mmda/status/1058170383801626625
+11-02-2018,11:09 AM,QUEZON AVE. DELTA,14.637473000000002,121.026629,EB,VEHICULAR ACCIDENT,1.0,VAN AND TAXI,MMDA ALERT: Vehicular accident at Quezon ave Delta EB involving van and taxi as of 11:09 AM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058204931008585728
+11-02-2018,12:33 PM,CONGRESSIONAL MINDANAO,14.667910999999998,121.03393799999999,WB,VEHICULAR ACCIDENT,1.0,PICK UP AND MC,MMDA ALERT: Vehicular accident at Congressional Mindanao WB involving Pick up and MC as of 12:33 PM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058216915078799360
+11-02-2018,12:34 PM,EDSA MRT ORTIGAS,14.593155,121.058494,NB,MULTIPLE COLLISION,2.0,STAREX AND 2 CARS,MMDA ALERT: Multiple collision at EDSA MRT Ortigas NB involving starex and 2 cars as of 12:34 PM. 2 lanes occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058218054352429057
+11-02-2018,2:45 PM,EDSA MONTE,14.62385,121.049123,NB,VEHICULAR ACCIDENT,2.0,2 BUSES,MMDA ALERT: Vehicular accident at EDSA Monte NB involving 2 buses as of 2:45 PM. 2 lanes occupied. MMDA enforcer on site. #mmda,https://twitter.com/mmda/status/1058250744460075009
+11-02-2018,4:06 PM,EDSA LRT MUÑOZ,14.657576999999998,121.02118,SB,VEHICULAR ACCIDENT,2.0,TAXI AND UV EXPRESS,MMDA ALERT: Vehicular accident at EDSA LRT Muñoz SB involving taxi and UV express as of 4:06 PM. 2 lanes occupied.… https://t.co/6k3YEs6inN,https://twitter.com/mmda/status/1058270638165479424
+11-02-2018,5:02 PM,EDSA SANTOLAN,14.609768,121.055583,SB,VEHICULAR ACCIDENT,1.0,BUS AND VAN,MMDA ALERT: Vehicular accident at EDSA Santolan SB involving bus and van as of 5:02 PM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058285301079040000
+11-02-2018,5:07 PM,EDSA ERMIN GARCIA,14.628035,121.047229,NB,STALLED BUS DUE TO MECHANICAL PROBLEM,1.0,BUS,MMDA ALERT: Stalled bus due to mechanical problem at EDSA Ermin Garcia NB as of 5:07 PM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058288184910479360
+11-02-2018,8:12 PM,AURORA BLVD. KATIPUNAN,14.631692,121.074217,WB,MMDA ALERTL Vehicular accident at Aurora Blvd. Katipunan WB involving PUJ and taxi as of 8:12 PM. 1 lane occupied.… https://t.co/pxgTRGKUen,1.0,PUJ AND TAXI,MMDA ALERTL Vehicular accident at Aurora Blvd. Katipunan WB involving PUJ and taxi as of 8:12 PM. 1 lane occupied.… https://t.co/pxgTRGKUen,https://twitter.com/mmda/status/1058333112856264704
+11-02-2018,6:32 AM,COMMONWEALTH TANDANG SORA,14.66371,121.068008,WB,VEHICULAR ACCIDENT,1.0,MC AND DUMP TRUCK,MMDA ALERT: Vehicular accident at Commonwealth Tandang Sora WB involving MC and dump truck as of 6:32 AM. 1 lane oc… https://t.co/pDZV9MVle5,https://twitter.com/mmda/status/1058485927960502273
+11-03-2018,8:00 AM,EDSA BONI,14.574014000000002,121.04841,SB,MULTIPLE COLLISION,2.0,2 SUV TAXI AND L300,"MMDA ALERT: Multiple collision at EDSA Boni SB involving 2 SUV, taxi and L300 as of 8:00 AM. 2 lanes occupied. MMDA on site. #mmda",https://twitter.com/mmda/status/1058512071510245376
+11-03-2018,8:03 AM,EDSA MALIBAY,14.538272000000001,121.00608899999999,SB,STALLED VAN DUE TO MECHANICAL PROBLEM,1.0,VAN,MMDA ALERT: Stalled van due to mechanical problem at EDSA Malibay SB as of 8:03 AM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058512502584004609
+11-03-2018,8:51 AM,EDSA CENTRAL,14.579778,121.05251200000001,NB,VEHICULAR ACCIDENT,1.0,2 BUSES,MMDA ALERT: Vehicular accident at EDSA Central NB involving 2 buses as of 8:51 AM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058525059772346368
+11-03-2018,8:51 AM,ELLIPTICAL MAHARLIKA,14.650307999999999,121.05200500000001,,STALLED GARBAGE TRUCK DUE TO MECHANICAL PROBLEM,1.0,GARBAGE TRUCK,MMDA ALERT: Stalled garbage truck due to mechanical problem at Elliptical Maharlika as of 8:51 AM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058525199539171335
+11-03-2018,9:32 AM,EDSA P. TUAZON TUNNEL,14.616404000000001,121.052548,SB,ONGOING DPWH LANE MARKING,1.0,,MMDA ALERT: Ongoing DPWH lane marking at EDSA P. Tuazon Tunnel SB as of 9:32 AM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058534989690658816
+11-03-2018,9:40 AM,EDSA DARIO BRIDGE,14.657584,121.015619,SB,VEHICULAR ACCIDENT,1.0,CAR AND ARMORED CAR,MMDA ALERT: Vehicular accident at EDSA Dario Bridge SB involving car and armored car as of 9:40 AM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058536447240622080
+11-03-2018,11:20 AM,EDSA MAIN AVE.,14.613660000000001,121.053801,NB,VEHICULAR ACCIDENT,1.0,MC AND PICK UP,MMDA ALERT: Vehicular accident at EDSA Main Avenue NB involving MC and pick up as of 11:20 AM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058563365641932800
+11-03-2018,11:46 AM,EDSA AURORA,14.621564000000001,121.050149,SB,VEHICULAR ACCIDENT,1.0,2 BUSES,MMDA ALERT: Vehicular accident at EDSA Aurora SB involving 2 buses as of 11:46 AM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058568359254482949
+11-03-2018,11:53 AM,C5 J.VARGAS,14.582681,121.07683700000001,SB,VEHICULAR ACCIDENT,1.0,TAXI AND MC,MMDA ALERT: Vehicular accident at C5 J.Vargas SB involving taxi and MC as of 11:53 AM. 1 lane occupied. MMDA on site. #mmda,https://twitter.com/mmda/status/1058569989857267712
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,

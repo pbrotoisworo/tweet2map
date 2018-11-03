@@ -1,20 +1,31 @@
 class RunConfig:
     """
-    Initialize settings from the .ini file
+    Class to run different operations on the config file
     """
 
     def __init__(self, file):
         self.file = file
 
     def reset_errors(self):
+        """
+        Reset the parser_error status to FALSE.
+        At the end of the Tweet2Map script there is a check
+        to see if an error was raised. This resets the status
+        so the script can continue even if there was no error.
+        """
         from configparser import ConfigParser
         parser = ConfigParser()
         parser.read(self.file)
         parser.set('settings', 'parser_error', 'False')
+        parser.set('settings', 'arcpy_run', 'True')
         with open(self.file, 'w') as f:
             parser.write(f)
 
-    def error(self):
+    def arcpy_prevent_parser_error(self):
+        """
+        Change parser_error to True. This will prevent the ArcPy
+        script from running when a Tweet2Map error occurs.
+        """
         from configparser import ConfigParser
         parser = ConfigParser()
         parser.read(self.file)
@@ -22,7 +33,22 @@ class RunConfig:
         with open(self.file, 'w') as f:
             parser.write(f)
 
+    def arcpy_prevent_empty_input(self):
+        """
+        If there is empty input from the tweet
+        then prevent the arcpy script from executing
+        """
+        from configparser import ConfigParser
+        parser = ConfigParser()
+        parser.read(self.file)
+        parser.set('settings', 'arcpy_run', 'False')
+        with open(self.file, 'w') as f:
+            parser.write(f)
+
     def tweepy_tokens(self):
+        """
+        Import Twitter API tokens from the config file
+        """
         from configparser import ConfigParser
         parser = ConfigParser()
         parser.read(self.file)

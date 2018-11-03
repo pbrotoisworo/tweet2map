@@ -7,15 +7,32 @@
 # THIS SCRIPT IS FOR THE TESTING ENVIRONMENT ONLY
 # ---------------------------------------------------------------------------
 
+# Check initial config
 from configparser import ConfigParser
-
 config = ConfigParser()
-config.read(r'C:\Users\Panji\Documents\Python Scripts\Non-Jupyter Py Scripts\Scratch\OOP Testing\config.ini')
+config.read(r'C:\Users\Panji\Documents\Python Scripts\Non-Jupyter Py Scripts\MMDA Tweet2Map\Environments - Testing\config.ini')
 config.read('config.ini')
 if config.getboolean('settings', 'parser_error') == True:
-    print('Error Detected!')
+    print('Error Detected! Terminating script.')
     try:
         program_exit = str(input('Press ENTER to close'))
+    except:
+        exit()
+    exit()
+
+if config.getboolean('settings', 'arcpy_module_installed') == False:
+    print('arcpy_module_installed set to False')
+    try:
+        str(input('Press ENTER to close'))
+        exit()
+    except:
+        exit()
+    exit()
+
+if config.getboolean('settings', 'arcpy_run') == False:
+    try:
+        str(input('Press ENTER to close'))
+        exit()
     except:
         exit()
     exit()
@@ -23,7 +40,22 @@ if config.getboolean('settings', 'parser_error') == True:
 print('Initializing ArcPy script...')
 
 # Import arcpy module
-import arcpy
+try:
+    import arcpy
+except:
+    print('Warning! ArcPy not detected!')
+    print('Setting run_arcpy to FALSE in config.ini. You can modify this when you install ArcPy later')
+    parser = ConfigParser()
+    parser.read('config.ini')
+    parser.set('settings', 'arcpy_module_installed', 'False')
+    with open(self.file, 'w') as f:
+        parser.write(f)
+    print('Analysis done.')
+    try:
+        program_exit = str(input('Press ENTER to close'))
+        exit()
+    except:
+        exit()
 
 # Local variables:
 data_all_csv = "C:\\GIS\\Data Files\\Work Files\\MMDA Tweet2Map\\input\\data_mmda_traffic_alerts.csv"
@@ -55,7 +87,7 @@ except:
     print('Table to Table - Rewriting existing .dbf file')
     arcpy.Delete_management(data_all_dbf, "")
     arcpy.TableToTable_conversion(data_all_csv, output_gdb, "data_all", "", "Date \"Date\" true true false 8 Date 0 0 ,First,#,C:\\GIS\\Data Files\\Work Files\\MMDA Tweet2Map\\input\\data_all.csv,Date,-1,-1;Time \"Time\" true true false 8000 Text 0 0 ,First,#,C:\\GIS\\Data Files\\Work Files\\MMDA Tweet2Map\\input\\data_all.csv,Time,-1,-1;Location \"Location\" true true false 8000 Text 0 0 ,First,#,C:\\GIS\\Data Files\\Work Files\\MMDA Tweet2Map\\input\\data_all.csv,Location,-1,-1;Latitude \"Latitude\" true true false 8000 Double 0 0 ,First,#,C:\\GIS\\Data Files\\Work Files\\MMDA Tweet2Map\\input\\data_all.csv,Latitude,-1,-1;Longitude \"Longitude\" true true false 8000 Double 0 0 ,First,#,C:\\GIS\\Data Files\\Work Files\\MMDA Tweet2Map\\input\\data_all.csv,Longitude,-1,-1;Direction \"Direction\" true true false 8000 Text 0 0 ,First,#,C:\\GIS\\Data Files\\Work Files\\MMDA Tweet2Map\\input\\data_all.csv,Direction,-1,-1;Type \"Type\" true true false 8000 Text 0 0 ,First,#,C:\\GIS\\Data Files\\Work Files\\MMDA Tweet2Map\\input\\data_all.csv,Type,-1,-1;Lanes_Blocked \"Lanes Blocked\" true true false 4 Long 0 0 ,First,#,C:\\GIS\\Data Files\\Work Files\\MMDA Tweet2Map\\input\\data_all.csv,Lanes Blocked,-1,-1;Involved \"Involved\" true true false 8000 Text 0 0 ,First,#,C:\\GIS\\Data Files\\Work Files\\MMDA Tweet2Map\\input\\data_all.csv,Involved,-1,-1;Tweet \"Tweet\" true true false 8000 Text 0 0 ,First,#,C:\\GIS\\Data Files\\Work Files\\MMDA Tweet2Map\\input\\data_all.csv,Tweet,-1,-1;Source \"Source\" true true false 8000 Text 0 0 ,First,#,C:\\GIS\\Data Files\\Work Files\\MMDA Tweet2Map\\input\\data_all.csv,Source,-1,-1", "")
-    
+
 # Process: Make XY Event Layer
 print('Make XY Event Layer')
 arcpy.MakeXYEventLayer_management(data_all_dbf, "Longitude", "Latitude", data_all_Layer, spRef)
@@ -71,7 +103,8 @@ except arcpy.ExecuteError:
 
 # Process: Alter Field
 print('Alter Field')
-arcpy.AlterField_management(data_all_join, "NAME_2", "City", "City", "", "", "NON_NULLABLE", "false")
+arcpy.AlterField_management(data_all_join, "NAME_2", "City",
+                            "City", "", "", "NON_NULLABLE", "false")
 
 # Process: Delete Field
 print('Delete Field')
@@ -80,14 +113,16 @@ arcpy.DeleteField_management(data_all_join__2_, "Join_Count;TARGET_FID")
 # Process: Import custom toolbox
 # TableToCSV
 print('Import custom toolbox')
-arcpy.ImportToolbox(r'C:\Program Files (x86)\ArcGIS\Desktop10.6\ArcToolbox\Toolboxes\Excel and CSV Conversion Tools.tbx')
+arcpy.ImportToolbox(
+    r'C:\Program Files (x86)\ArcGIS\Desktop10.6\ArcToolbox\Toolboxes\Excel and CSV Conversion Tools.tbx')
 
 # Process: TableToCSV
 try:
     arcpy.TableToCSV_tableconversion(data_all_join__3_, data_all_csv__2_, "COMMA")
 except arcpy.ExecuteError:
     print('TableToCSV - Rewriting existing .csv file')
-    arcpy.Delete_management(r'C:\Users\Panji\Documents\Python Scripts\Non-Jupyter Py Scripts\MMDA Tweet2Map\data_all.csv', "")
+    arcpy.Delete_management(
+        r'C:\Users\Panji\Documents\Python Scripts\Non-Jupyter Py Scripts\MMDA Tweet2Map\data_all.csv', "")
     arcpy.TableToCSV_tableconversion(data_all_join__3_, data_all_csv__2_, "COMMA")
     # print(arcpy.GetMessages(2))
 
