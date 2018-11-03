@@ -4,7 +4,9 @@ MMDA Tweet2Map is a python script that converts MMDA Tweets ([@mmda](https://twi
 I'm open to suggestions and comments! This is my first major coding project since I started self-learning Python.
 
 ### ArcPy Package Information
-The file uses the [ArcPy package](http://help.arcgis.com/en/arcgisdesktop/10.0/help/index.html#//000v000000v7000000.htm), which comes with ArcGIS, to integrate and automate geospatial analysis. This Python package comes with ArcGIS and is not available through `pip install` options. ArcPy is used in this script but it is **not required**.
+ArcPy is used in this script but it is ***not required.***
+
+The file uses the [ArcPy package](http://help.arcgis.com/en/arcgisdesktop/10.0/help/index.html#//000v000000v7000000.htm) to integrate and automate geospatial analysis. ArcPy is bundled with ArcGIS software and is not available through `pip install` options. The script includes logic to prevent ArcPy from running and throwing exceptions if you do not have it in your system.
 
 The ArcPy package allows you to add the 'City' column to the data through a Spatial Join. The script is written in Python 3 but `arcpy_Spatial_Join_City.py` was written in a Python 2 environment since I'm still using ArcMap 10.6.
 
