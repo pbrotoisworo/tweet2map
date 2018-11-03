@@ -14,8 +14,9 @@ The ArcPy package allows you to add the 'City' column to the data through a Spat
 
 - Run script and let it automatically parse Twitter data
 - Selecting options is done using by inputting the numbers associated with the action you want to do then follow the instructions on how to add the new location to the database
+- Link the `boundary_ncr_shp` variable in the ArcPy script to the .shp file in the shapefile folder 
 
-![Choicse for entering a new location](https://static.wixstatic.com/media/e7dfa2_d819bed373b14983a4612468f5169c0a~mv2.png/v1/fill/w_751,h_435,al_c,q_80,usm_0.66_1.00_0.01/e7dfa2_d819bed373b14983a4612468f5169c0a~mv2.webp)
+![Choices for entering a new location](https://static.wixstatic.com/media/e7dfa2_d819bed373b14983a4612468f5169c0a~mv2.png/v1/fill/w_751,h_435,al_c,q_80,usm_0.66_1.00_0.01/e7dfa2_d819bed373b14983a4612468f5169c0a~mv2.webp)
 
 # **Upcoming:**
 - Fix some bugs with location and direction parsing
