@@ -1,4 +1,9 @@
 # Encoding: utf-8
+#
+# TESTING ENVIRONMENT
+# TESTING ENVIRONMENT
+# TESTING ENVIRONMENT
+# TESTING ENVIRONMENT
 
 print('MMDA Tweet2Map Version 0.8')
 print('Panji Brotoisworo')
@@ -236,25 +241,23 @@ try:
                             tweetLocation = tweetLocation.replace(' EB', '')
                             tweetLocation = tweetLocation.replace(' SB', '')
                             tweetLocation = tweetLocation.replace(' WB', '')
-                        print(f'Direction: {tweetDirection}')
 
-                        if len(tweetText.split(' INVOLVING')) > 0:
-                            # Participants mentioned in elliptical incident
-                            tweetParticipant = tweetText.upper()
-                            print('ELLIPTICAL CHECK')
-                            time.sleep(5)
+                        if len(info.split(' INVOLVING')) > 0:
+                            tweetParticipant = info.upper()
                             tweetParticipant = tweetParticipant.split(' INVOLVING')[1]
-                            tweetParticipant = tweetParticipant.split(' AS OF')[0]
+                            tweetParticipant = tweetParticipant.split(' AS OF ')[0]
                             tweetParticipant = tweetParticipant.rstrip(' ')
                             tweetParticipant = tweetParticipant.lstrip(' ')
-                            print(f'Participants: {tweetParticipant}')
+
+                            tweetLocation = tweetLocation.upper()
+                            tweetLocation = tweetLocation.split(' INVOLVING')[0]
+                            tweetLocation = tweetLocation.split(' AT ')[0]
+                            tweetLocation = tweetLocation.rstrip()
+                            tweetLocation = tweetLocation.lstrip()
 
                         else:
                             # No participants mentioned in elliptical incident
-                            tweetLocation = tweetText.upper()
-                            print('ELLIPTICAL CHECK')
-                            print(f'DEBUG LINE 250: {tweetLocation.split(" AT ")}')
-                            time.sleep(5)
+                            tweetLocation = info.upper()
                             tweetLocation = tweetLocation.split(' AT ')[1]
                             tweetLocation = tweetLocation.split(' AS OF ')[0]
                             tweetLocation = tweetLocation.rstrip(' ')
