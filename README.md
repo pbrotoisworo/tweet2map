@@ -12,9 +12,14 @@ I'm open to suggestions and comments! This is my first major coding project sinc
 - Spell checker and auto-correct for location strings
   - Possible full automation of the script if auto-correct is accurate
 - Streamline main script by utilizing more classes and functions
-- ArcPy functions to automate heatmap calculations
+- Fix parsing logic regarding incidents involving rallyists
 
 # **Changelog:**
+
+0.9 (TBA)
+- Fixed parsing logic regarding incidents in Quezon City Elliptical Road
+- Added a `config.ini` file where you can put in the Tweepy API code and configure some settings
+- Added code to prevent the ArcPy script from executing if there is an error in the first .py file
 
 0.8 (October 23, 2018)
 - Added City column through ArcPy package into script
