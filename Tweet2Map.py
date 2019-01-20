@@ -1,9 +1,4 @@
 # Encoding: utf-8
-#
-# TESTING ENVIRONMENT
-# TESTING ENVIRONMENT
-# TESTING ENVIRONMENT
-# TESTING ENVIRONMENT
 
 print('MMDA Tweet2Map Version 0.8')
 print('Panji Brotoisworo')
