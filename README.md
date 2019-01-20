@@ -8,11 +8,9 @@ MMDA Tweet2Map is a python script that converts MMDA Tweets ([@mmda](https://twi
 I'm open to suggestions and comments! This is my first major coding project since I started self-learning Python.
 
 # **Upcoming:**
-- Fix some bugs with location and direction parsing
-- Spell checker and auto-correct for location strings
-  - Possible full automation of the script if auto-correct is accurate
 - Streamline main script by utilizing more classes and functions
 - Fix parsing logic regarding incidents involving rallyists
+- Code to automatically push database updates to the project's [Kaggle page](https://www.kaggle.com/esparko/mmda-traffic-incident-data)
 
 # **Changelog:**
 
@@ -20,6 +18,7 @@ I'm open to suggestions and comments! This is my first major coding project sinc
 - Fixed parsing logic regarding incidents in Quezon City Elliptical Road
 - Added a `config.ini` file where you can put in the Tweepy API code and configure some settings
 - Added code to prevent the ArcPy script from executing if there is an error in the first .py file
+- Updated timezone of extracted tweets from GMT+0 to GMT+8 to match Manila local time
 
 0.8 (October 23, 2018)
 - Added City column through ArcPy package into script
