@@ -8,6 +8,7 @@ I'm open to suggestions and comments! This is my first major coding project sinc
 - Fix parsing logic regarding incidents involving rallyists
 - Code to automatically push database updates to the project's [Kaggle page](https://www.kaggle.com/esparko/mmda-traffic-incident-data)
 - Spatial joins through FOSS tools instead of ArcGIS Software
+- Tweet2Map streaming version: a version where the script will continuously run and check the mmda page twice a day. The main Tweet2Map script will have a section to accomodate this streaming information.
 
 # Table of Contents
 1. [Important: ArcPy Package](#arcpy)
