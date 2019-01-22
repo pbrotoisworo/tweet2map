@@ -11,22 +11,32 @@ I'm open to suggestions and comments! This is my first major coding project sinc
 
 # Table of Contents
 1. [Important: ArcPy Package](#arcpy)
-2. [Code Structure](#structure)
+2. [Code Structure and Configuration](#structure)
 3. [Usage](#Usage)
 4. [Changelog](#changelog)
 
 ## ArcPy Package <a name="arcpy"></a>
-`ArcPy` is used in this script but is only required if you want to add the 'City' column to your data. The file uses the [ArcPy package](http://help.arcgis.com/en/arcgisdesktop/10.0/help/index.html#//000v000000v7000000.htm), which comes with ArcGIS, to integrate and automate geospatial analysis. This Python package comes with ArcGIS and is not available through `pip install` options. The script is written in Python 3 but `arcpy_Spatial_Join_City.py` was written in a Python 2 environment since I'm still using ArcMap 10.6.
+ArcPy is used in this script but is only required if you want to add the 'City' column to your data. The file uses the [ArcPy package](http://help.arcgis.com/en/arcgisdesktop/10.0/help/index.html#//000v000000v7000000.htm), which comes with ArcGIS, to integrate and automate geospatial analysis. This Python package comes with ArcGIS and is not available through `pip install` options. The script is written in Python 3 but `arcpy_Spatial_Join_City.py` was written in a Python 2 environment since I'm still using ArcMap 10.6.
 
-## Code Structure <a name="structure"></a>
+## Code Structure and Configuration <a name="structure"></a>
 The main script `Tweet2Map.py` runs in **Python 3.6** and above while the Spatial Join runs in **Python 2** through the ArcGIS Python package. Additional functions, classes, configuration, and ArcPy code is stored in the modules folder. The script can combine separate Python interpreters by executing them through the `run_program.bat` file.
+
+You can configure settings for the script such as Tweepy API tokens and whether or not you want the ArcPy module to run. This can be done in the `config.ini` file.
+
+The parameters are:
+
+- `arcpy_module_installed`: User can set this. If you don't have the arcpy module installed set this to False and it will prevent the script from running.
+- `parser_error`: **DO NOT CHANGE.** Automatically set to True if there was an error in the main script. Prevents ArcPy script file from executing. It outputs that an error is detected then closes the script.
+- `arcpy_run`: **DO NOT CHANGE.** Automatically set to True if there is another condition where the ArcPy script doesn't need to run. Does not output error message.
+
+In the Tweepy section, input your Twitter API codes which the script will use to connect to the Twitter API.
 
 ## Usage <a name="Usage"></a>
 Use the `run_program.bat` file to run the full code. You can execute the code using different Python interepreters by typing in the full link of the python.exe file. Afterwards, you put in the full link of the .py file you want to run. Use the following example below which is the placeholder information currently in the .bat file:
 ```
 @echo off
-"C:\ProgramData\Anaconda3\python.exe" "C:\Users\Panji\Documents\Python Scripts\Non-Jupyter Py Scripts\MMDA Tweet2Map\Tweet2Map.py"
-"C:\Python27\ArcGIS10.6\python.exe" "C:\Users\Panji\Documents\Python Scripts\Non-Jupyter Py Scripts\MMDA Tweet2Map\arcpy_Spatial_Join_City.py"
+"C:\ProgramData\Anaconda3\python.exe" "C:\Users\Panji\Documents\Python Scripts\MMDA Tweet2Map\Tweet2Map.py"
+"C:\Python27\ArcGIS10.6\python.exe" "C:\Users\Panji\Documents\Python Scripts\MMDA Tweet2Map\arcpy_Spatial_Join_City.py"
 
 ```
 In this case, I'm typing in the full path of the Python 3 interpreter I use from the Anaconda distribution for my Python 3 interpreter then I put in the Tweet2Map path. The following line is the full path of the Python 2 interpreter then the ArcPy script I use to run the spatial join.
