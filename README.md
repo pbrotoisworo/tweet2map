@@ -41,7 +41,7 @@ Use the `run_program.bat` file to run the full code. You can execute the code us
 ```
 In this case, I'm typing in the full path of the Python 3 interpreter I use from the Anaconda distribution for my Python 3 interpreter then I put in the Tweet2Map path. The following line is the full path of the Python 2 interpreter then the ArcPy script I use to run the spatial join.
 
-Now let's get to running the script and adding new locations.
+Now let's get to running the script and adding new locations. Here is my workflow for running the script and adding new locations.
 
 ![1](https://i.imgur.com/R5p4TpA.png)
 
@@ -53,7 +53,7 @@ Take note that the search function only searches using exact string matches. So 
 
 Here are all the existing locations in the location database that feature the Lacson string. If there was a matching location, you can simply select by typing the index number. For example, if I wanted to use the latitude/longitude information of ESPANA LACSON for my new location then I type in **649**. Then I confirm in the next input by pressing Y.
 
-In this case, there are no matching locations. So I type "RESET" without the quotes in order to bring me back to the option page. Then I choose 1. At this point, use your favorite location software to find this new location. I like to use Google maps to look up coordinate information on the internet. I type in Espana Loyola which gives me the details below.
+In this case, there are no matching locations. So I type "RESET" without the quotes in order to bring me back to the option page. Then I choose 1. At this point, use your favorite location software to find this new location. I like to use Google maps to look up coordinate information on the internet. I type in Lacson Loyola which gives me the details below.
 
 ![3](https://i.imgur.com/kpYNZRH.png)
 
