@@ -70,7 +70,8 @@ Just confirm with Y and the script will continue processing the other tweets.
 - Fixed parsing logic regarding incidents in Quezon City Elliptical Road
 - Added a `config.ini` file where you can put in the Tweepy API code and configure some settings
 - Added code to prevent the ArcPy script from executing if there is an error in the first .py file
-- Updated timezone of extracted tweets from GMT+0 to GMT+8 to match Manila local time. The update included a revised database which features the GMT+8 timestamp for all incidents.
+- Updated timezone of extracted tweets from GMT+0 to GMT+8 to match Manila local time. The database still features a slight time discrepancy due to this. This will be fixed in a future update.
+- Updated time parsing in the Tweetparse class to detect incorrect formats and fix them (EG, 10:18PM will be changed to 10:18 PM). The incorrect formats caused errors when converting the time data to a datetime object.
 
 0.8 (October 23, 2018)
 - Added City column through ArcPy package into script
