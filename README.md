@@ -1,6 +1,6 @@
 # MMDA Tweet2Map
 
-**Author: Panji Brotoisworo**
+**Author:** Panji Brotoisworo
 
 **Contact: [panji.p.broto@gmail.com](mailto:panji.p.broto@gmail.com)**
 
