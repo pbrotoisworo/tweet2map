@@ -1,7 +1,7 @@
 # Encoding: utf-8
 
-print('MMDA Tweet2Map Version 0.8')
-print('Panji Brotoisworo')
+print('MMDA Tweet2Map Version 0.9')
+print('Panji P. Brotoisworo')
 print('Contact: panji.p.broto@gmail.com')
 print('Website: https://panjib.wixsite.com/blog/mmdatweet2map')
 print(f'\nInitializing Libraries...')
@@ -151,6 +151,7 @@ try:
                 tweetDate = str(tweetDate).split(' ')[0]
 
                 tweetText = info.text
+                tweetText = tweetText.replace('  ', ' ')
                 info = info.text.upper()
                 lstTweets.append(info)
 
@@ -167,7 +168,7 @@ try:
 
                 # Get location, participants, and direction
                 pattern = re.compile(r' AT\s[a-zA-Z\Ñ\'\.\,\-0-9\/\s]+(AS OF)')
-                matches = pattern.finditer(info)
+                matches = pattern.finditer(tweetText.upper())
                 for match in matches:
                     tweetLocation = match.group(0)
                     # Location String Cleaning
@@ -237,7 +238,7 @@ try:
                             tweetLocation = tweetLocation.replace(' SB', '')
                             tweetLocation = tweetLocation.replace(' WB', '')
 
-                        if len(info.split(' INVOLVING')) > 0:
+                        if len(info.upper().split(' INVOLVING ')) > 1:
                             tweetParticipant = info.upper()
                             tweetParticipant = tweetParticipant.split(' INVOLVING')[1]
                             tweetParticipant = tweetParticipant.split(' AS OF ')[0]
@@ -271,7 +272,7 @@ try:
                 if 'RALLYIST' in info:
                     tweetType = 'RALLYIST'
                     # Get location and participants
-                    # tweetLocation = twt.rally_location(tweetText)
+                    tweetLocation = twt.rally_location(tweetText)
                     tweetParticipant = twt.rally_participants(tweetText)
 
         # Check for userBreak
@@ -299,7 +300,7 @@ try:
                     # User input to check if location string is correct
                     # if it is correct, type YES to add it, if not, type NO to manual fix
 
-                    print(f'\nNew location detected! {tweetLocation} is not recognized.')
+                    print(f'\nNew location detected! "{tweetLocation}" is not recognized.')
                     print(f'\nChoose number from list:')
                     print('1 - Add new location and new coordinates')
                     print(f'2 - Add new location based on existing coordinates\n')
