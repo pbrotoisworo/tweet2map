@@ -1,11 +1,15 @@
 # MMDA Tweet2Map
-MMDA Tweet2Map is a python script that mines MMDA Tweets ([@mmda](https://twitter.com/MMDA)) into a usable database for traffic accident research in Metro Manila. Please take note that you need your own unique Twitter API code in order to use this script. This script uses the **tweepy library** in order to connect with the Twitter API. For more information regarding this script please visit the project page on my [blog](https://panjib.wixsite.com/blog/mmdatweet2map).
+
+**Author: Panji Brotoisworo**
+
+**Contact: [panji.p.broto@gmail.com](mailto:panji.p.broto@gmail.com)**
+
+MMDA Tweet2Map is a python script that mines MMDA Tweets ([@mmda](https://twitter.com/MMDA)) into a usable database for traffic accident research in Metro Manila. Please take note that you need your own unique Twitter API code in order to use this script. This script uses the **tweepy library** in order to connect with the Twitter API and uses **RegEx** for text parsing. For more information regarding this script please visit the project page on my [blog](https://panjib.wixsite.com/blog/mmdatweet2map).
 
 I'm open to suggestions and comments! This is my first major coding project since I started self-learning Python.
 
 # **Upcoming:**
 - Streamline main script by utilizing more classes and functions
-- Fix parsing logic regarding incidents involving rallyists
 - Code to automatically push database updates to the project's [Kaggle page](https://www.kaggle.com/esparko/mmda-traffic-incident-data)
 - Spatial joins through FOSS tools instead of ArcGIS Software
 - Tweet2Map streaming version: a version where the script will continuously run and check the mmda page twice a day. The main Tweet2Map script will have a section to accomodate this streaming information.
@@ -26,7 +30,7 @@ You can configure settings for the script such as Tweepy API tokens and whether 
 
 The parameters are:
 
-- `arcpy_module_installed`: User can set this. If you don't have the arcpy module installed set this to False and it will prevent the script from running.
+- `arcpy_module_installed`: User can set this. If you don't have the arcpy module installed set this to False and it will prevent the second script from running.
 - `parser_error`: **DO NOT CHANGE.** Automatically set to True if there was an error in the main script. Prevents ArcPy script file from executing. It outputs that an error is detected then closes the script.
 - `arcpy_run`: **DO NOT CHANGE.** Automatically set to True if there is another condition where the ArcPy script doesn't need to run. Does not output error message.
 
@@ -66,7 +70,8 @@ Just confirm with Y and the script will continue processing the other tweets.
 
 ## Changelog <a name="changelog"></a>
 
-0.9 (TBA)
+0.9 (February 16, 2019)
+- Fixed parsing logic regarding incidents involving rallyists
 - Fixed parsing logic regarding incidents in Quezon City Elliptical Road
 - Added a `config.ini` file where you can put in the Tweepy API code and configure some settings
 - Added code to prevent the ArcPy script from executing if there is an error in the first .py file
