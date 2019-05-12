@@ -1,15 +1,10 @@
 # Encoding: utf-8
-#
-# TESTING ENVIRONMENT
-# TESTING ENVIRONMENT
-# TESTING ENVIRONMENT
-# TESTING ENVIRONMENT
 
-print('MMDA Tweet2Map Version 0.8')
-print('Panji Brotoisworo')
+print('MMDA Tweet2Map Version 0.9')
+print('Panji P. Brotoisworo')
 print('Contact: panji.p.broto@gmail.com')
 print('Website: https://panjib.wixsite.com/blog/mmdatweet2map')
-print(f'\nInitializing Libraries...\n')
+print(f'\nInitializing Libraries...')
 
 import tweepy
 import re
@@ -17,41 +12,20 @@ import time
 import csv
 from modules.function_list import location_string_clean
 from modules.TweetParse import TweetParse
-from modules.RunConfig import RunConfig
-import time
+from modules.RunConfig import *
+from modules.initialization import *
+from modules.dbmanage import *
+import modules.logging
 import numpy as np
 from shutil import copy
 import pandas as pd
-from configparser import ConfigParser
+# from configparser import ConfigParser
+from datetime import datetime, timedelta
 import traceback
+import logging
 
-# Create RunConfig object for settings
-config = RunConfig('config.ini')
-config.reset_errors()
-
-# Initial connection check
-userConnection = False
-while userConnection == False:
-    try:
-        # Tweepy Settings
-        consumer_key = config.tweepy_tokens()[0]
-        consumer_secret = config.tweepy_tokens()[1]
-        access_token = config.tweepy_tokens()[2]
-        access_secret = config.tweepy_tokens()[3]
-        auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-        auth.set_access_token(access_token, access_secret)
-        api = tweepy.API(auth)
-        tweets = api.user_timeline(screen_name="mmda", count=200, include_rts=False)
-        # If it can connect, then get out of the while loop
-        userConnection = True
-    except:
-        print('Connection attempt failed!')
-        print('Retrying in 15 seconds')
-        time.sleep(15)
-
+# Declare variables
 databaseLocationsDictionary = {}
-#ListDirection = ['NB', 'SB', 'EB', 'WB']
-#ListDirectionCheck = [' NB ', ' SB ', ' EB ', ' WB ']
 lstTweets = []
 lstDuplicateCheck = []
 userBreak = False
@@ -59,50 +33,39 @@ userClose = False
 tweetCounter = 0
 databaseLocations = r'modules\dictionary_database.txt'
 databaseMain = 'data_mmda_traffic_alerts.csv'
+
+# database copy in my GIS folder
 databaseGIS = r'C:\GIS\Data Files\Work Files\MMDA Tweet2Map\input\data_mmda_traffic_alerts.csv'
 
-# Load database of string locations or create one if it doesn't exist
+# Load scripts from modules.initialization
+config = RunConfig('config.ini')
+config.reset_errors()
+
+print('Connecting to API...')
+tweets = initialization_tweepy_connect(input_consumer_key=config.tweepy_tokens()[0],
+                                       input_consumer_secret=config.tweepy_tokens()[1],
+                                       input_access_token=config.tweepy_tokens()[2],
+                                       input_access_secret=config.tweepy_tokens()[3])
+
+# Logging
+modules.logging.logger()
+
+# Load database of string locations
+print(f'Loading database...\n')
 try:
-    databaseLocationsFile = open(databaseLocations, 'r')
-    for line in databaseLocationsFile:
-        x = line.split("/")
-        x[1] = x[1].replace('\n', '')
-        x[1] = x[1].replace(' ', '')
-        databaseLocationsDictionary[x[0]] = x[1]
-    databaseLocationsFile.close()
-    #print('Location database loaded.')
-except FileNotFoundError:
-    print('Database not detected. Creating new txt file')
-    # Create file for read and write
-    databaseLocationsFile = open(databaseLocations, 'x+')
+    databaseLocationsDictionary = dbmanage_load_location_data(databaseLocations)
+except:
+    traceback.print_exc()
+    config.arcpy_prevent_parser_error()
+    exit()
 
-# Load last set of tweets to check for duplicates
-try:
-    with open(databaseMain, 'r', newline='') as CsvFile:
-        reader = csv.reader(CsvFile)
-
-        for idx, row in enumerate(reversed(list(CsvFile))):
-            dataRow = row
-            dataRow = dataRow.replace('\r\n', '')
-            lstDuplicateCheck.append(dataRow.split(',')[-1])
-            if idx == 200:
-                #print('Duplicate check initialized')
-                break
-
-except FileNotFoundError:
-    print('CSV file not detected. Creating new CSV file')
-    with open(databaseMain, 'x', newline='') as CsvFile:
-        # reader = csv.reader(CsvFile)
-        for idx, row in enumerate(reversed(list(CsvFile))):
-            dataRow = row
-            dataRow = dataRow.replace('\r\n', '')
-            lstDuplicateCheck.append(dataRow.split(',')[-1])
-            if idx == 200:
-                break
-
-print(f'Location Database loaded! {len(databaseLocationsDictionary)} entries.\n')
+# Load last tweets to prevent duplicate writes to the tweet database
+lstDuplicateCheck = initialization_check_duplicate(tweet_database=databaseMain,
+                                                   max_tweets=200)
 
 print(f'Tweet Data:\n')
+
+time.sleep(1)
 
 try:
     # Main loop that processes each tweet
@@ -139,13 +102,18 @@ try:
             else:
                 tweetCounter += 1
                 # Get date and text
-                tweetDate = info.created_at
-                tweetDate = tweetDate.strftime("%m-%d-%Y")
+                # Convert raw time from Twitter to GMT+8
+                tweetDate = str(info.created_at)
+                tweetDate = datetime.strptime(tweetDate, "%Y-%m-%d %H:%M:%S")
+                tweetDate = tweetDate + timedelta(hours=8)
+                tweetDate = str(tweetDate).split(' ')[0]
+
                 tweetText = info.text
+                tweetText = tweetText.replace('  ', ' ')
                 info = info.text.upper()
                 lstTweets.append(info)
 
-                print('-------------------------------')
+                print('------------------------------------------------------')
                 print(f'Tweet: {info}')
                 print(f'Date: {tweetDate}')
                 print(f'URL: {tweetID}')
@@ -158,7 +126,7 @@ try:
 
                 # Get location, participants, and direction
                 pattern = re.compile(r' AT\s[a-zA-Z\Ñ\'\.\,\-0-9\/\s]+(AS OF)')
-                matches = pattern.finditer(info)
+                matches = pattern.finditer(tweetText.upper())
                 for match in matches:
                     tweetLocation = match.group(0)
                     # Location String Cleaning
@@ -178,29 +146,27 @@ try:
                             tweetLocation = tweetLocation.replace(' SB', '')
                             tweetLocation = tweetLocation.replace(' WB', '')
                         print(f'Direction: {tweetDirection}')
-                        # print(f'DEBUG: CHECKPOINT1-{tweetLocation}')
+                        logging.debug('DEBUG: CHECKPOINT1-{tweetLocation}')
 
                         # Get participants
                         if len(tweetLocation.split(' INVOLVING')) > 1:
-                            # print(f'DEBUG: CHECKPOINT1.1-{tweetLocation}')
+                            logging.debug('DEBUG: CHECKPOINT1.1-{}'.format(tweetLocation))
                             tweetParticipant = tweetLocation.split(' INVOLVING')[1]
                             tweetParticipant = tweetParticipant.rstrip(' ')
                             tweetParticipant = tweetParticipant.lstrip(' ')
                             if len(tweetParticipant) > 0:
                                 print(f'Participants: {tweetParticipant}')
-
-                        tweetLocation = tweetLocation.split('INVOLVING')[0].strip(' ')
-                        print(f'Location: {tweetLocation}')
+                                tweetLocation = tweetLocation.split('INVOLVING')[0].strip(' ')
+                            print(f'Location: {tweetLocation}')
 
                         # Consider deletion
                         # Direction given. NO INVOLVED
                         if len(tweetLocation.split(' INVOLVING')) < 1:
-                            print(f'DEBUG: CHECKPOINT2.1-{tweetLocation}')
+                            logging.debug('DEBUG: CHECKPOINT2.1-{}'.format(tweetLocation))
                             tweetParticipant = tweetLocation.split(' AS OF ')[0]
                             tweetParticipant = tweetParticipant.rstrip(' ')
                             tweetParticipant = tweetParticipant.lstrip(' ')
-                            if len(tweetParticipant) > 0:
-                                print(f'Participants: {tweetParticipant}')
+                            print(f'Participants: {tweetParticipant}')
 
                     if 'ELLIPTICAL' in tweetLocation:
 
@@ -219,11 +185,38 @@ try:
                             # tweetLocation = input('Enter elliptical road location:')
                         # tweetParticipant = input('TEMPORARY. Enter participants:')
                         # Get participants
-                        if len(tweetLocation.split(' INVOLVING')) > 1:
-                            tweetParticipant = tweetLocation.split(' INVOLVING')[1]
+
+                        pattern = re.compile(r'( SB | NB | WB | EB )')
+                        matches = pattern.finditer(info)
+                        for match in matches:
+                            tweetDirection = match.group(0)
+                            tweetDirection = tweetDirection.replace(' ', '')
+                            tweetLocation = tweetLocation.replace(' NB', '')
+                            tweetLocation = tweetLocation.replace(' EB', '')
+                            tweetLocation = tweetLocation.replace(' SB', '')
+                            tweetLocation = tweetLocation.replace(' WB', '')
+
+                        if len(info.upper().split(' INVOLVING ')) > 1:
+                            tweetParticipant = info.upper()
+                            tweetParticipant = tweetParticipant.split(' INVOLVING')[1]
+                            tweetParticipant = tweetParticipant.split(' AS OF ')[0]
                             tweetParticipant = tweetParticipant.rstrip(' ')
                             tweetParticipant = tweetParticipant.lstrip(' ')
-                            print(f'Participants: {tweetParticipant}')
+
+                            tweetLocation = tweetLocation.upper()
+                            tweetLocation = tweetLocation.split(' INVOLVING')[0]
+                            tweetLocation = tweetLocation.split(' AT ')[0]
+                            tweetLocation = tweetLocation.rstrip()
+                            tweetLocation = tweetLocation.lstrip()
+
+                        else:
+                            # No participants mentioned in elliptical incident
+                            tweetLocation = info.upper()
+                            tweetLocation = tweetLocation.split(' AT ')[1]
+                            tweetLocation = tweetLocation.split(' AS OF ')[0]
+                            tweetLocation = tweetLocation.rstrip(' ')
+                            tweetLocation = tweetLocation.lstrip(' ')
+
                         # print(f'DEBUG: tweetLocation is {tweetLocation}')
                         print(f'Participants: {tweetParticipant}')
                         print(f'Location: {tweetLocation}')
@@ -237,8 +230,11 @@ try:
                 if 'RALLYIST' in info:
                     tweetType = 'RALLYIST'
                     # Get location and participants
-                    # tweetLocation = twt.rally_location(tweetText)
+                    tweetLocation = twt.rally_location(tweetText)
                     tweetParticipant = twt.rally_participants(tweetText)
+
+        if len(tweetLocation) > 50:
+            logging.warning('Possible location error \ntweetLocation: {}'.format(tweetLocation))
 
         # Check for userBreak
         if tweetLocation == 'BREAK':
@@ -250,7 +246,7 @@ try:
             # Declare variable to control while loop
             checkUserLocationChoice = False
             # empty variable
-            #user_error = False
+            # user_error = False
             while checkUserLocationChoice == False:
                 try:
                     tweetLatitude = databaseLocationsDictionary[tweetLocation].split(',')[0]
@@ -265,7 +261,7 @@ try:
                     # User input to check if location string is correct
                     # if it is correct, type YES to add it, if not, type NO to manual fix
 
-                    print(f'\nNew location detected! {tweetLocation} is not recognized.')
+                    print(f'\nNew location detected! "{tweetLocation}" is not recognized.')
                     print(f'\nChoose number from list:')
                     print('1 - Add new location and new coordinates')
                     print(f'2 - Add new location based on existing coordinates\n')
@@ -421,31 +417,8 @@ try:
 
             keys = WriteCombinedDict.keys()
 
-            # if tweetID in lstDuplicateCheck:
-            #     print('Duplicate data! Skipping to next tweet.')
-            #     continue
-
             if tweetID not in lstDuplicateCheck:
-
-                with open(databaseMain, 'r', newline='') as csv_file:
-                    reader = csv.reader(csv_file)
-                    try:
-                        header_check = next(reader)
-                    except StopIteration:
-                        header_check = []
-
-                    if header_check != []:
-                        # Update version in main script folder
-                        with open(databaseMain, 'a', newline='', encoding='utf-8') as CsvFile:
-                            dict_writer = csv.DictWriter(CsvFile, keys)
-                            dict_writer.writerow(WriteCombinedDict)
-                    else:
-                        # Then this is just an empty CSV file so we use write
-                        print(f'\nNo data in the CSV! Adding header to CSV file')
-                        with open(databaseMain, 'w', newline='', encoding='utf-8') as CsvFile:
-                            dict_writer = csv.DictWriter(CsvFile, keys)
-                            dict_writer.writeheader()
-                            dict_writer.writerow(WriteCombinedDict)
+                dbmanage_update_csv_data(databaseMain, WriteCombinedDict, keys)
 
 except Exception as error:
     traceback.print_exc()
@@ -472,8 +445,6 @@ databaseLocationsFile.close()
 # Drop empty rows generated
 # Clean data for ArcGIS
 df_1 = pd.read_csv(databaseMain)
-# df_1['Latitude'].replace(' ', np.nan, inplace=True)
-# df_1['Longitude'].replace(' ', '', inplace=True)
 
 df_1['Longitude'] = df_1['Longitude'].astype(str)
 df_1['Longitude'] = df_1['Longitude'].str.rstrip(' ')
@@ -481,7 +452,6 @@ df_1['Longitude'] = df_1['Longitude'].str.replace('\t', '')
 df_1['Longitude'] = df_1['Longitude'].str.replace('\n', '')
 df_1.replace('None', np.nan, inplace=True)
 df_1.dropna(axis=0, subset=['Source'], inplace=True)
-# df_1['Longitude'] = df_1['Longitude'].astype(float)
 df_1.to_csv(databaseMain, index=False)
 
 # Update dataset in GIS workspace
