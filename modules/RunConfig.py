@@ -1,3 +1,8 @@
+# initialization scripts for Tweet2Map
+from configparser import ConfigParser
+import tweepy
+
+
 class RunConfig:
     """
     Class to run different operations on the config file

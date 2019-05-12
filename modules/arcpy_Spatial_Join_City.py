@@ -12,7 +12,10 @@ from configparser import ConfigParser
 config = ConfigParser()
 config.read(r'C:\Users\Panji\Documents\Python Scripts\Non-Jupyter Py Scripts\MMDA Tweet2Map\Environments - Testing\config.ini')
 config.read('config.ini')
+
 if config.getboolean('settings', 'parser_error') == True:
+    # If there is an error generated in the main script it will set
+    # parser_error to True and stop the ArcPy script from running
     print('Error Detected! Terminating script.')
     try:
         program_exit = str(input('Press ENTER to close'))
@@ -67,7 +70,7 @@ boundary_ncr_shp = "C:\\GIS\\Data Files\\Work Files\\MMDA Tweet2Map\\boundary\\b
 data_all_join = "C:\\GIS\\Data Files\\Work Files\\MMDA Tweet2Map\\output\\output.gdb\\data_all_join"
 data_all_join__2_ = data_all_join
 data_all_join__3_ = data_all_join__2_
-data_all_csv__2_ = "C:\\Users\\Panji\\Documents\\Python Scripts\\Non-Jupyter Py Scripts\\MMDA Tweet2Map\\Environments - Testing\\data_all.csv"
+data_all_csv__2_ = "C:\\Users\\Panji\\Documents\\Python Scripts\\Non-Jupyter Py Scripts\\MMDA Tweet2Map\\data_all.csv"
 Delete_succeeded = "true"
 Delete_succeeded__2_ = "true"
 spRef = arcpy.SpatialReference("C:\GIS\Data Files\Work Files\MMDA Tweet2Map\input\GCS_WGS_1984.prj")
