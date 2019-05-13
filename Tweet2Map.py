@@ -6,23 +6,21 @@ print('Contact: panji.p.broto@gmail.com')
 print('Website: https://panjib.wixsite.com/blog/mmdatweet2map')
 print(f'\nInitializing Libraries...')
 
-import tweepy
 import re
 import time
-import csv
+# import csv
 from modules.function_list import location_string_clean
 from modules.TweetParse import TweetParse
 from modules.RunConfig import *
 from modules.initialization import *
 from modules.dbmanage import *
 import modules.logging
-import numpy as np
 from shutil import copy
 import pandas as pd
-# from configparser import ConfigParser
 from datetime import datetime, timedelta
 import traceback
 import logging
+import numpy as np
 
 # Declare variables
 databaseLocationsDictionary = {}
@@ -48,7 +46,7 @@ tweets = initialization_tweepy_connect(input_consumer_key=config.tweepy_tokens()
                                        input_access_secret=config.tweepy_tokens()[3])
 
 # Logging
-modules.logging.logger()
+modules.logging.logger('DEBUG')
 
 # Load database of string locations
 print(f'Loading database...\n')
@@ -136,8 +134,10 @@ try:
                     if 'ELLIPTICAL' not in tweetLocation:
                         # Get direction then remove direction
                         # tweetLocation = twt.strip_direction(tweetText)
+                        print('check1 {}'.format(tweetLocation))
                         pattern = re.compile(r'( SB | NB | WB | EB )')
-                        matches = pattern.finditer(info)
+                        #matches = pattern.finditer(info)
+                        matches = pattern.finditer(tweetLocation)
                         for match in matches:
                             tweetDirection = match.group(0)
                             tweetDirection = tweetDirection.replace(' ', '')
@@ -145,6 +145,11 @@ try:
                             tweetLocation = tweetLocation.replace(' EB', '')
                             tweetLocation = tweetLocation.replace(' SB', '')
                             tweetLocation = tweetLocation.replace(' WB', '')
+                            tweetLocation = tweetLocation.replace(' NB ', ' ')
+                            tweetLocation = tweetLocation.replace(' EB ', ' ')
+                            tweetLocation = tweetLocation.replace(' SB ', ' ')
+                            tweetLocation = tweetLocation.replace(' WB ', ' ')
+                            tweetParticipant = tweetParticipant.rstrip(' ')
                         print(f'Direction: {tweetDirection}')
                         logging.debug('DEBUG: CHECKPOINT1-{tweetLocation}')
 
@@ -195,6 +200,12 @@ try:
                             tweetLocation = tweetLocation.replace(' EB', '')
                             tweetLocation = tweetLocation.replace(' SB', '')
                             tweetLocation = tweetLocation.replace(' WB', '')
+                            tweetLocation = tweetLocation.replace(' NB ', ' ')
+                            tweetLocation = tweetLocation.replace(' EB ', ' ')
+                            tweetLocation = tweetLocation.replace(' SB ', ' ')
+                            tweetLocation = tweetLocation.replace(' WB ', ' ')
+                            tweetParticipant = tweetParticipant.rstrip(' ')
+                        logging.debug('DEBUG: CHECKPOINT3-{tweetLocation}')
 
                         if len(info.upper().split(' INVOLVING ')) > 1:
                             tweetParticipant = info.upper()
@@ -258,6 +269,13 @@ try:
                     checkUserLocationChoice = True
 
                 except KeyError:
+
+                    # Show probable similar locations
+                    similarList = dbmanage_check_similar_locations(tweetLocation, databaseLocations)
+                    print('\nSimilar locations:')
+                    for x in similarList:
+                        print(x)
+
                     # User input to check if location string is correct
                     # if it is correct, type YES to add it, if not, type NO to manual fix
 
@@ -444,15 +462,16 @@ databaseLocationsFile.close()
 
 # Drop empty rows generated
 # Clean data for ArcGIS
-df_1 = pd.read_csv(databaseMain)
-
-df_1['Longitude'] = df_1['Longitude'].astype(str)
-df_1['Longitude'] = df_1['Longitude'].str.rstrip(' ')
-df_1['Longitude'] = df_1['Longitude'].str.replace('\t', '')
-df_1['Longitude'] = df_1['Longitude'].str.replace('\n', '')
-df_1.replace('None', np.nan, inplace=True)
-df_1.dropna(axis=0, subset=['Source'], inplace=True)
-df_1.to_csv(databaseMain, index=False)
+dbmanage_clean_tweet_data(databaseMain)
+# df_1 = pd.read_csv(databaseMain)
+#
+# df_1['Longitude'] = df_1['Longitude'].astype(str)
+# df_1['Longitude'] = df_1['Longitude'].str.rstrip(' ')
+# df_1['Longitude'] = df_1['Longitude'].str.replace('\t', '')
+# df_1['Longitude'] = df_1['Longitude'].str.replace('\n', '')
+# df_1.replace('None', np.nan, inplace=True)
+# df_1.dropna(axis=0, subset=['Source'], inplace=True)
+# df_1.to_csv(databaseMain, index=False)
 
 # Update dataset in GIS workspace
 copy(databaseMain, databaseGIS)
