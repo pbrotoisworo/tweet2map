@@ -63,3 +63,15 @@ class RunConfig:
         access_token = parser.get('tweepy', 'access_token')
         access_secret = parser.get('tweepy', 'access_secret')
         return consumer_key, consumer_secret, access_token, access_secret
+
+    def dir_databases(self):
+        """
+        Directory for databases
+        """
+        parser = ConfigParser()
+        parser.read(self.file)
+        parser.sections()
+        database_main = parser.get('database', 'main')
+        database_copy_gis = parser.get('database', 'gis')
+
+        return database_main, database_copy_gis
