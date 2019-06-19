@@ -22,6 +22,10 @@ import traceback
 import logging
 import numpy as np
 
+# Load scripts from modules.initialization
+config = RunConfig('config.ini')
+config.reset_errors()
+
 # Declare variables
 databaseLocationsDictionary = {}
 lstTweets = []
@@ -29,21 +33,26 @@ lstDuplicateCheck = []
 userBreak = False
 userClose = False
 tweetCounter = 0
+
+# Load database
+config.dir_databases()
+databaseMain = config.dir_databases()[0]
+databaseGIS = config.dir_databases()[1]
+
 databaseLocations = r'modules\dictionary_database.txt'
-databaseMain = 'data_mmda_traffic_alerts.csv'
-
+# databaseMain = 'data_mmda_traffic_alerts.csv'
 # database copy in my GIS folder
-databaseGIS = r'C:\GIS\Data Files\Work Files\MMDA Tweet2Map\input\data_mmda_traffic_alerts.csv'
-
-# Load scripts from modules.initialization
-config = RunConfig('config.ini')
-config.reset_errors()
+#databaseGIS = r'C:\GIS\Data Files\Work Files\MMDA Tweet2Map\input\data_mmda_traffic_alerts.csv'
 
 print('Connecting to API...')
 tweets = initialization_tweepy_connect(input_consumer_key=config.tweepy_tokens()[0],
                                        input_consumer_secret=config.tweepy_tokens()[1],
                                        input_access_token=config.tweepy_tokens()[2],
                                        input_access_secret=config.tweepy_tokens()[3])
+# TO DO: TRIGGER PREVENT PARSER ERROR IF MODULE CANNOT CONNECT
+if len(tweets) == 0:
+    config.arcpy_prevent_parser_error()
+    exit()
 
 # Logging
 modules.logging.logger('DEBUG')
@@ -135,7 +144,7 @@ try:
                         # Get direction then remove direction
                         # tweetLocation = twt.strip_direction(tweetText)
                         print('check1 {}'.format(tweetLocation))
-                        pattern = re.compile(r'( SB | NB | WB | EB )')
+                        pattern = re.compile(r'( SB | NB | WB | EB | SB| NB| WB| EB)')
                         #matches = pattern.finditer(info)
                         matches = pattern.finditer(tweetLocation)
                         for match in matches:
@@ -162,6 +171,8 @@ try:
                             if len(tweetParticipant) > 0:
                                 print(f'Participants: {tweetParticipant}')
                                 tweetLocation = tweetLocation.split('INVOLVING')[0].strip(' ')
+                            print(f'Location: {tweetLocation}')
+                        else:
                             print(f'Location: {tweetLocation}')
 
                         # Consider deletion
@@ -271,10 +282,10 @@ try:
                 except KeyError:
 
                     # Show probable similar locations
-                    similarList = dbmanage_check_similar_locations(tweetLocation, databaseLocations)
-                    print('\nSimilar locations:')
-                    for x in similarList:
-                        print(x)
+                    # similarList = dbmanage_check_similar_locations(tweetLocation, databaseLocations)
+                    # print('\nSimilar locations:')
+                    # for x in similarList:
+                    #     print(x)
 
                     # User input to check if location string is correct
                     # if it is correct, type YES to add it, if not, type NO to manual fix
@@ -463,19 +474,14 @@ databaseLocationsFile.close()
 # Drop empty rows generated
 # Clean data for ArcGIS
 dbmanage_clean_tweet_data(databaseMain)
-# df_1 = pd.read_csv(databaseMain)
-#
-# df_1['Longitude'] = df_1['Longitude'].astype(str)
-# df_1['Longitude'] = df_1['Longitude'].str.rstrip(' ')
-# df_1['Longitude'] = df_1['Longitude'].str.replace('\t', '')
-# df_1['Longitude'] = df_1['Longitude'].str.replace('\n', '')
-# df_1.replace('None', np.nan, inplace=True)
-# df_1.dropna(axis=0, subset=['Source'], inplace=True)
-# df_1.to_csv(databaseMain, index=False)
 
 # Update dataset in GIS workspace
 copy(databaseMain, databaseGIS)
 
+# Get new database size
+df_count = dbmanage_database_count(databaseMain)
+
 print(f'Twitter analysis finished.')
 print(f'Analyzed {tweetCounter} new tweets')
+print(f'Current database size: {df_count}')
 print(f'Executing ArcPy script... This may take a few minutes depending on your computer\n')
