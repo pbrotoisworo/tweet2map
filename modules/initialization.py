@@ -1,6 +1,7 @@
 # initialization scripts for Tweet2Map
 from configparser import ConfigParser
 import tweepy
+from modules.RunConfig import *
 import csv
 import traceback
 import time
@@ -13,6 +14,7 @@ def initialization_tweepy_connect(max_connect_attempts=4,
                                   input_access_token=None,
                                   input_access_secret=None):
     """
+    Connect to Twitter and load tweets
     Keeps connecting to Tweepy service
     If max_connect_attempts set to None it will attempt forever
     """
@@ -36,18 +38,17 @@ def initialization_tweepy_connect(max_connect_attempts=4,
             userConnection = True
         except tweepy.TweepError as e:
 
-            print('Connection attempt failed!\n')
-
             if show_error == True:
                 print(e.reason, '\n')
+                print('Connection attempt failed!\n')
                 show_error = False
 
             if max_connect_attempts != None and isinstance(max_connect_attempts, int):
                 connect_attempts += 1
                 if connect_attempts == max_connect_attempts:
-                    print('Please check connection settings.')
-                    print('Closing script.')
-                    exit()
+                    print('\nPlease check your connection.')
+                    print('Terminating script.')
+                    tweets = []
 
             print('Retrying in {} seconds'.format(timeout_length))
             time.sleep(timeout_length)

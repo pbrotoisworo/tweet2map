@@ -6,23 +6,26 @@ print('Contact: panji.p.broto@gmail.com')
 print('Website: https://panjib.wixsite.com/blog/mmdatweet2map')
 print(f'\nInitializing Libraries...')
 
-import tweepy
 import re
 import time
-import csv
 from modules.function_list import location_string_clean
 from modules.TweetParse import TweetParse
 from modules.RunConfig import *
 from modules.initialization import *
 from modules.dbmanage import *
+from modules.geoanalysis import *
 import modules.logging
-import numpy as np
 from shutil import copy
 import pandas as pd
-# from configparser import ConfigParser
 from datetime import datetime, timedelta
 import traceback
 import logging
+import numpy as np
+import geopandas
+
+# Load scripts from modules.initialization
+config = RunConfig('config.ini')
+config.reset_errors()
 
 # Declare variables
 databaseLocationsDictionary = {}
@@ -31,24 +34,29 @@ lstDuplicateCheck = []
 userBreak = False
 userClose = False
 tweetCounter = 0
+
+# Load database
+config.dir_databases()
+databaseMain = config.dir_databases()[0]
+databaseGIS = config.dir_databases()[1]
+
 databaseLocations = r'modules\dictionary_database.txt'
-databaseMain = 'data_mmda_traffic_alerts.csv'
-
+# databaseMain = 'data_mmda_traffic_alerts.csv'
 # database copy in my GIS folder
-databaseGIS = r'C:\GIS\Data Files\Work Files\MMDA Tweet2Map\input\data_mmda_traffic_alerts.csv'
-
-# Load scripts from modules.initialization
-config = RunConfig('config.ini')
-config.reset_errors()
+#databaseGIS = r'C:\GIS\Data Files\Work Files\MMDA Tweet2Map\input\data_mmda_traffic_alerts.csv'
 
 print('Connecting to API...')
 tweets = initialization_tweepy_connect(input_consumer_key=config.tweepy_tokens()[0],
                                        input_consumer_secret=config.tweepy_tokens()[1],
                                        input_access_token=config.tweepy_tokens()[2],
                                        input_access_secret=config.tweepy_tokens()[3])
+# TO DO: TRIGGER PREVENT PARSER ERROR IF MODULE CANNOT CONNECT
+if len(tweets) == 0:
+    config.arcpy_prevent_parser_error()
+    exit()
 
 # Logging
-modules.logging.logger()
+modules.logging.logger('DEBUG')
 
 # Load database of string locations
 print(f'Loading database...\n')
@@ -136,8 +144,10 @@ try:
                     if 'ELLIPTICAL' not in tweetLocation:
                         # Get direction then remove direction
                         # tweetLocation = twt.strip_direction(tweetText)
-                        pattern = re.compile(r'( SB | NB | WB | EB )')
-                        matches = pattern.finditer(info)
+                        print('check1 {}'.format(tweetLocation))
+                        pattern = re.compile(r'( SB | NB | WB | EB | SB| NB| WB| EB)')
+                        #matches = pattern.finditer(info)
+                        matches = pattern.finditer(tweetLocation)
                         for match in matches:
                             tweetDirection = match.group(0)
                             tweetDirection = tweetDirection.replace(' ', '')
@@ -145,6 +155,11 @@ try:
                             tweetLocation = tweetLocation.replace(' EB', '')
                             tweetLocation = tweetLocation.replace(' SB', '')
                             tweetLocation = tweetLocation.replace(' WB', '')
+                            tweetLocation = tweetLocation.replace(' NB ', ' ')
+                            tweetLocation = tweetLocation.replace(' EB ', ' ')
+                            tweetLocation = tweetLocation.replace(' SB ', ' ')
+                            tweetLocation = tweetLocation.replace(' WB ', ' ')
+                            tweetParticipant = tweetParticipant.rstrip(' ')
                         print(f'Direction: {tweetDirection}')
                         logging.debug('DEBUG: CHECKPOINT1-{tweetLocation}')
 
@@ -157,6 +172,8 @@ try:
                             if len(tweetParticipant) > 0:
                                 print(f'Participants: {tweetParticipant}')
                                 tweetLocation = tweetLocation.split('INVOLVING')[0].strip(' ')
+                            print(f'Location: {tweetLocation}')
+                        else:
                             print(f'Location: {tweetLocation}')
 
                         # Consider deletion
@@ -195,6 +212,12 @@ try:
                             tweetLocation = tweetLocation.replace(' EB', '')
                             tweetLocation = tweetLocation.replace(' SB', '')
                             tweetLocation = tweetLocation.replace(' WB', '')
+                            tweetLocation = tweetLocation.replace(' NB ', ' ')
+                            tweetLocation = tweetLocation.replace(' EB ', ' ')
+                            tweetLocation = tweetLocation.replace(' SB ', ' ')
+                            tweetLocation = tweetLocation.replace(' WB ', ' ')
+                            tweetParticipant = tweetParticipant.rstrip(' ')
+                        logging.debug('DEBUG: CHECKPOINT3-{tweetLocation}')
 
                         if len(info.upper().split(' INVOLVING ')) > 1:
                             tweetParticipant = info.upper()
@@ -258,6 +281,13 @@ try:
                     checkUserLocationChoice = True
 
                 except KeyError:
+
+                    # Show probable similar locations
+                    # similarList = dbmanage_check_similar_locations(tweetLocation, databaseLocations)
+                    # print('\nSimilar locations:')
+                    # for x in similarList:
+                    #     print(x)
+
                     # User input to check if location string is correct
                     # if it is correct, type YES to add it, if not, type NO to manual fix
 
@@ -444,19 +474,24 @@ databaseLocationsFile.close()
 
 # Drop empty rows generated
 # Clean data for ArcGIS
-df_1 = pd.read_csv(databaseMain)
+dbmanage_clean_tweet_data(databaseMain)
 
-df_1['Longitude'] = df_1['Longitude'].astype(str)
-df_1['Longitude'] = df_1['Longitude'].str.rstrip(' ')
-df_1['Longitude'] = df_1['Longitude'].str.replace('\t', '')
-df_1['Longitude'] = df_1['Longitude'].str.replace('\n', '')
-df_1.replace('None', np.nan, inplace=True)
-df_1.dropna(axis=0, subset=['Source'], inplace=True)
-df_1.to_csv(databaseMain, index=False)
+# Get new database size
+df_count = dbmanage_database_count(databaseMain)
+
+print('Executing spatial join...')
+df = geoanalysis_spatial_join(databaseMain, r'shapefiles\boundary_ncr.shp')
+df.to_csv('data_mmda_kaggle.csv', index=False)
 
 # Update dataset in GIS workspace
 copy(databaseMain, databaseGIS)
 
 print(f'Twitter analysis finished.')
 print(f'Analyzed {tweetCounter} new tweets')
-print(f'Executing ArcPy script... This may take a few minutes depending on your computer\n')
+print(f'Current database size: {df_count}')
+
+try:
+    program_exit = str(input('Press ENTER to close'))
+except:
+    exit()
+exit()

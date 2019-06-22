@@ -58,6 +58,7 @@ def location_string_clean(twt_location):
     twt_location = twt_location.replace(' INTERSECTION', ' ')
     twt_location = twt_location.replace(' INT. ', ' ')
     twt_location = twt_location.replace(' INT ', ' ')
+    twt_location = twt_location.replace(' INT', ' ')
     twt_location = twt_location.replace(' APPROACHING ', ' ')
     twt_location = twt_location.replace('  ', ' ')
     twt_location = twt_location.replace('..', '.')
@@ -69,8 +70,9 @@ def location_string_clean(twt_location):
     twt_location = twt_location.replace(' SERVICE ROAD ', ' ')
     twt_location = twt_location.replace(' SVC. ROAD ', ' ')
     twt_location = twt_location.replace('\n', ' ')
-    twt_location = twt_location.replace('. ',' ')
-    twt_location = twt_location.replace('  ',' ')
+    twt_location = twt_location.replace('. ', ' ')
+    twt_location = twt_location.replace('.', '')
+    twt_location = twt_location.replace('  ', ' ')
     return twt_location
 
 
