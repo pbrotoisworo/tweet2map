@@ -55,6 +55,7 @@ def dbmanage_clean_tweet_data(tweet_database):
     df_1['Longitude'] = df_1['Longitude'].str.replace('\n', '')
     df_1.replace('None', np.nan, inplace=True)
     df_1.dropna(axis=0, subset=['Source'], inplace=True)
+    df_1.dropna(subset=['Latitude', 'Longitude'], inplace=True)
     df_1.to_csv(tweet_database, index=False)
 
 
