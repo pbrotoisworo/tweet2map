@@ -64,7 +64,7 @@ if len(tweets) == 0:
     exit()
 
 # Logging
-modules.logging.logger('DEBUG')
+modules.logging.logger('INFO')
 
 # Load database of string locations
 print(f'Loading database...\n')
@@ -140,6 +140,10 @@ try:
                 tweetType = twt.inc_type(tweetText)
                 tweetLane = twt.lane(tweetText)
 
+                logging.info(f'tweetID = {str(tweetID)}')
+                logging.info(f'info.text.upper() = {info}')
+                logging.info(f'tweetText = {tweetText}')
+
                 # Get location, participants, and direction
                 pattern = re.compile(r' AT\s[a-zA-Z\Ñ\'\.\,\-0-9\/\s]+(AS OF)')
                 matches = pattern.finditer(tweetText.upper())
@@ -152,7 +156,6 @@ try:
                     if 'ELLIPTICAL' not in tweetLocation:
                         # Get direction then remove direction
                         # tweetLocation = twt.strip_direction(tweetText)
-                        print('check1 {}'.format(tweetLocation))
                         pattern = re.compile(r'( SB | NB | WB | EB | SB| NB| WB| EB)')
                         #matches = pattern.finditer(info)
                         matches = pattern.finditer(tweetLocation)
@@ -169,7 +172,7 @@ try:
                             tweetLocation = tweetLocation.replace(' WB ', ' ')
                             tweetParticipant = tweetParticipant.rstrip(' ')
                         print(f'Direction: {tweetDirection}')
-                        logging.debug('DEBUG: CHECKPOINT1-{tweetLocation}')
+                        logging.debug(f'CHECKPOINT1-{tweetLocation}')
 
                         # Get participants
                         if len(tweetLocation.split(' INVOLVING')) > 1:
@@ -225,7 +228,7 @@ try:
                             tweetLocation = tweetLocation.replace(' SB ', ' ')
                             tweetLocation = tweetLocation.replace(' WB ', ' ')
                             tweetParticipant = tweetParticipant.rstrip(' ')
-                        logging.debug('DEBUG: CHECKPOINT3-{tweetLocation}')
+                        logging.debug(f'DEBUG: CHECKPOINT3-{tweetLocation}')
 
                         if len(info.upper().split(' INVOLVING ')) > 1:
                             tweetParticipant = info.upper()
