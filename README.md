@@ -4,47 +4,37 @@
 
 **Contact: [panji.p.broto@gmail.com](mailto:panji.p.broto@gmail.com)**
 
-MMDA Tweet2Map is a python script that mines MMDA Tweets ([@mmda](https://twitter.com/MMDA)) into a usable database for traffic accident research in Metro Manila. Please take note that you need your own unique Twitter API code in order to use this script. This script uses the **tweepy library** in order to connect with the Twitter API and uses **RegEx** for text parsing. For more information regarding this script please visit the project page on my [blog](https://panjib.wixsite.com/blog/mmdatweet2map).
+MMDA Tweet2Map is a python script that mines MMDA Tweets ([@mmda](https://twitter.com/MMDA)) into a usable database for traffic accident research in Metro Manila. Please take note that you need your own unique Twitter API code in order to use this script. This script uses the **Tweepy library** in order to connect with the Twitter API, **Geopandas** and **Shapely** for the Spatial Join, and uses **RegEx** for text parsing. For more information regarding this script please visit the project page on my [blog](https://panjib.wixsite.com/blog/mmdatweet2map).
 
 I'm open to suggestions and comments! This is my first major coding project since I started self-learning Python.
 
 # **Upcoming:**
 - Streamline main script by utilizing more classes and functions
-- Code to automatically push database updates to the project's [Kaggle page](https://www.kaggle.com/esparko/mmda-traffic-incident-data)
 - Spatial joins through FOSS tools instead of ArcGIS Software
+- Sharing workflows to help jumpstart analysis
+- Improve logging
 - Tweet2Map streaming version: a version where the script will continuously run and check the mmda page twice a day. The main Tweet2Map script will have a section to accomodate this streaming information.
 
 # Table of Contents
-1. [Important: ArcPy Package](#arcpy)
-2. [Code Structure and Configuration](#structure)
-3. [Usage](#Usage)
-4. [Changelog](#changelog)
-
-## ArcPy Package <a name="arcpy"></a>
-ArcPy is used in this script but is only required if you want to add the 'City' column to your data. The file uses the [ArcPy package](http://help.arcgis.com/en/arcgisdesktop/10.0/help/index.html#//000v000000v7000000.htm), which comes with ArcGIS, to integrate and automate geospatial analysis. This Python package comes with ArcGIS and is not available through `pip install` options. The script is written in Python 3 but `arcpy_Spatial_Join_City.py` was written in a Python 2 environment since I'm still using ArcMap 10.6.
+1. [Code Structure and Configuration](#structure)
+2. [Usage](#Usage)
+3. [Changelog](#changelog)
 
 ## Code Structure and Configuration <a name="structure"></a>
-The main script `Tweet2Map.py` runs in **Python 3.6** and above while the Spatial Join runs in **Python 2** through the ArcGIS Python package. Additional functions, classes, configuration, and ArcPy code is stored in the modules folder. The script can combine separate Python interpreters by executing them through the `run_program.bat` file.
+The main script `Tweet2Map.py` runs in **Python 3.6**. Additional functions, classes, configuration, and ArcPy code is stored in the modules folder. The script can combine separate Python interpreters by executing them through the `run_program.bat` file.
 
-You can configure settings for the script such as Tweepy API tokens and whether or not you want the ArcPy module to run. This can be done in the `config.ini` file.
-
-The parameters are:
-
-- `arcpy_module_installed`: User can set this. If you don't have the arcpy module installed set this to False and it will prevent the second script from running.
-- `parser_error`: **DO NOT CHANGE.** Automatically set to True if there was an error in the main script. Prevents ArcPy script file from executing. It outputs that an error is detected then closes the script.
-- `arcpy_run`: **DO NOT CHANGE.** Automatically set to True if there is another condition where the ArcPy script doesn't need to run. Does not output error message.
-
+You can configure settings for the script such as Tweepy API tokens and database locations. This can be done in the `config.ini` file.
 In the Tweepy section, input your Twitter API codes which the script will use to connect to the Twitter API.
 
 ## Usage <a name="Usage"></a>
 Use the `run_program.bat` file to run the full code. You can execute the code using different Python interepreters by typing in the full link of the python.exe file. Afterwards, you put in the full link of the .py file you want to run. Use the following example below which is the placeholder information currently in the .bat file:
 ```
 @echo off
-"C:\ProgramData\Anaconda3\python.exe" "C:\Users\Panji\Documents\Python Scripts\MMDA Tweet2Map\Tweet2Map.py"
-"C:\Python27\ArcGIS10.6\python.exe" "C:\Users\Panji\Documents\Python Scripts\MMDA Tweet2Map\arcpy_Spatial_Join_City.py"
+call activate tweet2map
+python "C:\Users\Panji\Documents\Python Scripts\MMDA Tweet2Map\Tweet2Map.py"
 
 ```
-In this case, I'm typing in the full path of the Python 3 interpreter I use from the Anaconda distribution for my Python 3 interpreter then I put in the Tweet2Map path. The following line is the full path of the Python 2 interpreter then the ArcPy script I use to run the spatial join.
+In this case, I'm activating the tweet2map virtual environment, type **python** to open the python interpreter in the virtual environment, then I put in the Tweet2Map path.
 
 Now let's get to running the script and adding new locations. Here is my workflow for running the script and adding new locations.
 
@@ -69,6 +59,14 @@ That looks about right. So I get the coordinate information by right clicking an
 Just confirm with Y and the script will continue processing the other tweets.
 
 ## Changelog <a name="changelog"></a>
+
+1.0 (TBA)
+- Replaced ArcMap spatial join workflow with a workflow that uses FOSS tools, Geopandas and Shapely
+- Improved logging capabilities
+- Compartmentalizing the code so that the main Tweet2Map.py script is easier to interpret
+- Improved naming of .csv database files. The **spatial** tag on the filename means that null location data is removed. This was done in order to make it compatible with Geopandas and Shapely workflows
+- Added option to manually fix the name if the code detects an unknown location. This is to prevent incorrect location names being fed into the location database
+- Fixed some bugs with Tweet parsing logic
 
 0.9 (February 16, 2019)
 - Fixed parsing logic regarding incidents involving rallyists
