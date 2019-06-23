@@ -73,5 +73,6 @@ class RunConfig:
         parser.sections()
         database_main = parser.get('database', 'main')
         database_copy_gis = parser.get('database', 'gis')
+        database_no_null = parser.get('database', 'main_no_null')
 
-        return database_main, database_copy_gis
+        return database_main, database_copy_gis, database_no_null

@@ -52,11 +52,6 @@ class TweetParse:
             stringFix = ''.join(stringFix)
             tweet_text = stringFix + ' ' + timeDay
 
-            time.sleep(1)
-            print(f'DEBUG: timeCheck is {timeCheck}')
-            print(f'DEBUG: checkList is {timeDay}')
-            print('DEBUG: TIME FIXED')
-
         print(f'Time: {tweet_text}')
         return tweet_text
 
@@ -70,10 +65,6 @@ class TweetParse:
         for match in matches:
             tweet_text = match.group(0)
             tweet_text = tweet_text.split(' ')[0]
-            if tweet_text == '':
-                tweet_text = input('Manual correction needed! Input lanes blocked: ')
-                if tweet_text == 'BREAK':
-                    break
             print(f'Lanes Blocked: {tweet_text}')
             return tweet_text
 

@@ -22,6 +22,7 @@ import traceback
 import logging
 import numpy as np
 import geopandas
+from shapely.geometry import Point
 
 # Load scripts from modules.initialization
 config = RunConfig('config.ini')
@@ -34,11 +35,18 @@ lstDuplicateCheck = []
 userBreak = False
 userClose = False
 tweetCounter = 0
+dfAppendList = []
 
 # Load database
-config.dir_databases()
-databaseMain = config.dir_databases()[0]
-databaseGIS = config.dir_databases()[1]
+try:
+    config.dir_databases()
+    databaseMain = config.dir_databases()[0]
+    databaseGIS = config.dir_databases()[1]
+    database_no_null = config.dir_databases()[2]
+except PermissionError:
+    print('Permission Error. Please check if file is in use')
+    time.sleep(5)
+    exit()
 
 databaseLocations = r'modules\dictionary_database.txt'
 # databaseMain = 'data_mmda_traffic_alerts.csv'
@@ -108,7 +116,7 @@ try:
                 checkDuplicate = True
                 continue
             else:
-                tweetCounter += 1
+
                 # Get date and text
                 # Convert raw time from Twitter to GMT+8
                 tweetDate = str(info.created_at)
@@ -294,7 +302,8 @@ try:
                     print(f'\nNew location detected! "{tweetLocation}" is not recognized.')
                     print(f'\nChoose number from list:')
                     print('1 - Add new location and new coordinates')
-                    print(f'2 - Add new location based on existing coordinates\n')
+                    print(f'2 - Add new location based on existing coordinates')
+                    print(f'3 - Fix location name\n')
 
                     userLocationChoice = input('Enter number to proceed:')
 
@@ -396,6 +405,9 @@ try:
                                 userReset = True
                                 print('Enter details again.')
                                 break
+                        elif userLocationChoice == '3':
+                            tweetLocation = input('Input new location: ').upper()
+                            userReset = True
 
                         else:
                             # Break out of the current while loop
@@ -440,6 +452,9 @@ try:
         # If it is not a duplicate then write to CSV
         if checkDuplicate == False:
 
+            if len(tweetLatitude) and len(tweetLongitude) > 0:
+                tweetCounter += 1
+
             WriteCombinedDict = {'Date': tweetDate, 'Time': tweetTime, 'Location': tweetLocation, 'Latitude': tweetLatitude,
                                  'Longitude': tweetLongitude, 'Direction': tweetDirection, 'Type': tweetType,
                                  'Lanes Blocked': tweetLane, 'Involved': tweetParticipant, 'Tweet': tweetText,
@@ -447,8 +462,17 @@ try:
 
             keys = WriteCombinedDict.keys()
 
-            if tweetID not in lstDuplicateCheck:
-                dbmanage_update_csv_data(databaseMain, WriteCombinedDict, keys)
+            if tweetID not in lstDuplicateCheck and len(tweetID) > 0:
+
+                dfAppendList.append(WriteCombinedDict)
+
+                # try:
+                #     dbmanage_update_csv_data(databaseMain, WriteCombinedDict, keys)
+                # except PermissionError:
+                #     print(f'Permission Error encountered. Please check if database file is in use.')
+                #     print(f'Database file: {databaseMain}')
+                #     time.sleep(5)
+                #     exit()
 
 except Exception as error:
     traceback.print_exc()
@@ -465,7 +489,9 @@ if tweetCounter == 0:
     config.arcpy_prevent_empty_input()
     exit()
 
-print(f'\nUpdating location database...')
+# Update Database
+print(f'\nUpdating databases...')
+dbmanage_update_csv_data(databaseMain, dfAppendList)
 
 databaseLocationsFile = open(databaseLocations, 'w')
 for x, y in databaseLocationsDictionary.items():
@@ -479,16 +505,48 @@ dbmanage_clean_tweet_data(databaseMain)
 # Get new database size
 df_count = dbmanage_database_count(databaseMain)
 
+# Generate separate dataframe for spatial join
+# Then drop nulls for spatial join
+# Load and prep excel file
 print('Executing spatial join...')
-df = geoanalysis_spatial_join(databaseMain, r'shapefiles\boundary_ncr.shp')
-df.to_csv('data_mmda_kaggle.csv', index=False)
+
+crs = {'init': 'espg:4326'}
+df = pd.read_csv(databaseMain)
+df.replace(to_replace='None', value=np.nan, inplace=True)
+df.dropna(subset=['Latitude', 'Longitude'], inplace=True)
+df['Longitude'] = df['Longitude'].astype('float64')
+df['Latitude'] = df['Latitude'].astype('float64')
+df['geometry'] = df.apply(lambda x: Point((float(x['Longitude']), float(x['Latitude']))), axis=1)
+
+# Load shapefile
+shapefile = geopandas.read_file(r'shapefiles\boundary_ncr.shp')
+shapefile.drop(['GID_0', 'GID_1', 'NL_NAME_1', 'GID_2', 'VARNAME_2', 'NL_NAME_2', 'TYPE_2', 'NAME_0',
+                'NAME_1', 'ENGTYPE_2', 'CC_2', 'HASC_2'], axis=1, inplace=True)
+shapefile.crs = {'init': 'epsg:4326'}
+
+# Join
+df = geopandas.GeoDataFrame(df, crs=crs, geometry='geometry')
+df.crs = {'init': 'epsg:4326'}
+
+# Spatial Join
+df_gpd = geopandas.sjoin(df, shapefile, how='left', op='within')
+df_gpd.drop(['index_right', 'geometry'], axis=1, inplace=True)
+df_gpd.rename(columns={'NAME_2': 'City'}, inplace=True)
+df_gpd = df_gpd[['Date', 'Time', 'City', 'Location', 'Latitude', 'Longitude', 'Direction',
+                 'Type', 'Lanes Blocked', 'Involved', 'Tweet', 'Source']]
+df_gpd.to_csv(database_no_null, index=False)
+
+
+#df.to_csv(r'C:\Users\Panji\Documents\Python Scripts\Projects\MMDA Tweet2Map\backup\data_mmda_traffic_alerts - Copy.csv', index=False)
+# df_no_null = geoanalysis_spatial_join(df, shapefile=r'shapefiles\boundary_ncr.shp')
+# df_no_null.to_csv(database_no_null, index=False)
 
 # Update dataset in GIS workspace
-copy(databaseMain, databaseGIS)
+copy(database_no_null, databaseGIS)
 
-print(f'Twitter analysis finished.')
+print(f'\nTwitter analysis finished.')
 print(f'Analyzed {tweetCounter} new tweets')
-print(f'Current database size: {df_count}')
+print(f'Current database size: {df_count}\n')
 
 try:
     program_exit = str(input('Press ENTER to close'))

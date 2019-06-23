@@ -21,29 +21,20 @@ def dbmanage_load_location_data(database_file=None):
     return databaseLocationsDictionary
 
 
-def dbmanage_update_csv_data(tweet_database=None, write_row=None, keys=None):
+def dbmanage_update_csv_data(database=None, dfAppendList=None):
     """
-    Update CSV file row by row
+    Input a Pandas dataframe into dfAppend
     """
-    with open(tweet_database, 'r', newline='') as csv_file:
-        reader = csv.reader(csv_file)
-        try:
-            header_check = next(reader)
-        except StopIteration:
-            header_check = []
 
-        if header_check != []:
-            # Update version in main script folder
-            with open(tweet_database, 'a', newline='', encoding='utf-8') as CsvFile:
-                dict_writer = csv.DictWriter(CsvFile, keys)
-                dict_writer.writerow(write_row)
-        else:
-            # Then this is just an empty CSV file so we use write
-            print(f'\nNo data in the CSV! Adding header to CSV file')
-            with open(tweet_database, 'w', newline='', encoding='utf-8') as CsvFile:
-                dict_writer = csv.DictWriter(CsvFile, keys)
-                dict_writer.writeheader()
-                dict_writer.writerow(write_row)
+    dfAppend = pd.DataFrame(dfAppendList, columns=['Date', 'Time', 'Location', 'Latitude', 'Longitude',
+                                                   'Direction', 'Type', 'Lanes Blocked', 'Involved', 'Tweet', 'Source'])
+
+    with open(database, mode='a', encoding='utf-8') as f:
+        dfAppend.to_csv(f, header=False, index=False)
+
+    df = pd.read_csv(database)
+    df.dropna(axis=0, subset=['Source'], inplace=True)
+    df.to_csv(database, index=False)
 
 
 def dbmanage_clean_tweet_data(tweet_database):
@@ -55,7 +46,6 @@ def dbmanage_clean_tweet_data(tweet_database):
     df_1['Longitude'] = df_1['Longitude'].str.replace('\n', '')
     df_1.replace('None', np.nan, inplace=True)
     df_1.dropna(axis=0, subset=['Source'], inplace=True)
-    df_1.dropna(subset=['Latitude', 'Longitude'], inplace=True)
     df_1.to_csv(tweet_database, index=False)
 
 

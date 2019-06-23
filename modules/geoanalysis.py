@@ -2,7 +2,7 @@ import pandas as pd
 import geopandas
 
 
-def geoanalysis_spatial_join(csv_file, shapefile):
+def geoanalysis_spatial_join(df_input, shapefile):
 
     # Load shapefile
     shapefile = geopandas.read_file(shapefile)
@@ -11,9 +11,9 @@ def geoanalysis_spatial_join(csv_file, shapefile):
     shapefile.crs = {'init': 'epsg:4326'}
 
     # Load Excel file
-    df = pd.read_csv(csv_file)
+
     df = geopandas.GeoDataFrame(
-        df, geometry=geopandas.points_from_xy(df['Longitude'], df['Latitude']))
+        df_input, geometry=geopandas.points_from_xy(df_input['Longitude'], df_input['Latitude']))
     df.crs = {'init': 'epsg:4326'}
 
     # Spatial Join
