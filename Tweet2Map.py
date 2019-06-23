@@ -8,6 +8,10 @@ print(f'\nInitializing Libraries...')
 
 import re
 import time
+<<<<<<< HEAD
+=======
+# import csv
+>>>>>>> 02fbe3340762954ee38b54461631d0e36a0878b4
 from modules.function_list import location_string_clean
 from modules.TweetParse import TweetParse
 from modules.RunConfig import *
@@ -21,7 +25,10 @@ from datetime import datetime, timedelta
 import traceback
 import logging
 import numpy as np
+<<<<<<< HEAD
 import geopandas
+=======
+>>>>>>> 02fbe3340762954ee38b54461631d0e36a0878b4
 
 # Load scripts from modules.initialization
 config = RunConfig('config.ini')
@@ -475,6 +482,7 @@ databaseLocationsFile.close()
 # Drop empty rows generated
 # Clean data for ArcGIS
 dbmanage_clean_tweet_data(databaseMain)
+<<<<<<< HEAD
 
 # Get new database size
 df_count = dbmanage_database_count(databaseMain)
@@ -482,16 +490,25 @@ df_count = dbmanage_database_count(databaseMain)
 print('Executing spatial join...')
 df = geoanalysis_spatial_join(databaseMain, r'shapefiles\boundary_ncr.shp')
 df.to_csv('data_mmda_kaggle.csv', index=False)
+=======
+>>>>>>> 02fbe3340762954ee38b54461631d0e36a0878b4
 
 # Update dataset in GIS workspace
 copy(databaseMain, databaseGIS)
 
+# Get new database size
+df_count = dbmanage_database_count(databaseMain)
+
 print(f'Twitter analysis finished.')
 print(f'Analyzed {tweetCounter} new tweets')
 print(f'Current database size: {df_count}')
+<<<<<<< HEAD
 
 try:
     program_exit = str(input('Press ENTER to close'))
 except:
     exit()
 exit()
+=======
+print(f'Executing ArcPy script... This may take a few minutes depending on your computer\n')
+>>>>>>> 02fbe3340762954ee38b54461631d0e36a0878b4
