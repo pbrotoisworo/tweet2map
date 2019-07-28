@@ -60,13 +60,14 @@ Just confirm with Y and the script will continue processing the other tweets.
 
 ## Changelog <a name="changelog"></a>
 
-1.0 (TBA)
+0.95 (TBA)
 - Replaced ArcMap spatial join workflow with a workflow that uses FOSS tools, Geopandas and Shapely
-- Improved logging capabilities
+- Improved logging for more in-depth troubleshooting
 - Compartmentalizing the code so that the main Tweet2Map.py script is easier to interpret
-- Improved naming of .csv database files. The **spatial** tag on the filename means that null location data is removed. This was done in order to make it compatible with Geopandas and Shapely workflows
+ - Transferred more parsing code to the TweetParse object
+- Improved naming of .csv database files. The **spatial** tag on the filename means that null location data is removed. This was done in order to make it compatible with Geopandas and Shapely workflows. The **raw** includes null data but does not include City location data.
 - Added option to manually fix the name if the code detects an unknown location. This is to prevent incorrect location names being fed into the location database
-- Fixed some bugs with Tweet parsing logic
+- Added option to set the location as invalid from the new location menu
 
 0.9 (February 16, 2019)
 - Fixed parsing logic regarding incidents involving rallyists
