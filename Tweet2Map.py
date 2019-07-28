@@ -51,7 +51,7 @@ except PermissionError:
 databaseLocations = r'modules\dictionary_database.txt'
 # databaseMain = 'data_mmda_traffic_alerts.csv'
 # database copy in my GIS folder
-#databaseGIS = r'C:\GIS\Data Files\Work Files\MMDA Tweet2Map\input\data_mmda_traffic_alerts.csv'
+# databaseGIS = r'C:\GIS\Data Files\Work Files\MMDA Tweet2Map\input\data_mmda_traffic_alerts.csv'
 
 print('Connecting to API...')
 tweets = initialization_tweepy_connect(input_consumer_key=config.tweepy_tokens()[0],
@@ -123,170 +123,43 @@ try:
             else:
 
                 logging.info('Processing Tweet {}'.format(str(tweetCounter)))
-                # Get date and text
-                # Convert raw time from Twitter to GMT+8
-                tweetDate = str(info.created_at)
-                tweetDate = datetime.strptime(tweetDate, "%Y-%m-%d %H:%M:%S")
-                tweetDate = tweetDate + timedelta(hours=8)
-                tweetDate = str(tweetDate).split(' ')[0]
 
                 tweetText = info.text
                 tweetText = tweetText.replace('  ', ' ')
-                info = info.text.upper()
                 lstTweets.append(info)
 
-                print('------------------------------------------------------')
-                print(f'Tweet: {info}')
-                print(f'Date: {tweetDate}')
-                print(f'URL: {tweetID}')
+                # Create TweetParse object then parse tweet
+                twt = TweetParse()
+                tweetDate = twt.get_date(info)
+                tweetTime = twt.get_time(tweetText)
+                tweetType = twt.get_inc_type(tweetText)
+                tweetLane = twt.get_lanes_blocked(tweetText)
+                tweetDirection = twt.get_direction(tweetText)
+                tweetParticipant = twt.get_participants(tweetText)
+                tweetLocation = twt.get_location(tweetText)
 
-                # Call on the TweetParse class
-                twt = TweetParse(tweetText)
-                tweetTime = twt.time(tweetText)
-                tweetType = twt.inc_type(tweetText)
-                tweetLane = twt.lane(tweetText)
+                if 'RALLY' in tweetText.upper():
+                    tweetLocation = twt.get_rally_location(tweetText)
+                    tweetParticipant = twt.get_rally_participants(tweetText)
+                    tweetType = 'RALLY'
+
+                if 'STALLED' in tweetText.upper():
+                    tweetParticipant = twt.get_stalled_participants(tweetText)
+                    tweetType = 'STALLED'
+
+                print('------------------------------------------------------')
+                print(f'Tweet: {tweetText}')
+                print(f'Date: {tweetDate}')
+                print(f'Time: {tweetTime}')
+                print(f'URL: {tweetID}')
+                print(f'Incident Type: {tweetType}')
+                print(f'Participants: {tweetParticipant}')
+                print(f'Lanes Involved: {tweetLane}')
+                print(f'Location: {tweetLocation}')
 
                 logging.info(f'Line 149 tweetID = {str(tweetID)}')
                 logging.info(f'Line 150 info.text.upper() = {info}')
                 logging.info(f'Line 151 tweetText = {tweetText}')
-
-                # Get location, participants, and direction
-                pattern = re.compile(r' AT\s[a-zA-Z\Ñ\'\.\,\-0-9\/\s]+(AS OF)')
-                matches = pattern.finditer(tweetText.upper())
-                for match in matches:
-                    tweetLocation = match.group(0)
-                    # Location String Cleaning
-                    tweetLocation = location_string_clean(tweetLocation)
-                    logging.info('LINE 160: tweetLocation: {}'.format(tweetLocation))
-
-                    # ELLIPTICAL ROAD in QC can confuse parser sometimes
-                    if 'ELLIPTICAL' not in tweetLocation:
-                        logging.info('ELLIPTICAL not detected in tweetLocation')
-                        # Get direction then remove direction
-                        pattern = re.compile(r'( SB | NB | WB | EB | SB| NB| WB| EB)')
-                        #matches = pattern.finditer(info)
-                        matches = pattern.finditer(tweetLocation)
-                        for match in matches:
-                            tweetDirection = match.group(0)
-                            tweetDirection = tweetDirection.replace(' ', '')
-                            #tweetLocation = twt.strip_direction(tweetLocation)
-                            tweetLocation = tweetLocation.replace(' NB', '')
-                            tweetLocation = tweetLocation.replace(' EB', '')
-                            tweetLocation = tweetLocation.replace(' SB', '')
-                            tweetLocation = tweetLocation.replace(' WB', '')
-                            tweetLocation = tweetLocation.replace(' NB ', ' ')
-                            tweetLocation = tweetLocation.replace(' EB ', ' ')
-                            tweetLocation = tweetLocation.replace(' SB ', ' ')
-                            tweetLocation = tweetLocation.replace(' WB ', ' ')
-                            tweetParticipant = tweetParticipant.rstrip(' ')
-                        print(f'Direction: {tweetDirection}')
-                        logging.info('Parsed and Removed Cardinal Directions')
-                        logging.info('Line 183: tweetLocation: {}'.format(tweetLocation))
-
-                        # Get participants
-                        if len(tweetLocation.split(' INVOLVING')) > 1:
-                            logging.info('CHECKPOINT1.1-{}'.format(tweetLocation))
-                            tweetParticipant = tweetLocation.split(' INVOLVING')[1]
-                            tweetParticipant = tweetParticipant.rstrip(' ')
-                            tweetParticipant = tweetParticipant.lstrip(' ')
-                            if len(tweetParticipant) > 0:
-                                print(f'Participants: {tweetParticipant}')
-                                tweetLocation = tweetLocation.split('INVOLVING')[0].strip(' ')
-                            print(f'Location: {tweetLocation}')
-                        else:
-                            print(f'Location: {tweetLocation}')
-
-                        # Consider deletion
-                        # Direction given. NO INVOLVED
-                        if len(tweetLocation.split(' INVOLVING')) < 1:
-                            logging.info('CHECKPOINT1.2-{}'.format(tweetLocation))
-                            tweetParticipant = tweetLocation.split(' AS OF ')[0]
-                            tweetParticipant = tweetParticipant.rstrip(' ')
-                            tweetParticipant = tweetParticipant.lstrip(' ')
-                            print(f'Participants: {tweetParticipant}')
-
-                    if 'ELLIPTICAL' in tweetLocation:
-                        logging.info('ELLIPTICAL detected in tweetLocation')
-
-                        if 'ELLIPTICAL' and 'NORTH' in tweetLocation:
-                            tweetLocation = 'ELLIPTICAL ROAD NORTH AVE.'
-                        elif 'ELLIPTICAL' and 'QUEZON' in tweetLocation:
-                            tweetLocation = 'ELLIPTICAL ROAD QUEZON AVE.'
-                        elif 'ELLIPTICAL' and 'VISAYAS' in tweetLocation:
-                            tweetLocation = 'ELLIPTICAL ROAD VISAYAS AVE.'
-                        elif 'ELLIPTICAL' and 'EAST AVE' in tweetLocation:
-                            tweetLocation = 'ELLIPTICAL ROAD EAST AVE.'
-                        elif 'ELLIPTICAL' and ' DAR ' in tweetLocation:
-                            tweetLocation = 'ELLIPTICAL ROAD DAR'
-                        else:
-                            pass
-                            # tweetLocation = input('Enter elliptical road location:')
-                        # tweetParticipant = input('TEMPORARY. Enter participants:')
-                        # Get participants
-
-                        pattern = re.compile(r'( SB | NB | WB | EB )')
-                        matches = pattern.finditer(info)
-                        for match in matches:
-                            tweetDirection = match.group(0)
-                            tweetDirection = tweetDirection.replace(' ', '')
-                            tweetLocation = tweetLocation.replace(' NB', '')
-                            tweetLocation = tweetLocation.replace(' EB', '')
-                            tweetLocation = tweetLocation.replace(' SB', '')
-                            tweetLocation = tweetLocation.replace(' WB', '')
-                            tweetLocation = tweetLocation.replace(' NB ', ' ')
-                            tweetLocation = tweetLocation.replace(' EB ', ' ')
-                            tweetLocation = tweetLocation.replace(' SB ', ' ')
-                            tweetLocation = tweetLocation.replace(' WB ', ' ')
-                            tweetParticipant = tweetParticipant.rstrip(' ')
-                        logging.info(f'CHECKPOINT3-{tweetLocation}')
-
-                        if len(info.upper().split(' INVOLVING ')) > 1:
-                            tweetParticipant = info.upper()
-                            tweetParticipant = tweetParticipant.split(' INVOLVING')[1]
-                            tweetParticipant = tweetParticipant.split(' AS OF ')[0]
-                            tweetParticipant = tweetParticipant.rstrip(' ')
-                            tweetParticipant = tweetParticipant.lstrip(' ')
-
-                            tweetLocation = tweetLocation.upper()
-                            tweetLocation = tweetLocation.split(' INVOLVING')[0]
-                            tweetLocation = tweetLocation.split(' AT ')[0]
-                            tweetLocation = tweetLocation.rstrip()
-                            tweetLocation = tweetLocation.lstrip()
-
-                        else:
-                            # No participants mentioned in elliptical incident
-                            tweetLocation = info.upper()
-                            tweetLocation = tweetLocation.split(' AT ')[1]
-                            tweetLocation = tweetLocation.split(' AS OF ')[0]
-                            tweetLocation = tweetLocation.rstrip(' ')
-                            tweetLocation = tweetLocation.lstrip(' ')
-
-                        # print(f'DEBUG: tweetLocation is {tweetLocation}')
-                        print(f'Participants: {tweetParticipant}')
-                        print(f'Location: {tweetLocation}')
-                        print(f'Direction: {tweetDirection}')
-
-                        logging.info('Participants: {}'.format(tweetParticipant))
-                        logging.info('Location: {}'.format(tweetLocation))
-                        logging.info('Direction: {}'.format(tweetDirection))
-
-                # Special case. Get participants
-                if 'STALLED' in info:
-                    logging.info(f'Input for STALLED parsing: {tweetText}')
-                    logging.info(f'Tweet Location: {tweetLocation}')
-                    tweetParticipant = twt.stall(tweetText)
-
-                # Special case. Get location and participants
-                if 'RALLYIST' in info:
-                    tweetType = 'RALLYIST'
-                    # Get location and participants
-                    logging.info(f'Input for RALLYIST parsing: {tweetText}')
-                    logging.info(f'Tweet Location: {tweetLocation}')
-                    tweetLocation = twt.rally_location(tweetText)
-                    tweetParticipant = twt.rally_participants(tweetText)
-
-        if len(tweetLocation) > 50:
-            logging.warning('Possible location error \ntweetLocation: {}'.format(tweetLocation))
 
         # Check for userBreak
         if tweetLocation == 'BREAK':
@@ -597,7 +470,7 @@ df_gpd = df_gpd[['Date', 'Time', 'City', 'Location', 'Latitude', 'Longitude', 'D
 df_gpd.to_csv(database_no_null, index=False)
 
 
-#df.to_csv(r'C:\Users\Panji\Documents\Python Scripts\Projects\MMDA Tweet2Map\backup\data_mmda_traffic_alerts - Copy.csv', index=False)
+# df.to_csv(r'C:\Users\Panji\Documents\Python Scripts\Projects\MMDA Tweet2Map\backup\data_mmda_traffic_alerts - Copy.csv', index=False)
 # df_no_null = geoanalysis_spatial_join(df, shapefile=r'shapefiles\boundary_ncr.shp')
 # df_no_null.to_csv(database_no_null, index=False)
 
