@@ -7,13 +7,13 @@ class TweetParse:
     # Blank
 
     # init
-    def __init__(self, string):
-        self.string = string.upper()
+    # def __init__(self, string):
+    #     self.string = string.upper()
 
     def __str__(self):
         return f'Tweet: {self.string}'
 
-    def time(self, tweet_text):
+    def get_time(self, tweet_text):
         """
         Extract time from the MMDA tweet. Output is string.
         tweet_text: full text of twitter post
@@ -22,7 +22,7 @@ class TweetParse:
 
         tweet_text = tweet_text.replace(';', ':')
         pattern = re.compile(r'\d+:\d\d[\s(AM|PM)]+')
-        matches = pattern.finditer(self.string)
+        matches = pattern.finditer(tweet_text)
         for match in matches:
             tweet_text = match.group(0)
             tweet_text = tweet_text.replace('.', '')
@@ -35,13 +35,13 @@ class TweetParse:
         numList = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', ':']
 
         pattern = re.compile(r'[0-9]\s[(AM|PM)]')
-        matches = pattern.finditer(self.string)
+        matches = pattern.finditer(tweet_text)
         timeCheck = ''
         for match in matches:
             timeCheck = match.group(0)
 
         pattern = re.compile(r'(AM|PM)')
-        matches = pattern.finditer(self.string)
+        matches = pattern.finditer(tweet_text)
         for match in matches:
             timeDay = match.group(0)
 
@@ -52,7 +52,6 @@ class TweetParse:
             stringFix = ''.join(stringFix)
             tweet_text = stringFix + ' ' + timeDay
 
-        print(f'Time: {tweet_text}')
         return tweet_text
 
     def lane(self, tweet_text):
@@ -61,27 +60,48 @@ class TweetParse:
         tweet_text: full text of twitter post
         """
         pattern = re.compile(r'\d\s(LANE|LANES)')
-        matches = pattern.finditer(self.string)
+        matches = pattern.finditer(tweet_text)
         for match in matches:
             tweet_text = match.group(0)
             tweet_text = tweet_text.split(' ')[0]
             print(f'Lanes Blocked: {tweet_text}')
             return tweet_text
 
-    def inc_type(self, tweet_text):
+    def get_lanes_blocked(self, tweet_text):
+        """
+        Extract lanes occupied data from the MMDA tweet. Output is string.
+        tweet_text: full text of twitter post
+        """
+        tweet_text = tweet_text.upper()
+        pattern = re.compile(r'\d\s(LANE|LANES)')
+        matches = pattern.finditer(tweet_text)
+        for match in matches:
+            tweet_text = match.group(0)
+            tweetLanes = tweet_text.split(' ')[0]
+            return tweetLanes
+
+    def get_inc_type(self, tweet_text):
         """
         Extract incident type from the MMDA tweet.
         tweet_text: full text of twitter post
         """
+
+        parsed_incident_type = False
+
+        tweet_text = tweet_text.upper()
         pattern = re.compile(r'MMDA ALERT: [A-Za-z0-9\s]+ AT ')
-        matches = pattern.finditer(self.string)
+        matches = pattern.finditer(tweet_text)
         for match in matches:
             tweet_text = match.group(0)
             # print(f'DEBUG: CLASS inc_type {tweet_text}')
             tweet_text = tweet_text.replace('MMDA ALERT: ', '')
-            tweet_text = tweet_text.replace(' AT ', '')
-        print(f'Type: {tweet_text}')
-        return tweet_text
+            tweetType = tweet_text.replace(' AT ', '')
+            parsed_incident_type = True
+
+        if parsed_incident_type == False:
+            tweetType = ''
+
+        return tweetType
 
     def stall(self, tweet_text):
         """
@@ -89,7 +109,7 @@ class TweetParse:
         tweet_text: full text of twitter post
         """
         pattern = re.compile(r'STALLED [A-Z0-9\-\s]+DUE')
-        matches = pattern.finditer(self.string)
+        matches = pattern.finditer(tweet_text)
         for match in matches:
             tweet_text = match.group(0)
             tweet_text = tweet_text.replace('STALLED ', '')
@@ -97,6 +117,15 @@ class TweetParse:
             tweet_text = tweet_text.rstrip(' ')
         print(f'Participants: {tweet_text}')
         return tweet_text
+
+    def direction(self, tweet_text):
+
+        pattern = re.compile(r'( SB | NB | WB | EB | SB| NB| WB| EB)')
+        matches = pattern.finditer(tweet_text)
+        for match in matches:
+            tweetDirection = match.group(0)
+            tweetDirection = tweetDirection.replace(' ', '')
+        return tweetDirection
 
     def rally_location(self, tweet_text):
         """
@@ -132,17 +161,169 @@ class TweetParse:
             print(f'Participants: {tweet_text}')
         return tweet_text
 
-    def strip_direction(self, tweet_text):
+    def strip_direction(self, tweetLocation):
         """
-        Remove direction text from tweet
+        Parse then remove direction text from tweet
         """
-        pattern = re.compile(r'( SB| NB| WB| EB)')
-        matches = pattern.finditer(self.string)
+        pattern = re.compile(r'( SB | NB | WB | EB | SB| NB| WB| EB)')
+        matches = pattern.finditer(tweetLocation)
+        for match in matches:
+            tweetDirection = match.group(0)
+            tweetDirection = tweetDirection.replace(' ', '')
+            tweetLocation = tweetLocation.replace(' NB', '')
+            tweetLocation = tweetLocation.replace(' EB', '')
+            tweetLocation = tweetLocation.replace(' SB', '')
+            tweetLocation = tweetLocation.replace(' WB', '')
+            tweetLocation = tweetLocation.replace(' NB ', ' ')
+            tweetLocation = tweetLocation.replace(' EB ', ' ')
+            tweetLocation = tweetLocation.replace(' SB ', ' ')
+            tweetLocation = tweetLocation.replace(' WB ', ' ')
+            tweetParticipant = tweetParticipant.rstrip(' ')
+        return tweetLocation
+
+    def get_direction(self, tweet_text):
+
+        parsed_direction = False
+
+        pattern = re.compile(r'( SB | NB | WB | EB | SB| NB| WB| EB)')
+        matches = pattern.finditer(tweet_text)
+        for match in matches:
+            tweetDirection = match.group(0)
+            tweetDirection = tweetDirection.replace(' ', '')
+            parsed_direction = True
+
+        if parsed_direction == False:
+            tweetDirection = ''
+
+        return tweetDirection
+
+    def strip_direction(self, tweetLocation):
+        """
+        Parse then remove direction text from tweet
+        """
+        pattern = re.compile(r'( SB | NB | WB | EB | SB| NB| WB| EB)')
+        matches = pattern.finditer(tweetLocation)
+        for match in matches:
+            tweetLocation = tweetLocation.replace(' NB', '')
+            tweetLocation = tweetLocation.replace(' EB', '')
+            tweetLocation = tweetLocation.replace(' SB', '')
+            tweetLocation = tweetLocation.replace(' WB', '')
+            tweetLocation = tweetLocation.replace(' NB ', ' ')
+            tweetLocation = tweetLocation.replace(' EB ', ' ')
+            tweetLocation = tweetLocation.replace(' SB ', ' ')
+            tweetLocation = tweetLocation.replace(' WB ', ' ')
+        return tweetLocation
+
+    def get_location(self, tweetText, strip_direction=True):
+
+        parsed_location = False
+        pattern = re.compile(r' AT\s[a-zA-Z\Ñ\'\.\,\-0-9\/\s]+(AS OF)')
+        matches = pattern.finditer(tweetText.upper())
+        for match in matches:
+            tweetLocation = match.group(0)
+            tweetLocation = tweetLocation.lstrip(' ')
+            tweetLocation = tweetLocation.replace('  ', ' ')
+            tweetLocation = tweetLocation.split(' INVOLVING')[0]
+            tweetLocation = tweetLocation.split('AT ')[1]
+            tweetLocation = tweetLocation.replace(' AT ', '')
+            tweetLocation = tweetLocation.replace(' AS OF', '')
+
+            parsed_location = True
+
+            if strip_direction == True:
+                tweetLocationStrip = self.strip_direction(tweetLocation)
+                return tweetLocationStrip
+
+        if parsed_location == False:
+            tweetLocation = ''
+        return tweetLocation
+
+    def get_participants(self, tweetLocation):
+
+        tweetLocation = tweetLocation.upper()
+
+        if len(tweetLocation.split(' INVOLVING')) > 1:
+            tweetParticipant = tweetLocation.split(' INVOLVING')[1]
+            tweetParticipant = tweetParticipant.rstrip(' ')
+            tweetParticipant = tweetParticipant.lstrip(' ')
+            tweetParticipant = tweetParticipant.split('AS OF')[0]
+        else:
+            tweetParticipant = ''
+
+        return tweetParticipant
+
+    def get_date(self, tweet):
+
+        from datetime import datetime, timedelta
+
+        tweetDate = str(tweet.created_at)
+        tweetDate = datetime.strptime(tweetDate, "%Y-%m-%d %H:%M:%S")
+        tweetDate = tweetDate + timedelta(hours=8)
+        tweetDate = str(tweetDate).split(' ')[0]
+
+        return tweetDate
+
+    def get_rally_location(self, tweet_text):
+        """
+        Special case. Fix parse for 'RALLYIST' type event
+        tweet_text: full text of twitter post
+        """
+
+        parsed_rally_location = False
+
+        pattern = re.compile(r' AT [A-Z0-9\s]+MORE OR')
+        matches = pattern.finditer(tweet_text.upper())
+
+        for match in matches:
+            tweetLocation = match.group(0)
+            tweetLocation = tweetLocation.replace(' MORE OR', '')
+            tweetLocation = tweetLocation.replace(' AT ', '')
+            tweetLocation = self.strip_direction(tweetLocation)
+            parsed_rally_location = True
+
+        if parsed_rally_location == False:
+            tweetLocation = ''
+
+        return tweetLocation
+
+    def get_rally_participants(self, tweet_text):
+        """
+        Special case. Gets participants.
+        Fix parse for 'RALLYIST' type event
+        tweet_text: full text of twitter post
+        """
+        parsed_rally_participant = False
+
+        pattern = re.compile(r'MORE OR LESS \d+ PAX')
+        matches = pattern.finditer(tweet_text.upper())
+        for match in matches:
+            tweetParticipant = match.group(0)
+            tweetParticipant = tweetParticipant.replace('MORE OR LESS ', '')
+            parsed_rally_participant = True
+
+        if parsed_rally_participant == False:
+            tweetParticipant = ''
+
+        return tweetParticipant
+
+    def get_stalled_participants(self, tweetText):
+        """
+        Special case. Used to parse only if 'STALLED' in tweet
+        tweet_text: full text of twitter post
+        """
+        tweetText = tweetText.upper()
+        parsed_stalled_participants = False
+
+        pattern = re.compile(r'STALLED [A-Z0-9\-\s]+DUE')
+        matches = pattern.finditer(tweetText)
         for match in matches:
             tweet_text = match.group(0)
-            # tweet_text = tweet_text.replace(' ', '')
-            tweet_text = tweet_text.replace(' NB', '')
-            tweet_text = tweet_text.replace(' EB', '')
-            tweet_text = tweet_text.replace(' SB', '')
-            tweet_text = tweet_text.replace(' WB', '')
-        return tweet_text
+            tweet_text = tweet_text.replace('STALLED ', '')
+            tweet_text = tweet_text.replace(' DUE', '')
+            tweetParticipants = tweet_text.rstrip(' ')
+            parsed_stalled_participants = True
+
+        if parsed_stalled_participants == False:
+            tweetParticipants = ''
+
+        return tweetParticipants
