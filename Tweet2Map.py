@@ -23,6 +23,7 @@ import logging
 import numpy as np
 import geopandas
 from shapely.geometry import Point
+import sys
 
 # Load scripts from modules.initialization
 config = RunConfig('config.ini')
@@ -46,12 +47,9 @@ try:
 except PermissionError:
     print('Permission Error. Please check if file is in use')
     time.sleep(5)
-    exit()
+    sys.exit()
 
 databaseLocations = r'modules\dictionary_database.txt'
-# databaseMain = 'data_mmda_traffic_alerts.csv'
-# database copy in my GIS folder
-# databaseGIS = r'C:\GIS\Data Files\Work Files\MMDA Tweet2Map\input\data_mmda_traffic_alerts.csv'
 
 print('Connecting to API...')
 tweets = initialization_tweepy_connect(input_consumer_key=config.tweepy_tokens()[0],
@@ -60,8 +58,7 @@ tweets = initialization_tweepy_connect(input_consumer_key=config.tweepy_tokens()
                                        input_access_secret=config.tweepy_tokens()[3])
 # TO DO: TRIGGER PREVENT PARSER ERROR IF MODULE CANNOT CONNECT
 if len(tweets) == 0:
-    config.arcpy_prevent_parser_error()
-    exit()
+    sys.exit()
 
 # Logging
 modules.logging.logger('INFO')
@@ -72,7 +69,8 @@ try:
     databaseLocationsDictionary = dbmanage_load_location_data(databaseLocations)
 except:
     traceback.print_exc()
-    config.arcpy_prevent_parser_error()
+    print('Critical Error! Cannot load location database.')
+    input('Press any button to continue...')
     exit()
 
 # Load last tweets to prevent duplicate writes to the tweet database
@@ -157,10 +155,6 @@ try:
                 print(f'Lanes Involved: {tweetLane}')
                 print(f'Location: {tweetLocation}')
 
-                logging.info(f'Line 149 tweetID = {str(tweetID)}')
-                logging.info(f'Line 150 info.text.upper() = {info}')
-                logging.info(f'Line 151 tweetText = {tweetText}')
-
         # Check for userBreak
         if tweetLocation == 'BREAK':
             userBreak = True
@@ -170,8 +164,6 @@ try:
             # Check location with database
             # Declare variable to control while loop
             checkUserLocationChoice = False
-            # empty variable
-            # user_error = False
             while checkUserLocationChoice == False:
                 try:
                     tweetLatitude = databaseLocationsDictionary[tweetLocation].split(',')[0]
@@ -387,12 +379,6 @@ try:
                                  'Lanes Blocked': tweetLane, 'Involved': tweetParticipant, 'Tweet': tweetText,
                                  'Source': tweetID}
 
-            logging.info('FINAL VARIABLES:')
-            logging.info('\tDate: {}'.format(tweetDate))
-            logging.info('\ttweetLocation: {}\n\ttweetParticipant: {}'.format(
-                tweetLocation, tweetParticipant))
-            logging.info('\ttweetType: {}'.format(tweetType))
-
             keys = WriteCombinedDict.keys()
 
             if tweetID not in lstDuplicateCheck and len(tweetID) > 0:
@@ -409,18 +395,15 @@ try:
 
 except Exception as error:
     traceback.print_exc()
-    config.arcpy_prevent_parser_error()
-    exit()
+    sys.exit()
 
 if userBreak == True:
     print('User terminated script.')
-    config.arcpy_prevent_parser_error()
-    exit()
+    sys.exit()
 
 if tweetCounter == 0:
     print(f'\nNo new tweets!\n')
-    config.arcpy_prevent_empty_input()
-    exit()
+    sys.exit()
 
 # Update Database
 print(f'\nUpdating databases...')
