@@ -60,19 +60,6 @@ class TweetParse:
 
         return tweet_text
 
-    def lane(self, tweet_text):
-        """
-        Extract lanes occupied data from the MMDA tweet. Output is string.
-        tweet_text: full text of twitter post
-        """
-        pattern = re.compile(r'\d\s(LANE|LANES)')
-        matches = pattern.finditer(tweet_text)
-        for match in matches:
-            tweet_text = match.group(0)
-            tweet_text = tweet_text.split(' ')[0]
-            print(f'Lanes Blocked: {tweet_text}')
-            return tweet_text
-
     def get_lanes_blocked(self, tweet_text):
         """
         Extract lanes occupied data from the MMDA tweet. Output is string.
@@ -115,64 +102,6 @@ class TweetParse:
             logging.info('get_inc_type(): Empty output')
 
         return tweetType
-
-    def stall(self, tweet_text):
-        """
-        Special case. Used to parse only if 'STALLED' in tweet
-        tweet_text: full text of twitter post
-        """
-        pattern = re.compile(r'STALLED [A-Z0-9\-\s]+DUE')
-        matches = pattern.finditer(tweet_text)
-        for match in matches:
-            tweet_text = match.group(0)
-            tweet_text = tweet_text.replace('STALLED ', '')
-            tweet_text = tweet_text.replace(' DUE', '')
-            tweet_text = tweet_text.rstrip(' ')
-        print(f'Participants: {tweet_text}')
-        return tweet_text
-
-    def direction(self, tweet_text):
-
-        pattern = re.compile(r'( SB | NB | WB | EB | SB| NB| WB| EB)')
-        matches = pattern.finditer(tweet_text)
-        for match in matches:
-            tweetDirection = match.group(0)
-            tweetDirection = tweetDirection.replace(' ', '')
-        return tweetDirection
-
-    def rally_location(self, tweet_text):
-        """
-        Special case. Fix parse for 'RALLYIST' type event
-        tweet_text: full text of twitter post
-        """
-        pattern = re.compile(r' AT [A-Z0-9\s]+MORE OR')
-        matches = pattern.finditer(self.string)
-
-        for match in matches:
-            tweet_text = match.group(0)
-            #print(f'DEBUG: tweet_text rallyist is {tweet_text}')
-            tweet_text = tweet_text.replace(' MORE OR', '')
-            tweet_text = tweet_text.replace(' AT ', '')
-            tweet_text = tweet_text.replace(' NB ', ' ')
-            tweet_text = tweet_text.replace(' EB ', ' ')
-            tweet_text = tweet_text.replace(' SB ', ' ')
-            tweet_text = tweet_text.replace(' WB ', ' ')
-        print(f'Location: {tweet_text}')
-        return tweet_text
-
-    def rally_participants(self, tweet_text):
-        """
-        Special case. Gets participants.
-        Fix parse for 'RALLYIST' type event
-        tweet_text: full text of twitter post
-        """
-        pattern = re.compile(r'MORE OR LESS \d+ PAX')
-        matches = pattern.finditer(self.string.upper())
-        for match in matches:
-            tweet_text = match.group(0)
-            tweet_text = tweet_text.replace('MORE OR LESS ', '')
-            print(f'Participants: {tweet_text}')
-        return tweet_text
 
     def strip_direction(self, tweetLocation):
         """
