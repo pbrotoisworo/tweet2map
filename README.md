@@ -10,10 +10,8 @@ I'm open to suggestions and comments! This is my first major coding project sinc
 
 # **Upcoming:**
 - Streamline main script by utilizing more classes and functions
-- Spatial joins through FOSS tools instead of ArcGIS Software
-- Sharing workflows to help jumpstart analysis
-- Improve logging
-- Tweet2Map streaming version: a version where the script will continuously run and check the mmda page twice a day. The main Tweet2Map script will have a section to accomodate this streaming information.
+- Tweet2Map streaming version: a version where the script will continuously run and check the mmda page twice a day. The main Tweet2Map script will have a section to accomodate this streaming information. This is the main goal of this script.
+- Natural Language Processing in the far future.
 
 # Table of Contents
 1. [Code Structure and Configuration](#structure)
@@ -60,7 +58,7 @@ Just confirm with Y and the script will continue processing the other tweets.
 
 ## Changelog <a name="changelog"></a>
 
-0.95 (TBA)
+0.95 (July 28, 2019)
 - Replaced ArcMap spatial join workflow with a workflow that uses FOSS tools, Geopandas and Shapely
 - Improved logging for more in-depth troubleshooting
 - Compartmentalizing the code so that the main Tweet2Map.py script is easier to interpret
