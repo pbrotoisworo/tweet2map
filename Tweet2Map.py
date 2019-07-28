@@ -111,12 +111,18 @@ try:
 
             # Check if Tweet is duplicate from database
             tweetID = 'https://twitter.com/mmda/status/' + str(info.id)
+
+            logging.info('===================================================')
+            logging.info('Tweet ID: {}'.format(tweetID))
+
             if tweetID in lstDuplicateCheck:
                 print('Duplicate Data! Skipping to next tweet.')
                 checkDuplicate = True
+                logging.info('Duplicate data. Skipping.')
                 continue
             else:
 
+                logging.info('Processing Tweet {}'.format(str(tweetCounter)))
                 # Get date and text
                 # Convert raw time from Twitter to GMT+8
                 tweetDate = str(info.created_at)
@@ -140,9 +146,9 @@ try:
                 tweetType = twt.inc_type(tweetText)
                 tweetLane = twt.lane(tweetText)
 
-                logging.info(f'tweetID = {str(tweetID)}')
-                logging.info(f'info.text.upper() = {info}')
-                logging.info(f'tweetText = {tweetText}')
+                logging.info(f'Line 149 tweetID = {str(tweetID)}')
+                logging.info(f'Line 150 info.text.upper() = {info}')
+                logging.info(f'Line 151 tweetText = {tweetText}')
 
                 # Get location, participants, and direction
                 pattern = re.compile(r' AT\s[a-zA-Z\Ñ\'\.\,\-0-9\/\s]+(AS OF)')
@@ -151,17 +157,19 @@ try:
                     tweetLocation = match.group(0)
                     # Location String Cleaning
                     tweetLocation = location_string_clean(tweetLocation)
+                    logging.info('LINE 160: tweetLocation: {}'.format(tweetLocation))
 
                     # ELLIPTICAL ROAD in QC can confuse parser sometimes
                     if 'ELLIPTICAL' not in tweetLocation:
+                        logging.info('ELLIPTICAL not detected in tweetLocation')
                         # Get direction then remove direction
-                        # tweetLocation = twt.strip_direction(tweetText)
                         pattern = re.compile(r'( SB | NB | WB | EB | SB| NB| WB| EB)')
                         #matches = pattern.finditer(info)
                         matches = pattern.finditer(tweetLocation)
                         for match in matches:
                             tweetDirection = match.group(0)
                             tweetDirection = tweetDirection.replace(' ', '')
+                            #tweetLocation = twt.strip_direction(tweetLocation)
                             tweetLocation = tweetLocation.replace(' NB', '')
                             tweetLocation = tweetLocation.replace(' EB', '')
                             tweetLocation = tweetLocation.replace(' SB', '')
@@ -172,11 +180,12 @@ try:
                             tweetLocation = tweetLocation.replace(' WB ', ' ')
                             tweetParticipant = tweetParticipant.rstrip(' ')
                         print(f'Direction: {tweetDirection}')
-                        logging.debug(f'CHECKPOINT1-{tweetLocation}')
+                        logging.info('Parsed and Removed Cardinal Directions')
+                        logging.info('Line 183: tweetLocation: {}'.format(tweetLocation))
 
                         # Get participants
                         if len(tweetLocation.split(' INVOLVING')) > 1:
-                            logging.debug('DEBUG: CHECKPOINT1.1-{}'.format(tweetLocation))
+                            logging.info('CHECKPOINT1.1-{}'.format(tweetLocation))
                             tweetParticipant = tweetLocation.split(' INVOLVING')[1]
                             tweetParticipant = tweetParticipant.rstrip(' ')
                             tweetParticipant = tweetParticipant.lstrip(' ')
@@ -190,13 +199,14 @@ try:
                         # Consider deletion
                         # Direction given. NO INVOLVED
                         if len(tweetLocation.split(' INVOLVING')) < 1:
-                            logging.debug('DEBUG: CHECKPOINT2.1-{}'.format(tweetLocation))
+                            logging.info('CHECKPOINT1.2-{}'.format(tweetLocation))
                             tweetParticipant = tweetLocation.split(' AS OF ')[0]
                             tweetParticipant = tweetParticipant.rstrip(' ')
                             tweetParticipant = tweetParticipant.lstrip(' ')
                             print(f'Participants: {tweetParticipant}')
 
                     if 'ELLIPTICAL' in tweetLocation:
+                        logging.info('ELLIPTICAL detected in tweetLocation')
 
                         if 'ELLIPTICAL' and 'NORTH' in tweetLocation:
                             tweetLocation = 'ELLIPTICAL ROAD NORTH AVE.'
@@ -228,7 +238,7 @@ try:
                             tweetLocation = tweetLocation.replace(' SB ', ' ')
                             tweetLocation = tweetLocation.replace(' WB ', ' ')
                             tweetParticipant = tweetParticipant.rstrip(' ')
-                        logging.debug(f'DEBUG: CHECKPOINT3-{tweetLocation}')
+                        logging.info(f'CHECKPOINT3-{tweetLocation}')
 
                         if len(info.upper().split(' INVOLVING ')) > 1:
                             tweetParticipant = info.upper()
@@ -256,14 +266,22 @@ try:
                         print(f'Location: {tweetLocation}')
                         print(f'Direction: {tweetDirection}')
 
+                        logging.info('Participants: {}'.format(tweetParticipant))
+                        logging.info('Location: {}'.format(tweetLocation))
+                        logging.info('Direction: {}'.format(tweetDirection))
+
                 # Special case. Get participants
                 if 'STALLED' in info:
+                    logging.info(f'Input for STALLED parsing: {tweetText}')
+                    logging.info(f'Tweet Location: {tweetLocation}')
                     tweetParticipant = twt.stall(tweetText)
 
                 # Special case. Get location and participants
                 if 'RALLYIST' in info:
                     tweetType = 'RALLYIST'
                     # Get location and participants
+                    logging.info(f'Input for RALLYIST parsing: {tweetText}')
+                    logging.info(f'Tweet Location: {tweetLocation}')
                     tweetLocation = twt.rally_location(tweetText)
                     tweetParticipant = twt.rally_participants(tweetText)
 
@@ -306,7 +324,8 @@ try:
                     print(f'\nChoose number from list:')
                     print('1 - Add new location and new coordinates')
                     print(f'2 - Add new location based on existing coordinates')
-                    print(f'3 - Fix location name\n')
+                    print(f'3 - Fix location name')
+                    print(f'4 - Set location as invalid\n')
 
                     userLocationChoice = input('Enter number to proceed:')
 
@@ -409,8 +428,40 @@ try:
                                 print('Enter details again.')
                                 break
                         elif userLocationChoice == '3':
+                            logging.info('MANUAL LOCAITON FIX FROM USER')
+                            logging.info(f'\tOld Location: {tweetLocation}')
                             tweetLocation = input('Input new location: ').upper()
+                            logging.info(f'\tRevised Location: {tweetLocation}')
                             userReset = True
+
+                        elif userLocationChoice == '4':
+                            # TESTING
+                            tweetLatitude = ''
+                            tweetLongitude = ''
+                            userInputCoordMatch = tweetLatitude + ',' + tweetLongitude
+                            databaseLocationsDictionary[tweetLocation] = userInputCoordMatch
+
+                            print(
+                                f'Data to be added:\nLocation: {tweetLocation}\nLatitude: {tweetLatitude}\nLongitude: {tweetLongitude}')
+                            userAppendLocationDatabase = input(
+                                'Confirm information is correct? (Y/N) ').upper()
+
+                            if userAppendLocationDatabase == 'Y':
+                                userInputCoordMatch = tweetLatitude + ',' + tweetLongitude
+                                databaseLocationsDictionary[tweetLocation] = userInputCoordMatch
+                                checkLocationAdded = True
+                                checkUserLocationChoice = True
+                            elif userAppendLocationDatabase == 'N':
+                                userInputCoordMatch = ''
+                                userSearch = ''
+                                userInputCoord = ''
+                                tweetLatitude = ''
+                                tweetLongitude = ''
+                                userLocationChoice = ''
+                                userAppendLocationDatabase = ''
+                                userReset = True
+                                print('Enter details again.')
+                                break
 
                         else:
                             # Break out of the current while loop
@@ -462,6 +513,12 @@ try:
                                  'Longitude': tweetLongitude, 'Direction': tweetDirection, 'Type': tweetType,
                                  'Lanes Blocked': tweetLane, 'Involved': tweetParticipant, 'Tweet': tweetText,
                                  'Source': tweetID}
+
+            logging.info('FINAL VARIABLES:')
+            logging.info('\tDate: {}'.format(tweetDate))
+            logging.info('\ttweetLocation: {}\n\ttweetParticipant: {}'.format(
+                tweetLocation, tweetParticipant))
+            logging.info('\ttweetType: {}'.format(tweetType))
 
             keys = WriteCombinedDict.keys()
 
