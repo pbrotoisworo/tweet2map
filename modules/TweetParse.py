@@ -1,5 +1,6 @@
 import re
 import logging
+from function_list import *
 
 
 class TweetParse:
@@ -170,6 +171,7 @@ class TweetParse:
             tweetLocation = tweetLocation.split('AT ')[1]
             tweetLocation = tweetLocation.replace(' AT ', '')
             tweetLocation = tweetLocation.replace(' AS OF', '')
+            tweetLocation = location_string_clean(tweetLocation)
             logging.info('get_location(): Cleaned Location {}'.format(tweetLocation))
 
             parsed_location = True
