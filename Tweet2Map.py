@@ -1,6 +1,6 @@
 # Encoding: utf-8
 
-print('MMDA Tweet2Map Version 0.9')
+print('MMDA Tweet2Map Version 0.95')
 print('Panji P. Brotoisworo')
 print('Contact: panji.p.broto@gmail.com')
 print('Website: https://panjib.wixsite.com/blog/mmdatweet2map')
@@ -58,6 +58,7 @@ tweets = initialization_tweepy_connect(input_consumer_key=config.tweepy_tokens()
                                        input_access_secret=config.tweepy_tokens()[3])
 # TO DO: TRIGGER PREVENT PARSER ERROR IF MODULE CANNOT CONNECT
 if len(tweets) == 0:
+    input('Connection error')
     sys.exit()
 
 # Logging
@@ -143,7 +144,6 @@ try:
 
                 if 'STALLED' in tweetText.upper():
                     tweetParticipant = twt.get_stalled_participants(tweetText)
-                    tweetType = 'STALLED'
 
                 print('------------------------------------------------------')
                 print(f'Tweet: {tweetText}')
