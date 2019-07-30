@@ -1,6 +1,6 @@
 import re
 import logging
-from function_list import *
+from modules.function_list import location_string_clean
 
 
 class TweetParse:
