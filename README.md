@@ -9,9 +9,12 @@ MMDA Tweet2Map is a python script that mines MMDA Tweets ([@mmda](https://twitte
 I'm open to suggestions and comments! This is my first major coding project since I started self-learning Python.
 
 # **Upcoming:**
-- Streamline main script by utilizing more classes and functions
 - Tweet2Map streaming version: a version where the script will continuously run and check the mmda page twice a day. The main Tweet2Map script will have a section to accomodate this streaming information. This is the main goal of this script.
-- Natural Language Processing in the far future.
+- Spellchecker using the Peter Norvig algorithm to fix typos and wrong spelling of locations and other information
+- Permutations to try different combinations of locations
+  - Eg, if the script cannot find EDSA ORTIGAS MRT, it will try EDSA MRT ORTIGAS, and so on
+- Natural Language Processing to replace RegEx (maybe)
+  - Focus primarily on named entity recognition to extract data
 
 # Table of Contents
 1. [Code Structure and Configuration](#structure)
