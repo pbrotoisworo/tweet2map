@@ -13,6 +13,10 @@ I'm open to suggestions and comments! This is my first major coding project sinc
 - Spellchecker using the Peter Norvig algorithm to fix typos and wrong spelling of locations and other information
 - Permutations to try different combinations of locations
   - Eg, if the script cannot find EDSA ORTIGAS MRT, it will try EDSA MRT ORTIGAS, and so on
+- Suite of programs with GUIs
+  - Automated MMDA ALERT style Tweet generator and uploader
+  - Data Dashboard
+  - Tweet2Map Data Miner
 - Natural Language Processing to replace RegEx (maybe)
   - Focus primarily on named entity recognition to extract data
 
