@@ -121,7 +121,7 @@ class TweetParse:
             tweetLocation = tweetLocation.replace(' EB ', ' ')
             tweetLocation = tweetLocation.replace(' SB ', ' ')
             tweetLocation = tweetLocation.replace(' WB ', ' ')
-            tweetParticipant = tweetParticipant.rstrip(' ')
+            tweet_participant = tweet_participant.rstrip(' ')
         return tweetLocation
 
     def get_direction(self, tweet_text):
@@ -257,7 +257,7 @@ class TweetParse:
         logging.info('get_rally_participants(): Raw input {}'.format(tweet_text))
 
         for match in matches:
-            tweetParticipant = match.group(0)
+            tweet_participant = match.group(0)
             logging.info('get_rally_participants(): RegEx Match {}'.format(tweetParticipant))
             tweetParticipant = tweetParticipant.replace('MORE OR LESS ', '')
             logging.info('get_rally_participants(): Cleaned output {}'.format(tweetParticipant))
