@@ -2,3 +2,5 @@
 *.log
 .vscode/
 *__pycache__
+data/
+*.pkl

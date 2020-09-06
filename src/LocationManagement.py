@@ -38,20 +38,16 @@ class LocationDatabaseSQL:
         # Read database
         df = pd.read_sql_query(f'SELECT * FROM LOCATIONS WHERE Location LIKE "%{location}%"', self.conn)
         
-        # # Extract information
-        # index = []
-        # loc = []
-        # loc_coords = []
-        # for item in df.iterrows():
-        #     index.append(item[0])
-        #     loc.append(item[1]['Location'])
-        #     loc_coords.append(item[1]['Coordinates'])
-        # results = list(zip(index, loc, loc_coords))
+        # Display information
+        for item in df.iterrows():
+            print(item[0], item[1]['Location'], item[1]['Coordinates'])
 
         # Get user input to select location
-        user_selection = int(input('Select location by index:'))
-        location = df.iloc[user_selection]['Location']
-        coords = df.iloc[user_selection]['Coordinates']
+        user_selection = input('Select location by index:')
+        if user_selection == 'BREAK':
+            return 'BREAK'
+        # location = df.iloc[user_selection]['Location']
+        coords = df.iloc[int(user_selection)]['Coordinates']
 
         return (location, coords)
 
@@ -60,3 +56,17 @@ class LocationDatabaseSQL:
         df = pd.read_sql_query(f'SELECT * FROM LOCATIONS', self.conn)
         location_dict = dict(zip(df['Location'], df['Coordinates']))
         return location_dict
+
+    def insert(self, location, coordinates):
+        """INSERT SQL command.
+        Input sql_cmd_values is tuple containing all variables from Tweet2Map.
+        It must be in the same order as the columns of the database."""
+
+        sql_cmd_vals = (location, coordinates)
+
+        sql_placeholder = '?, ' * self.num_columns
+        sql_placeholder = sql_placeholder.rstrip(', ')
+        sql_cmd = "INSERT INTO {} VALUES ({})".format(self.SQL_TABLE, sql_placeholder)
+
+        self.c.execute(sql_cmd, sql_cmd_vals)
+        self.conn.commit()

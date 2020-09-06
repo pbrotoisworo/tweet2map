@@ -42,7 +42,7 @@ class Tweet2MapDatabaseSQL:
         latest_values = list(df.values.flatten())
         return latest_values
 
-    def get_newest_tweet_ids(self, tweets, count=200):
+    def get_newest_tweet_ids(self, count=200):
         """Gets the last n Tweets to prevent duplicates when processing new Tweepy data"""
 
         # Get original tweets from existing database
@@ -79,28 +79,31 @@ class Tweet2MapDatabaseSQL:
                          'Type', 'Lanes_Blocked', 'Involved', 'Tweet', 'Source']]
         return df_gpd
 
-    def insert(self, df):
+    def insert(self, row):
         """INSERT SQL command.
         Input sql_cmd_values is tuple containing all variables from Tweet2Map.
         It must be in the same order as the columns of the database."""
 
-        tweetDate = df.iloc[0]['Date']
-        tweetTime = df.iloc[0]['Time']
-        tweetCity = df.iloc[0]['City']
-        tweetLocation = df.iloc[0]['Location']
-        tweetLatitude = df.iloc[0]['Latitude']
-        tweetLongitude = df.iloc[0]['Longitude']
-        tweetDirection = df.iloc[0]['Direction']
-        tweetType = df.iloc[0]['Type']
-        tweetLanes = df.iloc[0]['Lanes_Blocked']
-        tweetParticipant = df.iloc[0]['Involved']
-        tweetText = df.iloc[0]['Tweet']
-        tweetID = df.iloc[0]['Source']
+        tweet_date = row[1]['Date']
+        tweet_time = row[1]['Time']
+        tweet_city = row[1]['City']
+        tweet_location = row[1]['Location']
+        tweet_latitude = row[1]['Latitude']
+        tweet_longitude = row[1]['Longitude']
+        tweet_direction = row[1]['Direction']
+        tweet_type = row[1]['Type']
+        tweet_lanes = row[1]['Lanes_Blocked']
+        tweet_involved = row[1]['Involved']
+        tweet_text = row[1]['Tweet']
+        tweet_id = row[1]['Source']
 
-        sql_cmd_vals = (tweetDate, tweetTime, tweetCity, tweetLocation,
-                        tweetLatitude, tweetLongitude, tweetDirection,
-                        tweetType, tweetLanes, tweetParticipant, tweetText,
-                        tweetID)
+        sql_cmd_vals = (tweet_date, tweet_time, tweet_city, tweet_location, tweet_latitude, tweet_longitude,
+                        tweet_direction, tweet_type, tweet_lanes, tweet_involved, tweet_text, tweet_id)
+
+        # sql_cmd_vals = (row_dict['Date'], row_dict['Time'], row_dict['City'], row_dict['Location'],
+        #                 row_dict['Latitude'], row_dict['Longitude'], row_dict['Direction'],
+        #                 row_dict['Type'], row_dict['Lanes_Blocked'], row_dict['Involved'], row_dict['Tweet'],
+        #                 row_dict['Source'])
 
         sql_placeholder = '?, ' * self.num_columns
         sql_placeholder = sql_placeholder.rstrip(', ')

@@ -30,6 +30,7 @@ class TweetParse:
             self.participants = self.get_stalled_participants()
         else:
             self.participants = self.get_participants()
+        self.source = 'https://twitter.com/mmda/status/' + tweepy_tweet.id_str
 
 
     def get_time(self):
