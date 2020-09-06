@@ -15,6 +15,7 @@ def spatial_join(df_input, shapefile):
     df = gpd.GeoDataFrame(
         df_input, geometry=gpd.points_from_xy(df_input['Longitude'], df_input['Latitude']))
     df.crs = {'init': 'epsg:4326'}
+    # df.crs = 'epsg:4326'
 
     # Spatial Join
     df = gpd.sjoin(df, shapefile, how='left', op='within')

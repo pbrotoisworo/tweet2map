@@ -64,18 +64,34 @@ if __name__ == '__main__':
                              access_secret=tweepy_params['access_secret'])
 
     # Load Tweets
+    incoming_tweets = []
     tweets = load_tweets(api=api, screen_name='mmda', count=200)
+    for tweet in reversed(tweets):
+        if 'MMDA ALERT' in tweet.full_text:
+            incoming_tweets.append(tweet)
+    # print('INITIAL DOWNLOAD:', len(incoming_tweets))
 
     # Load SQL Database
     database_sql = Tweet2MapDatabaseSQL(sql_database_file=config.get('software', 'database_path'))
     download_comparison = database_sql.get_newest_tweet_ids(count=500)
     recent_processed_ids = [x.replace('https://twitter.com/mmda/status/', '') for x in download_comparison]
 
+    # Remove tweets that are already in the database
+    for idx, tweet in enumerate(incoming_tweets):
+        _id = tweet.id_str
+        if _id in recent_processed_ids:
+            del incoming_tweets[idx]
+
+    # CHECK
+    # print('AFTER DELETION:', len(incoming_tweets))
+    # for tweet in incoming_tweets:
+    #     print(tweet.full_text)
+
     if download_only:
         # Download only and store to cache for later processing
         cache_processing(cache_path=CACHE_PATH,
                          recent_processed_ids=recent_processed_ids,
-                         tweets=tweets)
+                         tweets=incoming_tweets)
         sys.exit()
     
     # Process and add into database
@@ -88,16 +104,21 @@ if __name__ == '__main__':
         
         # Get IDs from cached and new tweets
         existing_cache_ids = [tweet.id_str for tweet in tweet_cache]
-        new_tweet_ids = [tweet.id_str for tweet in tweets]
+        incoming_tweet_ids = [tweet.id_str for tweet in incoming_tweets]
+
+        # print('Count cache IDs:', len(existing_cache_ids))
+        # print('Count new IDs:', len(incoming_tweet_ids))
 
         # If cached tweet not in new tweet, add to tweets_for_processing
         for cached_tweet in tweet_cache:
-            if cached_tweet.id_str not in new_tweet_ids:
+            if cached_tweet.id_str not in incoming_tweet_ids:
                 tweets_for_processing.append(cached_tweet)
+
+    tweets_for_processing += incoming_tweets
         
     # Add tweets
-    for tweet in tweets:
-        tweets_for_processing.append(tweet)        
+    # for tweet in tweets:
+    #     tweets_for_processing.append(tweet)        
     
     # Load last n tweets to check for duplicates
     latest_tweet_ids = database_sql.get_newest_tweet_ids(count=200)
@@ -107,13 +128,15 @@ if __name__ == '__main__':
     location_dict = location_sql.get_location_dictionary()
 
     # Process tweets
+    process_counter = 0
     tweet_list = []  # Store processed tweets in list
-    for tweet in reversed(tweets_for_processing):
-        if ('MMDA ALERT' in tweet.full_text) and (tweet.id_str not in existing_cache_ids):
+    for tweet in tweets_for_processing:
+        if 'MMDA ALERT' in tweet.full_text: # tweet.id_str not in existing_cache_ids:
 
-            tweet_url = 'https://twitter.com/mmda/status/' + tweet.id_str
+            # tweet_url = 'https://twitter.com/mmda/status/' + tweet.id_str
+            # tweet_url = tweet.id_str
 
-            if tweet_url in latest_tweet_ids:
+            if tweet.id_str in recent_processed_ids:
                 print('Duplicate Data! Skipping to next tweet.')
                 checkDuplicate = True
                 continue
@@ -136,7 +159,7 @@ if __name__ == '__main__':
                 tweet_dict['Involved'] = twt.participants
                 tweet_dict['Lanes_Blocked'] = twt.lanes_blocked
                 tweet_list.append(tweet_dict)
-    
+
     if not tweet_list:
         print('No new data.')
         # Delete cache if exists
@@ -177,6 +200,11 @@ if __name__ == '__main__':
                 print('Incident Type:', item['Type'])
                 print('Participants:', item['Involved'])
                 print('Lanes Involved:', item['Lanes_Blocked'])
+                
+                # Only count the valid data
+                if (tweet_latitude and tweet_longitude) and (tweet_latitude != 'None' and tweet_longitude != 'None'):
+                    process_counter += 1
+                
                 break
 
             except KeyError:
@@ -233,6 +261,9 @@ if __name__ == '__main__':
     df['Latitude'] = df['Latitude'].astype('float64')
     shp_path = config.get('software', 'shp_path')
     df = spatial_join(df_input=df, shapefile=shp_path)
+
+    
+    print(f'{process_counter} tweets processed.')
 
     # Update incident database
     for row in df.iterrows():
