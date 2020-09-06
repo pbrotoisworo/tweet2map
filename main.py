@@ -72,30 +72,44 @@ if __name__ == '__main__':
     recent_processed_ids = [x.replace('https://twitter.com/mmda/status/', '') for x in download_comparison]
 
     if download_only:
-        cache_processing(download_arg=download_only,
-                        cache_path=CACHE_PATH,
-                        recent_processed_ids=recent_processed_ids,
-                        tweets=tweets)
-    else:
-
-        # Load last n tweets to check for duplicates
-        latest_tweet_ids = database_sql.get_newest_tweet_ids(count=200)
-
-        # Load Locations
-        location_sql = LocationDatabaseSQL(sql_database_file=config.get('software', 'locations_path'))
-        location_dict = location_sql.get_location_dictionary()
-
+        # Download only and store to cache for later processing
+        cache_processing(cache_path=CACHE_PATH,
+                         recent_processed_ids=recent_processed_ids,
+                         tweets=tweets)
+        sys.exit()
+    
+    # Process and add into database
+    tweets_for_processing = []
+    if os.path.exists(CACHE_PATH):
         
+        # If cache exists load the file and combine with existing tweets
+        with open(CACHE_PATH, 'rb') as f:
+            tweet_cache = pickle.load(f)
+        
+        # Get IDs from cached and new tweets
+        existing_cache_ids = [tweet.id_str for tweet in tweet_cache]
+        new_tweet_ids = [tweet.id_str for tweet in tweets]
+
+        # If cached tweet not in new tweet, add to tweets_for_processing
+        for cached_tweet in tweet_cache:
+            if cached_tweet.id_str not in new_tweet_ids:
+                tweets_for_processing.append(cached_tweet)
+        
+    # Add tweets
+    for tweet in tweets:
+        tweets_for_processing.append(tweet)        
+    
+    # Load last n tweets to check for duplicates
+    latest_tweet_ids = database_sql.get_newest_tweet_ids(count=200)
+
+    # Load Locations
+    location_sql = LocationDatabaseSQL(sql_database_file=config.get('software', 'locations_path'))
+    location_dict = location_sql.get_location_dictionary()
 
     # Process tweets
-    if os.path.exists(CACHE_PATH):
-        # If cache exists load the file
-        with open(CACHE_PATH, 'rb') as f:
-            tweet_list = pickle.load(f)
-    else:
-        tweet_list = []
-    for tweet in reversed(tweets):
-        if 'MMDA ALERT' in tweet.full_text and if tweet.id_str in :
+    tweet_list = []  # Store processed tweets in list
+    for tweet in reversed(tweets_for_processing):
+        if ('MMDA ALERT' in tweet.full_text) and (tweet.id_str not in existing_cache_ids):
 
             tweet_url = 'https://twitter.com/mmda/status/' + tweet.id_str
 
@@ -122,6 +136,13 @@ if __name__ == '__main__':
                 tweet_dict['Involved'] = twt.participants
                 tweet_dict['Lanes_Blocked'] = twt.lanes_blocked
                 tweet_list.append(tweet_dict)
+    
+    if not tweet_list:
+        print('No new data.')
+        # Delete cache if exists
+        if os.path.exists(CACHE_PATH):
+            os.remove(CACHE_PATH)
+        sys.exit()
 
     # Add unknown locations
     for idx, item in enumerate(tweet_list):
@@ -217,4 +238,9 @@ if __name__ == '__main__':
     for row in df.iterrows():
         database_sql.insert(row)
 
+    # Close SQL connection
     database_sql.close_connection()
+
+    # Delete cache if exists
+    if os.path.exists(CACHE_PATH):
+        os.remove(CACHE_PATH)
