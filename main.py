@@ -11,7 +11,7 @@ import os
 from src.SqlManagement import Tweet2MapDatabaseSQL
 from src.LocationManagement import LocationDatabaseSQL
 from src.CheckConfig import check_for_valid_config
-from src.ArgparseProcessing import argparse_tweepy
+from src.ArgparseProcessing import argparse_config
 from src.ConnectTwitter import connect_to_twitter
 from src.LoadTweets import load_tweets
 from src.CheckDuplicateTweets import check_duplicate_tweets
@@ -35,8 +35,8 @@ if __name__ == '__main__':
     # Define CLI inputs
     parser = argparse.ArgumentParser(description='Tweet2Map 1.0')
     cli_args = parser.add_argument_group('Arguments')
-    cli_args.add_argument('-v', help='Verbose mode', action='store_true')
-    cli_args.add_argument('-d', help='Download tweets only and store for later processing', action='store_true')
+    # cli_args.add_argument('-v', help='Verbose mode', action='store_true')
+    cli_args.add_argument('-d', help='Download tweets only and cache them for later processing', action='store_true')
     cli_args.add_argument('-consumer_key', help='Twitter API consumer key')
     cli_args.add_argument('-consumer_secret', help='Twitter API consumer secret')
     cli_args.add_argument('-access_token', help='Twitter API access token')
@@ -50,12 +50,14 @@ if __name__ == '__main__':
 
     # Process arguments
     tweepy_params = {}
-    tweepy_params['consumer_key'] = argparse_tweepy(arg=args['consumer_key'], arg_type='consumer_key', config_path=CONFIG_PATH)
-    tweepy_params['consumer_secret'] = argparse_tweepy(arg=args['consumer_secret'], arg_type='consumer_secret', config_path=CONFIG_PATH)
-    tweepy_params['access_token'] = argparse_tweepy(arg=args['access_token'], arg_type='access_token', config_path=CONFIG_PATH)
-    tweepy_params['access_secret'] = argparse_tweepy(arg=args['access_secret'], arg_type='access_secret', config_path=CONFIG_PATH)
+    tweepy_params['consumer_key'] = argparse_config(arg=args['consumer_key'], section='tweepy', arg_type='consumer_key', config_path=CONFIG_PATH)
+    tweepy_params['consumer_secret'] = argparse_config(arg=args['consumer_secret'], section='tweepy', arg_type='consumer_secret', config_path=CONFIG_PATH)
+    tweepy_params['access_token'] = argparse_config(arg=args['access_token'], section='tweepy', arg_type='access_token', config_path=CONFIG_PATH)
+    tweepy_params['access_secret'] = argparse_config(arg=args['access_secret'], section='tweepy', arg_type='access_secret', config_path=CONFIG_PATH)
+    shp_path = argparse_config(arg=args['shp_path'], section='software', arg_type='shp_path', config_path=CONFIG_PATH)
+    inc_database_path = argparse_config(arg=args['inc_database_path'], section='software', arg_type='database_path', config_path=CONFIG_PATH)
+    loc_database_path = argparse_config(arg=args['loc_database_path'], section='software', arg_type='locations_path', config_path=CONFIG_PATH)
     download_only = args['d']
-    verbose = args['v']
 
     # Connect to Tweepy
     api = connect_to_twitter(consumer_key=tweepy_params['consumer_key'],
@@ -69,32 +71,13 @@ if __name__ == '__main__':
     for tweet in reversed(tweets):
         if 'MMDA ALERT' in tweet.full_text:
             incoming_tweets.append(tweet)
-    # print('INITIAL DOWNLOAD:', len(incoming_tweets))
+    num_init_incoming_tweets = len(incoming_tweets)
 
     # Load SQL Database
-    database_sql = Tweet2MapDatabaseSQL(sql_database_file=config.get('software', 'database_path'))
-    download_comparison = database_sql.get_newest_tweet_ids(count=500)
-    recent_processed_ids = [x.replace('https://twitter.com/mmda/status/', '') for x in download_comparison]
+    database_sql = Tweet2MapDatabaseSQL(sql_database_file=inc_database_path)
+    recent_tweet_ids = database_sql.get_newest_tweet_ids(count=200)
 
-    # Remove tweets that are already in the database
-    for idx, tweet in enumerate(incoming_tweets):
-        _id = tweet.id_str
-        if _id in recent_processed_ids:
-            del incoming_tweets[idx]
-
-    # CHECK
-    # print('AFTER DELETION:', len(incoming_tweets))
-    # for tweet in incoming_tweets:
-    #     print(tweet.full_text)
-
-    if download_only:
-        # Download only and store to cache for later processing
-        cache_processing(cache_path=CACHE_PATH,
-                         recent_processed_ids=recent_processed_ids,
-                         tweets=incoming_tweets)
-        sys.exit()
-    
-    # Process and add into database
+    # Load cache for duplicate checking
     tweets_for_processing = []
     if os.path.exists(CACHE_PATH):
         
@@ -105,26 +88,38 @@ if __name__ == '__main__':
         # Get IDs from cached and new tweets
         existing_cache_ids = [tweet.id_str for tweet in tweet_cache]
         incoming_tweet_ids = [tweet.id_str for tweet in incoming_tweets]
-
-        # print('Count cache IDs:', len(existing_cache_ids))
-        # print('Count new IDs:', len(incoming_tweet_ids))
-
-        # If cached tweet not in new tweet, add to tweets_for_processing
-        for cached_tweet in tweet_cache:
-            if cached_tweet.id_str not in incoming_tweet_ids:
-                tweets_for_processing.append(cached_tweet)
-
-    tweets_for_processing += incoming_tweets
         
-    # Add tweets
-    # for tweet in tweets:
-    #     tweets_for_processing.append(tweet)        
+        tweets_for_processing += tweet_cache
     
+        # Add incoming tweets but check if they exist first in cache
+        for tweet in incoming_tweets:
+            if tweet.id_str not in existing_cache_ids:
+                tweets_for_processing.append(tweet)
+    else:
+        # No cache. So add all incoming tweets
+        tweets_for_processing += incoming_tweets
+
+    # Remove incoming tweets that are already in the incident database
+    for idx, tweet in enumerate(tweets_for_processing):
+        if tweet.id_str in recent_tweet_ids:
+            del tweets_for_processing[idx]
+
+    print(f'Downloaded {len(tweets_for_processing)} tweets')
+
+    if download_only:
+        # Download only and store to cache for later processing then exit
+        cache_processing(cache_path=CACHE_PATH,
+                         recent_processed_ids=recent_tweet_ids,
+                         tweets=tweets_for_processing)
+        sys.exit()
+    
+
+        
     # Load last n tweets to check for duplicates
     latest_tweet_ids = database_sql.get_newest_tweet_ids(count=200)
 
     # Load Locations
-    location_sql = LocationDatabaseSQL(sql_database_file=config.get('software', 'locations_path'))
+    location_sql = LocationDatabaseSQL(sql_database_file=loc_database_path)
     location_dict = location_sql.get_location_dictionary()
 
     # Process tweets
@@ -132,11 +127,7 @@ if __name__ == '__main__':
     tweet_list = []  # Store processed tweets in list
     for tweet in tweets_for_processing:
         if 'MMDA ALERT' in tweet.full_text: # tweet.id_str not in existing_cache_ids:
-
-            # tweet_url = 'https://twitter.com/mmda/status/' + tweet.id_str
-            # tweet_url = tweet.id_str
-
-            if tweet.id_str in recent_processed_ids:
+            if tweet.id_str in recent_tweet_ids:
                 print('Duplicate Data! Skipping to next tweet.')
                 checkDuplicate = True
                 continue
@@ -160,20 +151,13 @@ if __name__ == '__main__':
                 tweet_dict['Lanes_Blocked'] = twt.lanes_blocked
                 tweet_list.append(tweet_dict)
 
-    if not tweet_list:
-        print('No new data.')
-        # Delete cache if exists
-        if os.path.exists(CACHE_PATH):
-            os.remove(CACHE_PATH)
-        sys.exit()
-
     # Add unknown locations
     for idx, item in enumerate(tweet_list):
 
+        # While loop will keep repeating until a valid choice is made with the unknown location
         # while loop handling
         bool_location_added = False
         bool_user_reset = False
-
         while not bool_location_added:
             try:
                 if bool_user_reset:
@@ -188,22 +172,24 @@ if __name__ == '__main__':
                 tweet_longitude = location_dict[location].split(',')[1]
                 tweet_list[idx]['Longitude'] = tweet_longitude
 
-                print('---------------------------------------------------------------')
-                print('Tweet:', item['Tweet'])
-                print('Date:', item['Date'])
-                print('Time:', item['Time'])
-                print('URL:', item['Source'])
-                print('Location:', location)
-                print('Latitude:', tweet_latitude)
-                print('Longitude:', tweet_longitude)
-                print('Direction:', item['Direction'])
-                print('Incident Type:', item['Type'])
-                print('Participants:', item['Involved'])
-                print('Lanes Involved:', item['Lanes_Blocked'])
-                
                 # Only count the valid data
                 if (tweet_latitude and tweet_longitude) and (tweet_latitude != 'None' and tweet_longitude != 'None'):
                     process_counter += 1
+
+                    print('---------------------------------------------------------------')
+                    print('Tweet:', item['Tweet'])
+                    print('Date:', item['Date'])
+                    print('Time:', item['Time'])
+                    print('URL:', item['Source'])
+                    print('Location:', location)
+                    print('Latitude:', tweet_latitude)
+                    print('Longitude:', tweet_longitude)
+                    print('Direction:', item['Direction'])
+                    print('Incident Type:', item['Type'])
+                    print('Participants:', item['Involved'])
+                    print('Lanes Involved:', item['Lanes_Blocked'])
+                else:
+                    print(f'Skipping invalid location: {location}')
                 
                 break
 
@@ -259,11 +245,9 @@ if __name__ == '__main__':
     df.dropna(subset=['Latitude', 'Longitude'], inplace=True)
     df['Longitude'] = df['Longitude'].astype('float64')
     df['Latitude'] = df['Latitude'].astype('float64')
-    shp_path = config.get('software', 'shp_path')
     df = spatial_join(df_input=df, shapefile=shp_path)
 
-    
-    print(f'{process_counter} tweets processed.')
+    print(f'\n{process_counter} new tweets added to database')
 
     # Update incident database
     for row in df.iterrows():

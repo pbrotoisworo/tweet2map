@@ -2,9 +2,9 @@ import os
 # from src.LocationManagement import LocationDatabaseSQL
 
 def add_new_location(user_input_choice, location, location_dict, sql_object):
-    
+    """Function to handle menu choices"""
+
     tweet_location = location
-    bool_location_added = True
 
     if user_input_choice == '1':
         print('Enter decimal degrees coordinates in this format: LATITUDE,LONGITUDE')
@@ -48,7 +48,6 @@ def add_new_location(user_input_choice, location, location_dict, sql_object):
         return ('REVISED', revised_location)
 
     elif user_input_choice == '4':
-        # TESTING
         tweet_latitude = ''
         tweet_longitude = ''
         user_input_coords = tweet_latitude + ',' + tweet_longitude

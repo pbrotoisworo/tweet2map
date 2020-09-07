@@ -2,5 +2,5 @@
 *.log
 .vscode/
 *__pycache__
-data/
 *.pkl
+data/data.sql

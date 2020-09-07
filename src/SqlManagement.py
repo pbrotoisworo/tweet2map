@@ -48,6 +48,8 @@ class Tweet2MapDatabaseSQL:
         # Get original tweets from existing database
         df = pd.read_sql_query(f'SELECT * FROM {self.SQL_TABLE} ORDER BY date(Date) DESC LIMIT {count}', self.conn)
         id_list = list(df['Source'])
+        # Remove URL and extract just the ID
+        id_list = [str(x.replace('https://twitter.com/mmda/status/', '')) for x in id_list]
         
         return id_list
 
