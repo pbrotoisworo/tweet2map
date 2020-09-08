@@ -44,6 +44,7 @@ def cache_processing(cache_path, recent_processed_ids, tweets):
 
         if not added_cache_counter:
             print('No new tweets detected')
+            print(f'Current cache size: {len(cached_tweets)}')
             return
         
         cache_size = len(cached_tweets)

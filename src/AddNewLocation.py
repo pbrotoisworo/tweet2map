@@ -6,7 +6,13 @@ def add_new_location(user_input_choice, location, location_dict, sql_object):
 
     tweet_location = location
 
-    if user_input_choice == '1':
+    if (user_input_choice == '1') or (user_input_choice == '2'):
+
+        if user_input_choice == '1':
+            bool_high_accuracy = '1'
+        if user_input_choice == '2':
+            bool_high_accuracy = '0'
+
         print('Enter decimal degrees coordinates in this format: LATITUDE,LONGITUDE')
         user_input_coords = input('Enter coordinates:')
         user_input_coords = user_input_coords.replace(' ', '')
@@ -20,7 +26,7 @@ def add_new_location(user_input_choice, location, location_dict, sql_object):
 
         if user_confirm_add == 'Y':
             location_dict[tweet_location] = f'{tweet_latitude},{tweet_longitude}'
-            return (tweet_location, f'{tweet_latitude},{tweet_longitude}', location_dict)
+            return (tweet_location, f'{tweet_latitude},{tweet_longitude}', location_dict, bool_high_accuracy)
 
         elif user_confirm_add == 'N':
             return 'BREAK'
@@ -28,7 +34,7 @@ def add_new_location(user_input_choice, location, location_dict, sql_object):
         elif user_confirm_add == 'BREAK':
             return 'BREAK'
 
-    elif user_input_choice == '2':
+    elif user_input_choice == '3':
         user_search = input('Search database for existing location: ').upper()
         if user_search == 'BREAK':
             return 'BREAK'
@@ -43,13 +49,13 @@ def add_new_location(user_input_choice, location, location_dict, sql_object):
             search_results = (search_results[0], search_results[1], location_dict)
             return search_results
 
-    elif user_input_choice == '3':
+    elif user_input_choice == '4':
         revised_location = input('Input revised name: ').upper()
         return ('REVISED', revised_location)
 
-    elif user_input_choice == '4':
-        tweet_latitude = ''
-        tweet_longitude = ''
+    elif user_input_choice == '5':
+        tweet_latitude = '0'
+        tweet_longitude = '0'
         user_input_coords = tweet_latitude + ',' + tweet_longitude
         location_dict[tweet_location] = user_input_coords
         return (tweet_location, user_input_coords, location_dict)

@@ -92,6 +92,7 @@ class Tweet2MapDatabaseSQL:
         tweet_location = row[1]['Location']
         tweet_latitude = row[1]['Latitude']
         tweet_longitude = row[1]['Longitude']
+        tweet_high_accuracy = row[1]['High_Accuracy']
         tweet_direction = row[1]['Direction']
         tweet_type = row[1]['Type']
         tweet_lanes = row[1]['Lanes_Blocked']
@@ -100,7 +101,8 @@ class Tweet2MapDatabaseSQL:
         tweet_id = row[1]['Source']
 
         sql_cmd_vals = (tweet_date, tweet_time, tweet_city, tweet_location, tweet_latitude, tweet_longitude,
-                        tweet_direction, tweet_type, tweet_lanes, tweet_involved, tweet_text, tweet_id)
+                        tweet_high_accuracy, tweet_direction, tweet_type, tweet_lanes, tweet_involved,
+                        tweet_text, tweet_id)
 
         # sql_cmd_vals = (row_dict['Date'], row_dict['Time'], row_dict['City'], row_dict['Location'],
         #                 row_dict['Latitude'], row_dict['Longitude'], row_dict['Direction'],
@@ -115,3 +117,73 @@ class Tweet2MapDatabaseSQL:
         self.conn.commit()
 
         return
+
+
+class LocationDatabaseSQL:
+    """Object based management of location database"""
+
+    SQL_TABLE = 'LOCATIONS'
+
+    def __init__(self, sql_database_file=None, verbose=False):
+
+        # If empty, create default database
+        if not os.path.exists(sql_database_file):
+            default_new_database = r'data\locations.sql'
+            if verbose:
+                print(f'WARNING: SQL database not detected. Creating new database: {default_new_database}')
+            self.sql_database_file = sql_database_file = default_new_database
+            conn = sqlite3.connect(self.sql_database_file)
+            cols = ['Location', 'Coordinates']
+            df = pd.DataFrame(columns=cols)
+            df.to_sql(name=self.SQL_TABLE, con=conn)
+            conn.close()
+
+        self.sql_database_file = sql_database_file
+        self.conn = sqlite3.connect(self.sql_database_file)
+        self.c = self.conn.cursor()
+        self.num_columns = self.conn.execute(
+            'SELECT * FROM {} LIMIT 1'.format(self.SQL_TABLE))
+        self.num_columns = len([col[0] for col in self.num_columns.description])
+        self.columns = self.conn.execute('SELECT * FROM {} LIMIT 1'.format(self.SQL_TABLE))
+        self.columns = [col[0] for col in self.columns.description]
+        self.row_count = len(pd.read_sql_query(f'SELECT * FROM {self.SQL_TABLE}', self.conn))
+
+    def search_matching_location(self, location):
+        """Search location and prints a list of results. Returns select location and coordinate in a tuple."""
+
+        # Read database
+        df = pd.read_sql_query(f'SELECT * FROM LOCATIONS WHERE Location LIKE "%{location}%"', self.conn)
+        
+        # Display information
+        for item in df.iterrows():
+            print(item[0], item[1]['Location'], item[1]['Coordinates'])
+
+        # Get user input to select location
+        user_selection = input('Select location by index:')
+        if user_selection == 'BREAK':
+            return 'BREAK'
+        # location = df.iloc[user_selection]['Location']
+        coords = df.iloc[int(user_selection)]['Coordinates']
+
+        return (location, coords)
+
+    def get_location_dictionary(self):
+        """Get dictionary object where key is location and value is coordinate"""
+        df = pd.read_sql_query(f'SELECT * FROM LOCATIONS', self.conn)
+        location_dict = dict(zip(df['Location'], df['Coordinates']))
+        location_accuracy_dict = dict(zip(df['Location'], df['High_Accuracy']))
+        return location_dict, location_accuracy_dict
+
+    def insert(self, location, coordinates, high_accuracy):
+        """INSERT SQL command.
+        Input sql_cmd_values is tuple containing all variables from Tweet2Map.
+        It must be in the same order as the columns of the database."""
+
+        sql_cmd_vals = (location, coordinates, high_accuracy)
+
+        sql_placeholder = '?, ' * self.num_columns
+        sql_placeholder = sql_placeholder.rstrip(', ')
+        sql_cmd = "INSERT INTO {} VALUES ({})".format(self.SQL_TABLE, sql_placeholder)
+
+        self.c.execute(sql_cmd, sql_cmd_vals)
+        self.conn.commit()

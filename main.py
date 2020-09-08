@@ -8,8 +8,7 @@ import pandas as pd
 import pickle
 import os
 
-from src.SqlManagement import Tweet2MapDatabaseSQL
-from src.LocationManagement import LocationDatabaseSQL
+from src.SqlManagement import Tweet2MapDatabaseSQL, LocationDatabaseSQL
 from src.CheckConfig import check_for_valid_config
 from src.ArgparseProcessing import argparse_config
 from src.ConnectTwitter import connect_to_twitter
@@ -20,13 +19,19 @@ from src.AddNewLocation import add_new_location
 from src.SpatialJoin import spatial_join
 from src.CacheProcessing import cache_processing
 
+#TODO: Instead of disregarding invalid data assign a coordinate that will be labelled as high_accuracy=0
+#      to prevent throwing away data.
+#      - Add new column in SQL data "high_accuracy" (DONE)
+#      - Fix location data to replace invalid data with 0,0
+#      - Convert table to PostgreSQL
+
 
 if __name__ == '__main__':
 
     # Define work directory
     workspace = sys.argv[0]
 
-    CONFIG_PATH = 'testconfig.ini'
+    CONFIG_PATH = 'config.ini'
     CACHE_PATH = 'tweet_cache.pkl'
 
     # Check for valid config file and load
@@ -36,7 +41,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Tweet2Map 1.0')
     cli_args = parser.add_argument_group('Arguments')
     # cli_args.add_argument('-v', help='Verbose mode', action='store_true')
-    cli_args.add_argument('-d', help='Download tweets only and cache them for later processing', action='store_true')
+    cli_args.add_argument('-p', help='Process tweets', action='store_true')
     cli_args.add_argument('-consumer_key', help='Twitter API consumer key')
     cli_args.add_argument('-consumer_secret', help='Twitter API consumer secret')
     cli_args.add_argument('-access_token', help='Twitter API access token')
@@ -57,7 +62,7 @@ if __name__ == '__main__':
     shp_path = argparse_config(arg=args['shp_path'], section='software', arg_type='shp_path', config_path=CONFIG_PATH)
     inc_database_path = argparse_config(arg=args['inc_database_path'], section='software', arg_type='database_path', config_path=CONFIG_PATH)
     loc_database_path = argparse_config(arg=args['loc_database_path'], section='software', arg_type='locations_path', config_path=CONFIG_PATH)
-    download_only = args['d']
+    process_tweets = args['p']
 
     # Connect to Tweepy
     api = connect_to_twitter(consumer_key=tweepy_params['consumer_key'],
@@ -66,12 +71,9 @@ if __name__ == '__main__':
                              access_secret=tweepy_params['access_secret'])
 
     # Load Tweets
-    incoming_tweets = []
+    # incoming_tweets = []
     tweets = load_tweets(api=api, screen_name='mmda', count=200)
-    for tweet in reversed(tweets):
-        if 'MMDA ALERT' in tweet.full_text:
-            incoming_tweets.append(tweet)
-    num_init_incoming_tweets = len(incoming_tweets)
+    incoming_tweets = [tweet for tweet in reversed(tweets) if 'MMDA ALERT' in tweet.full_text]
 
     # Load SQL Database
     database_sql = Tweet2MapDatabaseSQL(sql_database_file=inc_database_path)
@@ -103,24 +105,21 @@ if __name__ == '__main__':
     for idx, tweet in enumerate(tweets_for_processing):
         if tweet.id_str in recent_tweet_ids:
             del tweets_for_processing[idx]
+    # print(f'Downloaded {len(tweets_for_processing)} tweets')
 
-    print(f'Downloaded {len(tweets_for_processing)} tweets')
-
-    if download_only:
+    if not process_tweets:
         # Download only and store to cache for later processing then exit
         cache_processing(cache_path=CACHE_PATH,
                          recent_processed_ids=recent_tweet_ids,
                          tweets=tweets_for_processing)
         sys.exit()
     
-
-        
     # Load last n tweets to check for duplicates
     latest_tweet_ids = database_sql.get_newest_tweet_ids(count=200)
 
     # Load Locations
     location_sql = LocationDatabaseSQL(sql_database_file=loc_database_path)
-    location_dict = location_sql.get_location_dictionary()
+    location_dict, location_accuracy_dict = location_sql.get_location_dictionary()
 
     # Process tweets
     process_counter = 0
@@ -171,6 +170,8 @@ if __name__ == '__main__':
                 tweet_list[idx]['Latitude'] = tweet_latitude
                 tweet_longitude = location_dict[location].split(',')[1]
                 tweet_list[idx]['Longitude'] = tweet_longitude
+                tweet_location_accuracy = location_accuracy_dict[location]
+                tweet_list[idx]['High_Accuracy'] = tweet_location_accuracy
 
                 # Only count the valid data
                 if (tweet_latitude and tweet_longitude) and (tweet_latitude != 'None' and tweet_longitude != 'None'):
@@ -184,6 +185,7 @@ if __name__ == '__main__':
                     print('Location:', location)
                     print('Latitude:', tweet_latitude)
                     print('Longitude:', tweet_longitude)
+                    print('High Accuracy:', (lambda x : True if x == '1' else False)(str(tweet_location_accuracy)))
                     print('Direction:', item['Direction'])
                     print('Incident Type:', item['Type'])
                     print('Participants:', item['Involved'])
@@ -197,10 +199,11 @@ if __name__ == '__main__':
                 print('---------------------------------------------------------------')
                 print(f'\nNew location detected! "{location}" is not recognized.')
                 print(f'\nChoose an option from the list:')
-                print('1 - Add new location and new coordinates')
-                print(f'2 - Add new location based on existing coordinates')
-                print(f'3 - Fix location name')
-                print(f'4 - Set location as invalid\n')
+                print('1 - Add new location and new coordinates (HIGH ACCURACY)')
+                print('2 - Add new location and new coordinates (LOW ACCURACY)')
+                print(f'3 - Add new location based on existing coordinates')
+                print(f'4 - Fix location name')
+                print(f'5 - Set location coordinates as invalid (0,0)\n')
 
                 user_input_choice = str(input('Enter number to proceed:'))
 
@@ -217,19 +220,21 @@ if __name__ == '__main__':
                     
                 results_location = results[0]
                 results_coords = results[1]
-                location_dict = results[2]
                 tweet_latitude = results[1].split(',')[0]
                 tweet_longitude = results[1].split(',')[1]
+                location_dict = results[2]
+                bool_high_accuracy = results[3]
 
                 print(f'Data to be added:')
                 print(f'Location: {location}')
+                print(f'High Accuracy: {bool_high_accuracy}')
                 print(f'Latitude: {tweet_latitude}')
                 print(f'Longitude: {tweet_longitude}')
                 user_confirm_add = input('Confirm information is correct? (Y/N) ').upper()
 
                 if user_confirm_add == 'Y':
                     location_dict[location] = f'{tweet_latitude},{tweet_longitude}'
-                    location_sql.insert(location=location, coordinates=results_coords)
+                    location_sql.insert(location=location, coordinates=results_coords, high_accuracy=bool_high_accuracy)
                     print('Added new location to location database')
                     break
                 elif user_confirm_add == 'N':
