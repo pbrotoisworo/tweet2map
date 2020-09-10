@@ -56,6 +56,7 @@ def add_new_location(user_input_choice, location, location_dict, sql_object):
     elif user_input_choice == '5':
         tweet_latitude = '0'
         tweet_longitude = '0'
+        bool_high_accuracy = '0'
         user_input_coords = tweet_latitude + ',' + tweet_longitude
         location_dict[tweet_location] = user_input_coords
-        return (tweet_location, user_input_coords, location_dict)
+        return (tweet_location, user_input_coords, location_dict, bool_high_accuracy)

@@ -9,7 +9,6 @@ MMDA Tweet2Map is a python script that mines MMDA Tweets ([@mmda](https://twitte
 I'm open to suggestions and comments! This is my first major coding project since I started self-learning Python.
 
 # **Upcoming:**
-- An entire rewrite of the code. This was my first Python project and it grew as I learned more Python. Right now it's a bit of a mess. I want to rewrite it to a Tweet2Map streaming version: a version where the script will continuously run and check the MMDA page twice a day. The main Tweet2Map script will have a section to accomodate this streaming information. This is the main goal of this script.
 - Spellchecker using the Peter Norvig algorithm to fix typos and wrong spelling of locations and other information
 - Permutations to try different combinations of locations
   - Eg, if the script cannot find EDSA ORTIGAS MRT, it will try EDSA MRT ORTIGAS, and so on
@@ -26,9 +25,7 @@ I'm open to suggestions and comments! This is my first major coding project sinc
 3. [Changelog](#changelog)
 
 ## Code Structure and Configuration <a name="structure"></a>
-The main script `Tweet2Map.py` runs in **Python 3.6**. Additional functions, classes, configuration, and ArcPy code is stored in the modules folder. The script can combine separate Python interpreters by executing them through the `run_program.bat` file.
-
-You can configure settings for the script such as Tweepy API tokens and database locations. This can be done in the `config.ini` file.
+The main script `Tweet2Map.py` was built in **Python 3.8**. You can configure settings for the script such as Tweepy API tokens and database locations. This can be done in the `config.ini` file or you can input it using the CLI tool.
 In the Tweepy section, input your Twitter API codes which the script will use to connect to the Twitter API.
 
 ## Usage <a name="Usage"></a>

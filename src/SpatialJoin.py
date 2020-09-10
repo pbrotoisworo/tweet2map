@@ -22,7 +22,7 @@ def spatial_join(df_input, shapefile):
     df = gpd.sjoin(df, shapefile, how='left', op='within')
     df.drop(['index_right', 'geometry'], axis=1, inplace=True)
     df.rename(columns={'NAME_2': 'City'}, inplace=True)
-    df = df[['Date', 'Time', 'City', 'Location', 'Latitude', 'Longitude', 'Direction',
+    df = df[['Date', 'Time', 'City', 'Location', 'High_Accuracy', 'Latitude', 'Longitude', 'Direction',
              'Type', 'Lanes_Blocked', 'Involved', 'Tweet', 'Source']]
 
     return df

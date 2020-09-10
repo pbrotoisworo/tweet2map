@@ -16,12 +16,15 @@ class Tweet2MapDatabaseSQL:
 
         # If empty, create default database
         if not os.path.exists(sql_database_file):
-            default_new_database = r'data\data.sql'
+            default_new_database = r'data\data.sqlite'
+            if not os.path.exists('data'):
+                # Make folder if not existing
+                os.mkdir('data')
             if verbose:
                 print(f'WARNING: SQL database not detected. Creating new database: {default_new_database}')
             self.sql_database_file = sql_database_file = default_new_database
             conn = sqlite3.connect(self.sql_database_file)
-            cols = ['Date', 'Time', 'City', 'Location', 'Latitude' ,'Longitude', 'Direction',
+            cols = ['Date', 'Time', 'City', 'Location', 'Latitude' ,'Longitude', 'High_Accuracy', 'Direction',
                     'Type', 'Lanes_Blocked', 'Involved', 'Tweet', 'Source']
             df = pd.DataFrame(columns=cols)
             df.to_sql(name=self.SQL_TABLE, con=conn)
@@ -53,7 +56,6 @@ class Tweet2MapDatabaseSQL:
         
         return id_list
 
-
     def close_connection(self):
         """Close SQL database connection"""
         self.c.close()
@@ -80,6 +82,11 @@ class Tweet2MapDatabaseSQL:
         df_gpd = df_gpd[['Date', 'Time', 'City', 'Location', 'Latitude', 'Longitude', 'Direction',
                          'Type', 'Lanes_Blocked', 'Involved', 'Tweet', 'Source']]
         return df_gpd
+
+    def convert_database_to_csv(self, csv_out_path):
+        """Convert entire SQL incidents database to a CSV file"""
+        df = pd.read_sql_query(f'SELECT * FROM {self.SQL_TABLE}', self.conn)
+        df.to_csv(csv_out_path, index=False)
 
     def insert(self, row):
         """INSERT SQL command.
@@ -129,11 +136,14 @@ class LocationDatabaseSQL:
         # If empty, create default database
         if not os.path.exists(sql_database_file):
             default_new_database = r'data\locations.sql'
+            if not os.path.exists('data'):
+                # Make folder if not existing
+                os.mkdir('data')
             if verbose:
                 print(f'WARNING: SQL database not detected. Creating new database: {default_new_database}')
             self.sql_database_file = sql_database_file = default_new_database
             conn = sqlite3.connect(self.sql_database_file)
-            cols = ['Location', 'Coordinates']
+            cols = ['Location', 'Coordinates', 'High_Accuracy']
             df = pd.DataFrame(columns=cols)
             df.to_sql(name=self.SQL_TABLE, con=conn)
             conn.close()

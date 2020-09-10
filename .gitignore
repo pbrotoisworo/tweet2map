@@ -7,3 +7,4 @@ data/data.sqlite
 *.ipynb
 *.pyc
 *.bak
+*.csv

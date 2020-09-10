@@ -19,12 +19,6 @@ from src.AddNewLocation import add_new_location
 from src.SpatialJoin import spatial_join
 from src.CacheProcessing import cache_processing
 
-#TODO: Instead of disregarding invalid data assign a coordinate that will be labelled as high_accuracy=0
-#      to prevent throwing away data.
-#      - Add new column in SQL data "high_accuracy" (DONE)
-#      - Fix location data to replace invalid data with 0,0
-#      - Convert table to PostgreSQL
-
 
 if __name__ == '__main__':
 
@@ -42,6 +36,7 @@ if __name__ == '__main__':
     cli_args = parser.add_argument_group('Arguments')
     # cli_args.add_argument('-v', help='Verbose mode', action='store_true')
     cli_args.add_argument('-p', help='Process tweets', action='store_true')
+    cli_args.add_argument('-csv_out_path', help='CSV output path for SQL database conversion')
     cli_args.add_argument('-consumer_key', help='Twitter API consumer key')
     cli_args.add_argument('-consumer_secret', help='Twitter API consumer secret')
     cli_args.add_argument('-access_token', help='Twitter API access token')
@@ -79,6 +74,14 @@ if __name__ == '__main__':
     database_sql = Tweet2MapDatabaseSQL(sql_database_file=inc_database_path)
     recent_tweet_ids = database_sql.get_newest_tweet_ids(count=200)
 
+    # Write to CSV if arg
+    if args['csv_out_path']:
+        csv_out_path = args['csv_out_path']
+        file_extension = os.path.basename(csv_out_path)
+        assert csv_out_path.endswith('.csv'), f'Invalid file extension in "{file_extension}". Must end in ".csv"'
+        print('Writing CSV file:', csv_out_path)
+        database_sql.convert_database_to_csv(csv_out_path)
+
     # Load cache for duplicate checking
     tweets_for_processing = []
     if os.path.exists(CACHE_PATH):
@@ -105,7 +108,6 @@ if __name__ == '__main__':
     for idx, tweet in enumerate(tweets_for_processing):
         if tweet.id_str in recent_tweet_ids:
             del tweets_for_processing[idx]
-    # print(f'Downloaded {len(tweets_for_processing)} tweets')
 
     if not process_tweets:
         # Download only and store to cache for later processing then exit
@@ -163,9 +165,9 @@ if __name__ == '__main__':
                     # User reset due to revised name
                     location = location_revised
                     bool_user_reset = False
-                    
                 else:
                     location = item['Location']
+
                 tweet_latitude = location_dict[location].split(',')[0]
                 tweet_list[idx]['Latitude'] = tweet_latitude
                 tweet_longitude = location_dict[location].split(',')[1]
@@ -174,24 +176,25 @@ if __name__ == '__main__':
                 tweet_list[idx]['High_Accuracy'] = tweet_location_accuracy
 
                 # Only count the valid data
-                if (tweet_latitude and tweet_longitude) and (tweet_latitude != 'None' and tweet_longitude != 'None'):
-                    process_counter += 1
+                # if (tweet_latitude and tweet_longitude) and (tweet_latitude != 'None' and tweet_longitude != 'None'):
 
-                    print('---------------------------------------------------------------')
-                    print('Tweet:', item['Tweet'])
-                    print('Date:', item['Date'])
-                    print('Time:', item['Time'])
-                    print('URL:', item['Source'])
-                    print('Location:', location)
-                    print('Latitude:', tweet_latitude)
-                    print('Longitude:', tweet_longitude)
-                    print('High Accuracy:', (lambda x : True if x == '1' else False)(str(tweet_location_accuracy)))
-                    print('Direction:', item['Direction'])
-                    print('Incident Type:', item['Type'])
-                    print('Participants:', item['Involved'])
-                    print('Lanes Involved:', item['Lanes_Blocked'])
-                else:
-                    print(f'Skipping invalid location: {location}')
+                print('---------------------------------------------------------------')
+                print('Tweet:', item['Tweet'])
+                print('Date:', item['Date'])
+                print('Time:', item['Time'])
+                print('URL:', item['Source'])
+                print('Location:', location)
+                print('Latitude:', tweet_latitude)
+                print('Longitude:', tweet_longitude)
+                print('High Accuracy:', tweet_list[idx]['High_Accuracy'])
+                print('Direction:', item['Direction'])
+                print('Incident Type:', item['Type'])
+                print('Participants:', item['Involved'])
+                print('Lanes Involved:', item['Lanes_Blocked'])
+                process_counter += 1
+
+                # else:
+                #     print(f'Skipping invalid location: {location}')
                 
                 break
 
@@ -245,14 +248,16 @@ if __name__ == '__main__':
 
     # Spatial Join
     df = pd.DataFrame(tweet_list)
-    df.replace(to_replace='None', value=np.nan, inplace=True)
-    df.replace(to_replace='', value=np.nan, inplace=True)
-    df.dropna(subset=['Latitude', 'Longitude'], inplace=True)
+    # df.replace(to_replace='None', value=np.nan, inplace=True)
+    # df.replace(to_replace='', value=np.nan, inplace=True)
+    # df.dropna(subset=['Latitude', 'Longitude'], inplace=True)
     df['Longitude'] = df['Longitude'].astype('float64')
     df['Latitude'] = df['Latitude'].astype('float64')
     df = spatial_join(df_input=df, shapefile=shp_path)
 
     print(f'\n{process_counter} new tweets added to database')
+
+    # print(list(df.iterrows()))
 
     # Update incident database
     for row in df.iterrows():
