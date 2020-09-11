@@ -16,7 +16,7 @@ class Tweet2MapDatabaseSQL:
 
         # If empty, create default database
         if not os.path.exists(sql_database_file):
-            default_new_database = r'data\data.sqlite'
+            default_new_database = os.path.join('data', 'data.sqlite')
             if not os.path.exists('data'):
                 # Make folder if not existing
                 os.mkdir('data')
@@ -135,7 +135,7 @@ class LocationDatabaseSQL:
 
         # If empty, create default database
         if not os.path.exists(sql_database_file):
-            default_new_database = r'data\locations.sql'
+            default_new_database = os.path.join('data', 'locations.sqlite')
             if not os.path.exists('data'):
                 # Make folder if not existing
                 os.mkdir('data')
@@ -174,8 +174,9 @@ class LocationDatabaseSQL:
             return 'BREAK'
         # location = df.iloc[user_selection]['Location']
         coords = df.iloc[int(user_selection)]['Coordinates']
+        bool_high_accuracy = df.iloc[int(user_selection)]['High_Accuracy']
 
-        return (location, coords)
+        return (location, coords, bool_high_accuracy)
 
     def get_location_dictionary(self):
         """Get dictionary object where key is location and value is coordinate"""

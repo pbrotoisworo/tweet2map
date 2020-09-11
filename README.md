@@ -1,14 +1,12 @@
-# MMDA Tweet2Map
+# Tweet2Map
 
 **Author:** Panji Brotoisworo
 
 **Contact: [panji.p.broto@gmail.com](mailto:panji.p.broto@gmail.com)**
 
-MMDA Tweet2Map is a python script that mines MMDA Tweets ([@mmda](https://twitter.com/MMDA)) into a usable database for traffic accident research in Metro Manila. Please take note that you need your own unique Twitter API code in order to use this script. This script uses the **Tweepy library** in order to connect with the Twitter API, **Geopandas** and **Shapely** for the Spatial Join, and uses **RegEx** for text parsing. For more information regarding this script please visit the project page on my [blog](https://panjib.wixsite.com/blog/mmdatweet2map).
+Tweet2Map is a python script that mines Metro Manila Development Authority (MMDA) Tweets ([@mmda](https://twitter.com/MMDA)) into a usable database for traffic accident research in Metro Manila. Please take note that you need your own unique Twitter API code in order to use this script. This script uses the **Tweepy library** in order to connect with the Twitter API, **Geopandas** and **Shapely** for the Spatial Join, and uses **RegEx** for text parsing. For more information regarding this script please visit the project page on my [blog](https://panjib.wixsite.com/blog/mmdatweet2map). This project is in no way affiliated with the MMDA and is a personal project.
 
-I'm open to suggestions and comments! This is my first major coding project since I started self-learning Python.
-
-# **Upcoming:**
+# Upcoming
 - Spellchecker using the Peter Norvig algorithm to fix typos and wrong spelling of locations and other information
 - Permutations to try different combinations of locations
   - Eg, if the script cannot find EDSA ORTIGAS MRT, it will try EDSA MRT ORTIGAS, and so on
@@ -19,48 +17,61 @@ I'm open to suggestions and comments! This is my first major coding project sinc
 - Natural Language Processing to replace RegEx (maybe)
   - Focus primarily on named entity recognition to extract data
 
-# Table of Contents
-1. [Code Structure and Configuration](#structure)
-2. [Usage](#Usage)
-3. [Changelog](#changelog)
+# Getting Started
 
-## Code Structure and Configuration <a name="structure"></a>
-The main script `Tweet2Map.py` was built in **Python 3.8**. You can configure settings for the script such as Tweepy API tokens and database locations. This can be done in the `config.ini` file or you can input it using the CLI tool.
-In the Tweepy section, input your Twitter API codes which the script will use to connect to the Twitter API.
+## Create Your Virtual Environment
+It is recommended that you install a Python 3.8 virtual environment. Though I think a 3.6 environment may still work. Once the environment is installed, install the relevant packages by installing these libraries:
 
-## Usage <a name="Usage"></a>
-Use the `run_program.bat` file to run the full code. You can execute the code using different Python interepreters by typing in the full link of the python.exe file. Afterwards, you put in the full link of the .py file you want to run. Use the following example below which is the placeholder information currently in the .bat file:
-```
-@echo off
-call activate tweet2map
-python "C:\Users\Panji\Documents\Python Scripts\MMDA Tweet2Map\Tweet2Map.py"
+`tweepy pandas geopandas`
 
-```
-In this case, I'm activating the tweet2map virtual environment, type **python** to open the python interpreter in the virtual environment, then I put in the Tweet2Map path.
+Run the `main.py` file to initialize and create the config file.
 
-Now let's get to running the script and adding new locations. Here is my workflow for running the script and adding new locations.
+## Input Twitter Tokens
+Create a Twitter developer account and get your own Twitter API tokens [here](https://developer.twitter.com/en). Afterwards, you have 2 options of entering your API tokens into the Tweet2Map software. You can manually input the tokens into the `config.ini` file or you can input them via the CLI using these arguments:
 
-![1](https://i.imgur.com/R5p4TpA.png)
+- `-consumer_secret`
+- `-consumer_key`
+- `-access_token`
+- `-access_secret`
 
-When you run the code you will inevitably run into new locations that need to be added to the database. Choose option 1 or 2 by typing them into the input. In this case I chose option 2 just to check if I can use an existing location's coordinate information and paste it into this new location. There are a lot of different ways to refer to the same location so this is a way to save time.
+## Downloading Tweets to Cache
+Start downloading and caching tweets for later processing by running `main.py`. This is designed to be run on a schedule automatically so you can just set a schedule to run it automatically come back when you area ready to process the tweets and add them to the database.
 
-Take note that the search function only searches using exact string matches. So it is better to search for locations using one word. The code can accept upper-string or lower-string search entries since everything is converted to upper-case. In this case I chose to search using the term "lacson".
+## Process The Tweet Data
+Run the processing script by adding the `-p` argument as seen below:
 
-![2](https://i.imgur.com/QWxDoMb.png)
+`python main.py -p`
 
-Here are all the existing locations in the location database that feature the Lacson string. If there was a matching location, you can simply select by typing the index number. For example, if I wanted to use the latitude/longitude information of ESPANA LACSON for my new location then I type in **649**. Then I confirm in the next input by pressing Y.
+This will download the latest tweets and also load all the cached tweets. It will perform duplicate checks according to the tweet ID and will look in the newly downloaded tweets, cached tweets, and processed tweets in the incident database.
 
-In this case, there are no matching locations. So I type "RESET" without the quotes in order to bring me back to the option page. Then I choose 1. At this point, use your favorite location software to find this new location. I like to use Google maps to look up coordinate information on the internet. I type in Lacson Loyola which gives me the details below.
+## Adding New Locations
+You will inevitably run into new locations that are not in the database and you will encounter this prompt:
 
-![3](https://i.imgur.com/kpYNZRH.png)
+![New location](/doc/1_new_location.png)
 
-That looks about right. So I get the coordinate information by right clicking and clicking "What's here?" in order to give me the coordinate information. I click on the latitude/longitude information that pops up in the bottom of the screen. Then a text version that is easy to copy and paste will pop up on the left. I like to copy and paste that into the Command Prompt window instead of manually typing in the latitude and longitude.
+You can check the database for an existing location. Often times there are many different names for the same location. In this case, there were no good matches so we go back to prompt by typing in "BREAK".
 
-![4](https://i.imgur.com/TNnQwuP.png)
+![New location](/doc/2_new_location.png)
 
-Just confirm with Y and the script will continue processing the other tweets.
+So you can search for the location on Google Maps. In this case, "EDSA PINATUBO" resulted in a very precise location which we can add to the database.
 
-## Changelog <a name="changelog"></a>
+![Searching on Google Maps](/doc/3_google_maps.png)
+
+We get the location by right clicking the location and clicking "What's here?". This will reveal the coordinates which can be copy and pasted into the terminal.
+
+![Extracting coords](/doc/4_google_maps.png)
+
+We paste it into the prompt. Then type "Y" to confirm.
+
+![Adding coords](/doc/5_adding_coords.png)
+
+# Changelog
+
+1.00 (TBD)
+- Complete code rewrite for usability and readability
+- Created automated script that will download and cache tweets for later processing
+- Replaced CSV databases with SQLITE3 databases
+- Added `High_Accuracy` column that is attached to the location to be able to filter accurate and inaccurate locations
 
 0.95 (July 28, 2019)
 - Replaced ArcMap spatial join workflow with a workflow that uses FOSS tools, Geopandas and Shapely

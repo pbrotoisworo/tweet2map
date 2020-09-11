@@ -23,13 +23,13 @@ from src.CacheProcessing import cache_processing
 if __name__ == '__main__':
 
     # Define work directory
-    workspace = sys.argv[0]
+    workspace = os.path.dirname(sys.argv[0])
 
-    CONFIG_PATH = 'config.ini'
-    CACHE_PATH = 'tweet_cache.pkl'
+    CONFIG_PATH = os.path.join(workspace, 'config.ini')
+    CACHE_PATH = os.path.join(workspace, 'tweet_cache.pkl')
 
     # Check for valid config file and load
-    config = check_for_valid_config(CONFIG_PATH)
+    config = check_for_valid_config(CONFIG_PATH, workspace=workspace)
 
     # Define CLI inputs
     parser = argparse.ArgumentParser(description='Tweet2Map 1.0')
@@ -66,13 +66,12 @@ if __name__ == '__main__':
                              access_secret=tweepy_params['access_secret'])
 
     # Load Tweets
-    # incoming_tweets = []
     tweets = load_tweets(api=api, screen_name='mmda', count=200)
     incoming_tweets = [tweet for tweet in reversed(tweets) if 'MMDA ALERT' in tweet.full_text]
 
     # Load SQL Database
     database_sql = Tweet2MapDatabaseSQL(sql_database_file=inc_database_path)
-    recent_tweet_ids = database_sql.get_newest_tweet_ids(count=200)
+    recent_tweet_ids = database_sql.get_newest_tweet_ids(count=500)
 
     # Write to CSV if arg
     if args['csv_out_path']:
@@ -159,12 +158,15 @@ if __name__ == '__main__':
         # while loop handling
         bool_location_added = False
         bool_user_reset = False
+        bool_location_confirmed = False
         while not bool_location_added:
             try:
                 if bool_user_reset:
                     # User reset due to revised name
                     location = location_revised
                     bool_user_reset = False
+                elif bool_location_confirmed:
+                    location = results_location
                 else:
                     location = item['Location']
 
@@ -174,9 +176,6 @@ if __name__ == '__main__':
                 tweet_list[idx]['Longitude'] = tweet_longitude
                 tweet_location_accuracy = location_accuracy_dict[location]
                 tweet_list[idx]['High_Accuracy'] = tweet_location_accuracy
-
-                # Only count the valid data
-                # if (tweet_latitude and tweet_longitude) and (tweet_latitude != 'None' and tweet_longitude != 'None'):
 
                 print('---------------------------------------------------------------')
                 print('Tweet:', item['Tweet'])
@@ -191,11 +190,7 @@ if __name__ == '__main__':
                 print('Incident Type:', item['Type'])
                 print('Participants:', item['Involved'])
                 print('Lanes Involved:', item['Lanes_Blocked'])
-                process_counter += 1
-
-                # else:
-                #     print(f'Skipping invalid location: {location}')
-                
+                process_counter += 1          
                 break
 
             except KeyError:
@@ -211,9 +206,18 @@ if __name__ == '__main__':
                 user_input_choice = str(input('Enter number to proceed:'))
 
                 results = add_new_location(user_input_choice=user_input_choice,
-                                        location=location,
-                                        location_dict=location_dict,
-                                        sql_object=location_sql)
+                                           location=location,
+                                           location_dict=location_dict,
+                                           location_accuracy_dict=location_accuracy_dict,
+                                           sql_object=location_sql)
+
+                # results indexing
+                # results[0] is location
+                # results[1] is coordinates
+                # results[2] is location_dict
+                # reuslts[3] is location_accuracy_dict
+                # reuslts[4] is bool_high_accuracy
+
                 if results == 'BREAK':
                     continue
                 if results[0] == 'REVISED':
@@ -226,38 +230,18 @@ if __name__ == '__main__':
                 tweet_latitude = results[1].split(',')[0]
                 tweet_longitude = results[1].split(',')[1]
                 location_dict = results[2]
-                bool_high_accuracy = results[3]
-
-                print(f'Data to be added:')
-                print(f'Location: {location}')
-                print(f'High Accuracy: {bool_high_accuracy}')
-                print(f'Latitude: {tweet_latitude}')
-                print(f'Longitude: {tweet_longitude}')
-                user_confirm_add = input('Confirm information is correct? (Y/N) ').upper()
-
-                if user_confirm_add == 'Y':
-                    location_dict[location] = f'{tweet_latitude},{tweet_longitude}'
-                    location_sql.insert(location=location, coordinates=results_coords, high_accuracy=bool_high_accuracy)
-                    print('Added new location to location database')
-                    break
-                elif user_confirm_add == 'N':
-                    break
-                else:
-                    print(f'Invalid input: {user_confirm_add}')
-                    break
+                location_accuracy_dict = results[3]
+                bool_high_accuracy = results[4]
+                bool_location_confirmed = True
+                continue
 
     # Spatial Join
     df = pd.DataFrame(tweet_list)
-    # df.replace(to_replace='None', value=np.nan, inplace=True)
-    # df.replace(to_replace='', value=np.nan, inplace=True)
-    # df.dropna(subset=['Latitude', 'Longitude'], inplace=True)
     df['Longitude'] = df['Longitude'].astype('float64')
     df['Latitude'] = df['Latitude'].astype('float64')
     df = spatial_join(df_input=df, shapefile=shp_path)
 
     print(f'\n{process_counter} new tweets added to database')
-
-    # print(list(df.iterrows()))
 
     # Update incident database
     for row in df.iterrows():

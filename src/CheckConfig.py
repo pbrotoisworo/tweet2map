@@ -1,20 +1,36 @@
 from configparser import ConfigParser
 import os
+import sys
 
 
-def check_for_valid_config(config_path):
+def check_for_valid_config(config_path, workspace):
     """Checks for valid config file and if it contains required settings.
     If it doesn't exist, create one using default parameters."""
-
-    parser = ConfigParser()
-    parser.read(config_path)
     
     if not os.path.exists(config_path):
-        print('Config file not found. Creating config file.')
+        # Write empty file
+        with open(config_path, 'w') as f:
+            pass
+
+        parser = ConfigParser()
+        parser.read(config_path)
+
+        print('Config file not found. Creating default config file.')
         parser['tweepy'] = {'consumer_key': '', 'consumer_secret': '', 'access_token': '', 'access_secret': ''}
-        parser['software'] = {'database_path': r'data\data.sql', 'shp_path': r'shapefiles\boundary_ncr.shp'}
+        parser['software'] = {'database_path': os.path.join(workspace, 'data', 'data.sqlite'),
+                              'shp_path': os.path.join(workspace, 'shapefiles', 'boundary_ncr.shp'),
+                              'locations_path': os.path.join(workspace, 'data', 'locations.sqlite')}
         parser.write(open(config_path, 'w'))
+
+        print('WARNING! Default config file has empty Twitter tokens. Please input tokens when you run the software.')
+        sys.exit()
+
+        return parser
+
     else:
+        parser = ConfigParser()
+        parser.read(config_path)
+
         # Check software_config section
         software_config = dict(parser.items('software'))
         software_config_keys = software_config.keys()
