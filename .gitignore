@@ -1,0 +1,10 @@
+*.ini
+*.log
+.vscode/
+*__pycache__
+*.pkl
+# data/data.sqlite
+*.ipynb
+*.pyc
+*.bak
+*.csv
