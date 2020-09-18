@@ -8,11 +8,11 @@ def load_tweets(api, screen_name, count):
         tweets = api.user_timeline(screen_name='mmda', count=200, include_rts=False, tweet_mode='extended')
     except Exception as e:
         print(e)
-        print('Cannot load tweets.')
+        print('Cannot load tweets')
         sys.exit()
         
     if len(tweets) == 0:
-        print('No Tweets were downloaded. Check parameters?')
+        print('No Tweets were downloaded')
         sys.exit()
     else:
         return tweets

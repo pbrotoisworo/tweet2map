@@ -151,7 +151,7 @@ if __name__ == '__main__':
                 tweet_dict['Lanes_Blocked'] = twt.lanes_blocked
                 tweet_list.append(tweet_dict)
 
-    # Add unknown locations
+    # Add locations
     for idx, item in enumerate(tweet_list):
 
         # While loop will keep repeating until a valid choice is made with the unknown location
@@ -170,6 +170,7 @@ if __name__ == '__main__':
                 else:
                     location = item['Location']
 
+                tweet_text = item['Tweet']
                 tweet_latitude = location_dict[location].split(',')[0]
                 tweet_list[idx]['Latitude'] = tweet_latitude
                 tweet_longitude = location_dict[location].split(',')[1]
@@ -178,7 +179,7 @@ if __name__ == '__main__':
                 tweet_list[idx]['High_Accuracy'] = tweet_location_accuracy
 
                 print('---------------------------------------------------------------')
-                print('Tweet:', item['Tweet'])
+                print('Tweet:', tweet_text)
                 print('Date:', item['Date'])
                 print('Time:', item['Time'])
                 print('URL:', item['Source'])
@@ -190,12 +191,14 @@ if __name__ == '__main__':
                 print('Incident Type:', item['Type'])
                 print('Participants:', item['Involved'])
                 print('Lanes Involved:', item['Lanes_Blocked'])
-                process_counter += 1          
-                break
+                process_counter += 1
+                bool_location_added = True          
 
             except KeyError:
+                
                 print('---------------------------------------------------------------')
                 print(f'\nNew location detected! "{location}" is not recognized.')
+                print(f'\nTweet: {tweet_text}')
                 print(f'\nChoose an option from the list:')
                 print('1 - Add new location and new coordinates (HIGH ACCURACY)')
                 print('2 - Add new location and new coordinates (LOW ACCURACY)')
@@ -237,6 +240,8 @@ if __name__ == '__main__':
 
     # Spatial Join
     df = pd.DataFrame(tweet_list)
+    df['Longitude'].replace(to_replace='None', value='0', inplace=True)
+    df['Latitude'].replace(to_replace='None', value='0', inplace=True)
     df['Longitude'] = df['Longitude'].astype('float64')
     df['Latitude'] = df['Latitude'].astype('float64')
     df = spatial_join(df_input=df, shapefile=shp_path)

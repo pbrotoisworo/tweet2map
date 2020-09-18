@@ -181,6 +181,8 @@ class TweetParse:
                 logging.info('get_location(): Stripped Direction {}'.format(tweet_location))
 
         tweet_location = tweet_location.replace('Ñ', 'N')
+        tweet_location = tweet_location.rstrip(' ')
+        tweet_location = tweet_location.lstrip(' ')
         
         return tweet_location
 

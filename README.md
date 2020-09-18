@@ -10,10 +10,6 @@ Tweet2Map is a python script that mines Metro Manila Development Authority (MMDA
 - Spellchecker using the Peter Norvig algorithm to fix typos and wrong spelling of locations and other information
 - Permutations to try different combinations of locations
   - Eg, if the script cannot find EDSA ORTIGAS MRT, it will try EDSA MRT ORTIGAS, and so on
-- Suite of programs with GUIs
-  - Automated MMDA ALERT style Tweet generator and uploader
-  - Data Dashboard
-  - Tweet2Map Data Miner
 - Natural Language Processing to replace RegEx (maybe)
   - Focus primarily on named entity recognition to extract data
 
@@ -24,7 +20,7 @@ It is recommended that you install a Python 3.8 virtual environment. Though I th
 
 `tweepy pandas geopandas`
 
-Run the `main.py` file to initialize and create the config file.
+Run the `main.py` to initialize and create the config file.
 
 ## Input Twitter Tokens
 Create a Twitter developer account and get your own Twitter API tokens [here](https://developer.twitter.com/en). Afterwards, you have 2 options of entering your API tokens into the Tweet2Map software. You can manually input the tokens into the `config.ini` file or you can input them via the CLI using these arguments:
@@ -35,7 +31,7 @@ Create a Twitter developer account and get your own Twitter API tokens [here](ht
 - `-access_secret`
 
 ## Downloading Tweets to Cache
-Start downloading and caching tweets for later processing by running `main.py`. This is designed to be run on a schedule automatically so you can just set a schedule to run it automatically come back when you area ready to process the tweets and add them to the database.
+Start downloading and caching tweets for later processing by running `main.py` without any arguments. This is designed to be run on a schedule automatically so you can just set a schedule to run it automatically come back when you area ready to process the tweets and add them to the database.
 
 ## Process The Tweet Data
 Run the processing script by adding the `-p` argument as seen below:
@@ -67,8 +63,9 @@ We paste it into the prompt. Then type "Y" to confirm.
 
 # Changelog
 
-1.00 (TBD)
+1.00 (September 19, 2020)
 - Complete code rewrite for usability and readability
+- Made script more modular. Moved functions to `src` folder
 - Created automated script that will download and cache tweets for later processing
 - Replaced CSV databases with SQLITE3 databases
 - Added `High_Accuracy` column that is attached to the location to be able to filter accurate and inaccurate locations

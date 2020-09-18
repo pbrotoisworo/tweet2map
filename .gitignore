@@ -3,7 +3,7 @@
 .vscode/
 *__pycache__
 *.pkl
-data/data.sqlite
+# data/data.sqlite
 *.ipynb
 *.pyc
 *.bak
