@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import pickle
 import os
+import traceback
 
 from src.SqlManagement import Tweet2MapDatabaseSQL, LocationDatabaseSQL
 from src.CheckConfig import check_for_valid_config
@@ -18,6 +19,7 @@ from src.TweetParse import TweetParse
 from src.AddNewLocation import add_new_location
 from src.SpatialJoin import spatial_join
 from src.CacheProcessing import cache_processing
+
 
 
 if __name__ == '__main__':
@@ -44,9 +46,20 @@ if __name__ == '__main__':
     cli_args.add_argument('-inc_database_path', help='Incident database path')
     cli_args.add_argument('-shp_path', help='Shapefile path')
     cli_args.add_argument('-loc_database_path', help='Location database path')
+    
     # Convert args to dict
-    args = parser.parse_args()
+    try:
+        args = parser.parse_args()
+    except Exception:
+        print('CLI input failed! Please check arguments')
+        parser.print_help()
+        sys.exit()
     args = vars(args)
+    
+    # Check if asking for help
+    if args['h']:
+        parser.print_help()
+        sys.exit()
 
     # Process arguments
     tweepy_params = {}
@@ -80,6 +93,7 @@ if __name__ == '__main__':
         assert csv_out_path.endswith('.csv'), f'Invalid file extension in "{file_extension}". Must end in ".csv"'
         print('Writing CSV file:', csv_out_path)
         database_sql.convert_database_to_csv(csv_out_path)
+        sys.exit()
 
     # Load cache for duplicate checking
     tweets_for_processing = []
@@ -179,6 +193,7 @@ if __name__ == '__main__':
                 tweet_list[idx]['High_Accuracy'] = tweet_location_accuracy
 
                 print('---------------------------------------------------------------')
+                print(f'Tweet {idx} of {len(tweet_list)}')
                 print('Tweet:', tweet_text)
                 print('Date:', item['Date'])
                 print('Time:', item['Time'])
@@ -194,19 +209,29 @@ if __name__ == '__main__':
                 process_counter += 1
                 bool_location_added = True          
 
-            except KeyError:
+            except KeyError as e:
                 
                 print('---------------------------------------------------------------')
-                print(f'\nNew location detected! "{location}" is not recognized.')
+                print(f'Tweet {idx} of {len(tweet_list)}')
+                print(f'New location detected! "{location}" is not recognized.')
                 print(f'\nTweet: {tweet_text}')
                 print(f'\nChoose an option from the list:')
                 print('1 - Add new location and new coordinates (HIGH ACCURACY)')
                 print('2 - Add new location and new coordinates (LOW ACCURACY)')
                 print(f'3 - Add new location based on existing coordinates')
                 print(f'4 - Fix location name')
-                print(f'5 - Set location coordinates as invalid (0,0)\n')
+                print(f'5 - Set location coordinates as invalid (0,0)')
+                print(f'6 - Stop processing locations and exit\n')
 
                 user_input_choice = str(input('Enter number to proceed:'))
+                
+                # Give user option to stop processing at current location
+                # Tweet database is not updated yet, however location base is updated and will
+                # allow the user to resume processing from their current position
+                if user_input_choice == '6':
+                    database_sql.close_connection()
+                    location_sql.close_connection()
+                    sys.exit()
 
                 results = add_new_location(user_input_choice=user_input_choice,
                                            location=location,
@@ -254,6 +279,7 @@ if __name__ == '__main__':
 
     # Close SQL connection
     database_sql.close_connection()
+    location_sql.close_connection()
 
     # Delete cache if exists
     if os.path.exists(CACHE_PATH):

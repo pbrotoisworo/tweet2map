@@ -111,11 +111,6 @@ class Tweet2MapDatabaseSQL:
                         tweet_high_accuracy, tweet_direction, tweet_type, tweet_lanes, tweet_involved,
                         tweet_text, tweet_id)
 
-        # sql_cmd_vals = (row_dict['Date'], row_dict['Time'], row_dict['City'], row_dict['Location'],
-        #                 row_dict['Latitude'], row_dict['Longitude'], row_dict['Direction'],
-        #                 row_dict['Type'], row_dict['Lanes_Blocked'], row_dict['Involved'], row_dict['Tweet'],
-        #                 row_dict['Source'])
-
         sql_placeholder = '?, ' * self.num_columns
         sql_placeholder = sql_placeholder.rstrip(', ')
         sql_cmd = "INSERT INTO {} VALUES ({})".format(self.SQL_TABLE, sql_placeholder)
@@ -198,3 +193,8 @@ class LocationDatabaseSQL:
 
         self.c.execute(sql_cmd, sql_cmd_vals)
         self.conn.commit()
+        
+    def close_connection(self):
+        """Close SQL database connection"""
+        self.c.close()
+        self.conn.close()

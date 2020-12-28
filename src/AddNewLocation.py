@@ -15,6 +15,8 @@ def add_new_location(user_input_choice, location, location_dict, location_accura
 
         print('Enter decimal degrees coordinates in this format: LATITUDE,LONGITUDE')
         user_input_coords = input('Enter coordinates:')
+        if user_input_coords == 'BREAK':
+            return 'BREAK'
         user_input_coords = user_input_coords.replace(' ', '')
         tweet_latitude = user_input_coords.split(',')[0]
         tweet_longitude = user_input_coords.split(',')[1]
@@ -92,4 +94,6 @@ def add_new_location(user_input_choice, location, location_dict, location_accura
         bool_high_accuracy = '0'
         user_input_coords = tweet_latitude + ',' + tweet_longitude
         location_dict[tweet_location] = user_input_coords
-        return (tweet_location, user_input_coords, location_dict, bool_high_accuracy)
+        location_accuracy_dict[location] = bool_high_accuracy
+        sql_object.insert(location, user_input_coords, bool_high_accuracy)
+        return (tweet_location, user_input_coords, location_dict, location_accuracy_dict, bool_high_accuracy)
