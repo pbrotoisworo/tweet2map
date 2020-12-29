@@ -5,13 +5,13 @@ before_install:
   - python --version
   - pip install -U pip
   - pip install -U pytest
-  - pip install codecov
 install:
   - pip install tweepy
   - pip install geopandas
   - pip install pandas
   - pip install -e .[test]
+  - pip install pytest-cov codecov
 script:
-  - pytest tests
+  - pytest tests --cov=src tests
 after_success:
   - codecov
