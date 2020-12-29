@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/pbrotoisworo/tweet2map.svg?branch=test)](https://travis-ci.com/pbrotoisworo/tweet2map) [![codecov](https://codecov.io/gh/pbrotoisworo/tweet2map/branch/master/graph/badge.svg?token=U2F1H66DUB)](https://codecov.io/gh/pbrotoisworo/tweet2map)
+
 # Tweet2Map
 
 **Author:** Panji Brotoisworo
