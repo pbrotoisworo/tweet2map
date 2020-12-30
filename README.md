@@ -1,4 +1,6 @@
-[![Build Status](https://travis-ci.com/pbrotoisworo/tweet2map.svg?branch=unittesting)](https://travis-ci.com/pbrotoisworo/tweet2map)  [![codecov](https://codecov.io/gh/pbrotoisworo/tweet2map/branch/unittesting/graph/badge.svg?token=U2F1H66DUB)](https://codecov.io/gh/pbrotoisworo/tweet2map)
+[![Build Status](https://travis-ci.com/pbrotoisworo/tweet2map.svg?branch=unittesting)](https://travis-ci.com/pbrotoisworo/tweet2map)  [![codecov](https://codecov.io/gh/pbrotoisworo/tweet2map/branch/unittesting/graph/badge.svg?token=U2F1H66DUB)](https://codecov.io/gh/pbrotoisworo/tweet2map) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) ![Version](https://img.shields.io/badge/release-1.0-blue)
+
+
 
 # Tweet2Map
 
@@ -18,7 +20,7 @@ Tweet2Map is a python script that mines Metro Manila Development Authority (MMDA
 # Getting Started
 
 ## Create Your Virtual Environment
-It is recommended that you install a Python 3.8 virtual environment. Though I think a 3.6 environment may still work. Once the environment is installed, install the relevant packages by installing these libraries:
+It is recommended that you install a Python 3.8 virtual environment. At minumum a 3.6 environment may still work. Once the environment is installed, install the relevant packages by installing these libraries:
 
 `tweepy pandas geopandas`
 
