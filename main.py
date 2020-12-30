@@ -38,9 +38,6 @@ def Tweet2Map():
     parser = argparse_generate_flags(parser=parser)
     args = parser.parse_args()
     args = vars(args)
-    
-    print(args)
-    sys.exit()
 
     # Process arguments
     argparse_return = argparse_processing(args=args, config=CONFIG_PATH)
@@ -72,33 +69,11 @@ def Tweet2Map():
         print('Writing CSV file:', csv_out_path)
         database_sql.convert_database_to_csv(csv_out_path)
         sys.exit()
-
+        
     # Load cache for duplicate checking
-    tweets_for_processing = []
-    if os.path.exists(CACHE_PATH):
-        
-        # If cache exists load the file and combine with existing tweets
-        with open(CACHE_PATH, 'rb') as f:
-            tweet_cache = pickle.load(f)
-        
-        # Get IDs from cached and new tweets
-        existing_cache_ids = [tweet.id_str for tweet in tweet_cache]
-        incoming_tweet_ids = [tweet.id_str for tweet in incoming_tweets]
-        
-        tweets_for_processing += tweet_cache
-    
-        # Add incoming tweets but check if they exist first in cache
-        for tweet in incoming_tweets:
-            if tweet.id_str not in existing_cache_ids:
-                tweets_for_processing.append(tweet)
-    else:
-        # No cache. So add all incoming tweets
-        tweets_for_processing += incoming_tweets
-
-    # Remove incoming tweets that are already in the incident database
-    for idx, tweet in enumerate(tweets_for_processing):
-        if tweet.id_str in recent_tweet_ids:
-            del tweets_for_processing[idx]
+    tweets_for_processing = check_duplicate_tweets(cache_path=CACHE_PATH,
+                                                   incoming_tweets=incoming_tweets,
+                                                   recent_tweet_ids=recent_tweet_ids)
 
     if not process_tweets:
         # Download only and store to cache for later processing then exit
@@ -108,7 +83,7 @@ def Tweet2Map():
         sys.exit()
     
     # Load last n tweets to check for duplicates
-    latest_tweet_ids = database_sql.get_newest_tweet_ids(count=200)
+    # latest_tweet_ids = database_sql.get_newest_tweet_ids(count=200)
 
     # Load Locations
     location_sql = LocationDatabaseSQL(sql_database_file=loc_database_path)
@@ -121,7 +96,7 @@ def Tweet2Map():
         if 'MMDA ALERT' in tweet.full_text: # tweet.id_str not in existing_cache_ids:
             if tweet.id_str in recent_tweet_ids:
                 print('Duplicate Data! Skipping to next tweet.')
-                checkDuplicate = True
+                # checkDuplicate = True
                 continue
             else:
                 tweet_text = tweet.full_text.upper()
