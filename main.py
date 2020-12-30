@@ -38,6 +38,9 @@ def Tweet2Map():
     parser = argparse_generate_flags(parser=parser)
     args = parser.parse_args()
     args = vars(args)
+    
+    print(args)
+    sys.exit()
 
     # Process arguments
     argparse_return = argparse_processing(args=args, config=CONFIG_PATH)
