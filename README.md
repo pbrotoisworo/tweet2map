@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/pbrotoisworo/tweet2map.svg?branch=unittesting)](https://travis-ci.com/pbrotoisworo/tweet2map)  [![codecov](https://codecov.io/gh/pbrotoisworo/tweet2map/branch/unittesting/graph/badge.svg?token=U2F1H66DUB)](https://codecov.io/gh/pbrotoisworo/tweet2map) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) ![Version](https://img.shields.io/badge/version-1.0-blue)
+[![Build Status](https://travis-ci.com/pbrotoisworo/tweet2map.svg?branch=master)](https://travis-ci.com/pbrotoisworo/tweet2map)  [![codecov](https://codecov.io/gh/pbrotoisworo/tweet2map/branch/master/graph/badge.svg?token=U2F1H66DUB)](https://codecov.io/gh/pbrotoisworo/tweet2map) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) ![Version](https://img.shields.io/badge/version-1.0-blue)
 
 # Tweet2Map
 
