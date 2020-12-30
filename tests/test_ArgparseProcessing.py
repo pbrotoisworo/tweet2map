@@ -100,20 +100,3 @@ def test_argparse_processing():
         print('Asserting... Key: {k}, Value: {v}')
         message = f'Actual {args} does not match {expected_args_valid}'
         assert expected_args_valid[k] == args[k], message
-    
-@pytest.mark.xfail
-def test_argparse_processing_fail():
-    """
-    Test CLI processing
-    """
-    
-    # Assert with valid arguments
-    parser = argparse.ArgumentParser(description='Tweet2Map Testing')
-    parser = argparse_generate_flags(parser)
-    args = parser.parse_args(test_args_invalid)
-    args = vars(args)
-    for k,v in args.items():
-        print(f'Asserting... Key: {k}, Value: {v}')
-        message = f'Expected to fail due to invalid file path'
-        assert expected_args_valid[k] == args[k], message
-    

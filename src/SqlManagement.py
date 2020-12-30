@@ -10,7 +10,7 @@ class Tweet2MapDatabaseSQL:
 
     SQL_TABLE = 'INCIDENTS'
 
-    def __init__(self, sql_database_file=None, verbose=False):
+    def __init__(self, sql_database_file=None, num_latest_tweets=200, verbose=False):
 
         self.sql_database_file = sql_database_file
 
@@ -38,6 +38,10 @@ class Tweet2MapDatabaseSQL:
         self.columns = self.conn.execute('SELECT * FROM {} LIMIT 1'.format(self.SQL_TABLE))
         self.columns = [col[0] for col in self.columns.description]
         self.row_count = len(pd.read_sql_query(f'SELECT * FROM {self.SQL_TABLE}', self.conn))
+        
+        self.num_latest_tweets = num_latest_tweets
+        if self.num_latest_tweets > self.row_count:
+            raise Exception(f'Number of latest tweets to check "{self.num_latest_tweets}" > rows in database "{self.row_count}"')
 
     def load_latest_tweets(self):
         df = pd.read_sql_query(
@@ -45,11 +49,11 @@ class Tweet2MapDatabaseSQL:
         latest_values = list(df.values.flatten())
         return latest_values
 
-    def get_newest_tweet_ids(self, count=200):
+    def get_newest_tweet_ids(self):
         """Gets the last n Tweets to prevent duplicates when processing new Tweepy data"""
 
         # Get original tweets from existing database
-        df = pd.read_sql_query(f'SELECT * FROM {self.SQL_TABLE} ORDER BY date(Date) DESC LIMIT {count}', self.conn)
+        df = pd.read_sql_query(f'SELECT * FROM {self.SQL_TABLE} ORDER BY date(Date) DESC LIMIT {self.num_latest_tweets}', self.conn)
         id_list = list(df['Source'])
         # Remove URL and extract just the ID
         id_list = [str(x.replace('https://twitter.com/mmda/status/', '')) for x in id_list]
