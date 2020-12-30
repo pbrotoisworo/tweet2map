@@ -7,9 +7,9 @@ import time
 
 global PATH_TEST_INC_DATABASE
 TESTS_DIR = os.path.dirname(__file__)
-PATH_TEMPLATE_INC_DATABASE = os.path.join(TESTS_DIR, r'test_data\\data.sqlite')
-PATH_TEST_INC_DATABASE = os.path.join(TESTS_DIR, r'test_data\\data_test.sqlite')
-PATH_TEST_LOCATION_DATABASE = (TESTS_DIR, r'test_data\\locations.sqlite')
+PATH_TEMPLATE_INC_DATABASE = os.path.join(TESTS_DIR, 'test_data', 'data.sqlite')
+PATH_TEST_INC_DATABASE = os.path.join(TESTS_DIR, 'test_data', 'data_test.sqlite')
+PATH_TEST_LOCATION_DATABASE = (TESTS_DIR, 'test_data', 'locations.sqlite')
 if os.path.exists(PATH_TEST_INC_DATABASE):
     os.remove(PATH_TEST_INC_DATABASE)
 shutil.copy(src=PATH_TEMPLATE_INC_DATABASE, dst=PATH_TEST_INC_DATABASE)
