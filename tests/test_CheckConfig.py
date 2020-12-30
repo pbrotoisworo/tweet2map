@@ -85,8 +85,7 @@ def test_argparse_shp_path_string():
     expected = arg
     message = 'shp_path not updated in config file'
     assert actual == expected, message
-    
-<<<<<<< HEAD
+
 @pytest.mark.xfail
 def test_argparse_shp_path_string_fail():
     """
@@ -161,9 +160,7 @@ def test_argparse_inc_database_path_fail():
     expected = arg
     message = 'database_path not updated in config file'
     assert actual == expected, message
-    
-=======
->>>>>>> master
+
 def test_argparse_tweepy_consumer_key():
     """
     Test Tweepy consumer key
