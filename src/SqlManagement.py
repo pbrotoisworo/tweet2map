@@ -37,11 +37,16 @@ class Tweet2MapDatabaseSQL:
         self.num_columns = len([col[0] for col in self.num_columns.description])
         self.columns = self.conn.execute('SELECT * FROM {} LIMIT 1'.format(self.SQL_TABLE))
         self.columns = [col[0] for col in self.columns.description]
-        self.row_count = len(pd.read_sql_query(f'SELECT * FROM {self.SQL_TABLE}', self.conn))
+        self.row_count = self.count_rows()
         
         self.num_latest_tweets = num_latest_tweets
         if self.num_latest_tweets > self.row_count:
             raise Exception(f'Number of latest tweets to check "{self.num_latest_tweets}" > rows in database "{self.row_count}"')
+        
+    def count_rows(self):
+        """count rows"""
+        row_count = len(pd.read_sql_query(f'SELECT * FROM {self.SQL_TABLE}', self.conn))
+        return row_count
 
     def load_latest_tweets(self):
         df = pd.read_sql_query(
