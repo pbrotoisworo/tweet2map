@@ -50,10 +50,10 @@ def check_for_valid_config(config_path, workspace):
     shp_path = parser.get('software', 'shp_path')
     locations_path = parser.get('software', 'locations_path')
     if not os.path.exists(database_path):
-        raise FileNotFoundError(f'Database not found. Specified file path: {database_path}')
+        raise FileNotFoundError(f'Database not found. Specified file path: "{database_path}"')
     if not os.path.exists(shp_path):
-        raise FileNotFoundError(f'Shapefile not found. Specified path: {shp_path}')
+        raise FileNotFoundError(f'Shapefile not found. Specified path: "{shp_path}"')
     if not os.path.exists(locations_path):
-        raise FileNotFoundError(f'Locations not found. Specified path: {locations_path}')
+        raise FileNotFoundError(f'Locations not found. Specified path: "{locations_path}"')
 
     return parser

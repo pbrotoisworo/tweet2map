@@ -196,6 +196,7 @@ class TweetParse:
             tweet_participant = tweet_participant.rstrip(' ')
             tweet_participant = tweet_participant.lstrip(' ')
             tweet_participant = tweet_participant.split('AS OF')[0]
+            tweet_participant = tweet_participant.rstrip(' ')
             logging.info('get_participants(): Cleaned output {}'.format(tweet_participant))
         else:
             tweet_participant = ''

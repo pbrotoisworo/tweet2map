@@ -97,3 +97,7 @@ def add_new_location(user_input_choice, location, location_dict, location_accura
         location_accuracy_dict[location] = bool_high_accuracy
         sql_object.insert(location, user_input_coords, bool_high_accuracy)
         return (tweet_location, user_input_coords, location_dict, location_accuracy_dict, bool_high_accuracy)
+    
+    else:
+        print(f'Input "{user_input_choice}" is not recognized')
+        return 'BREAK'

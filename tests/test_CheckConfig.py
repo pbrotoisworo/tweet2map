@@ -3,6 +3,7 @@ from configparser import ConfigParser
 import shutil
 import os
 import sys
+import pytest
     
 # Prepare config file for tests
 global TEST_CONFIG_PATH
@@ -84,7 +85,82 @@ def test_argparse_shp_path_string():
     expected = arg
     message = 'shp_path not updated in config file'
     assert actual == expected, message
+
+@pytest.mark.xfail
+def test_argparse_shp_path_string_fail():
+    """
+    Test shapefile path input
+    """
     
+    section = 'software'
+    arg = r'test_data\boundary_ncr.shp.fail'
+    arg_type = 'shp_path'
+    
+    kwargs = dict()
+    kwargs['arg'] = arg
+    kwargs['section'] = section
+    kwargs['arg_type'] = arg_type
+    kwargs['config_path'] = TEST_CONFIG_PATH
+    _ = argparse_config(**kwargs)
+    
+    # Assert config file is modified
+    config = ConfigParser()
+    config.read(TEST_CONFIG_PATH)
+    actual = config.get(section, arg_type)
+    expected = arg
+    message = 'shp_path not updated in config file'
+    assert actual == expected, message
+    
+@pytest.mark.xfail
+def test_argparse_loc_database_path_string_fail():
+    """
+    Test location database input
+    """
+    
+    section = 'software'
+    arg = r'test_data\locations.sqlite.fail'
+    arg_type = 'locations_path'
+    
+    kwargs = dict()
+    kwargs['arg'] = arg
+    kwargs['section'] = section
+    kwargs['arg_type'] = arg_type
+    kwargs['config_path'] = TEST_CONFIG_PATH
+    _ = argparse_config(**kwargs)
+    
+    # Assert config file is modified
+    config = ConfigParser()
+    config.read(TEST_CONFIG_PATH)
+    actual = config.get(section, arg_type)
+    expected = arg
+    message = 'locations_path not updated in config file'
+    assert actual == expected, message
+    
+@pytest.mark.xfail
+def test_argparse_inc_database_path_fail():
+    """
+    Test incident database input
+    """
+    
+    section = 'software'
+    arg = r'test_data\data.sqlite.fail'
+    arg_type = 'database_path'
+    
+    kwargs = dict()
+    kwargs['arg'] = arg
+    kwargs['section'] = section
+    kwargs['arg_type'] = arg_type
+    kwargs['config_path'] = TEST_CONFIG_PATH
+    _ = argparse_config(**kwargs)
+    
+    # Assert config file is modified
+    config = ConfigParser()
+    config.read(TEST_CONFIG_PATH)
+    actual = config.get(section, arg_type)
+    expected = arg
+    message = 'database_path not updated in config file'
+    assert actual == expected, message
+
 def test_argparse_tweepy_consumer_key():
     """
     Test Tweepy consumer key

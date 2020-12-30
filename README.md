@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/pbrotoisworo/tweet2map.svg?branch=test)](https://travis-ci.com/pbrotoisworo/tweet2map) [![codecov](https://codecov.io/gh/pbrotoisworo/tweet2map/branch/master/graph/badge.svg?token=U2F1H66DUB)](https://codecov.io/gh/pbrotoisworo/tweet2map)
+[![Build Status](https://travis-ci.com/pbrotoisworo/tweet2map.svg?branch=unittesting)](https://travis-ci.com/pbrotoisworo/tweet2map)  [![codecov](https://codecov.io/gh/pbrotoisworo/tweet2map/branch/unittesting/graph/badge.svg?token=U2F1H66DUB)](https://codecov.io/gh/pbrotoisworo/tweet2map) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) ![Version](https://img.shields.io/badge/version-1.0-blue)
 
 # Tweet2Map
 
@@ -18,7 +18,7 @@ Tweet2Map is a python script that mines Metro Manila Development Authority (MMDA
 # Getting Started
 
 ## Create Your Virtual Environment
-It is recommended that you install a Python 3.8 virtual environment. Though I think a 3.6 environment may still work. Once the environment is installed, install the relevant packages by installing these libraries:
+It is recommended that you install a Python 3.8 virtual environment. At minumum a 3.6 environment may still work. Once the environment is installed, install the relevant packages by installing these libraries:
 
 `tweepy pandas geopandas`
 
@@ -62,48 +62,3 @@ We get the location by right clicking the location and clicking "What's here?". 
 We paste it into the prompt. Then type "Y" to confirm.
 
 ![Adding coords](/doc/5_adding_coords.png)
-
-# Changelog
-
-1.00 (September 19, 2020)
-- Complete code rewrite for usability and readability
-- Made script more modular. Moved functions to `src` folder
-- Created automated script that will download and cache tweets for later processing
-- Replaced CSV databases with SQLITE3 databases
-- Added `High_Accuracy` column that is attached to the location to be able to filter accurate and inaccurate locations
-
-0.95 (July 28, 2019)
-- Replaced ArcMap spatial join workflow with a workflow that uses FOSS tools, Geopandas and Shapely
-- Improved logging for more in-depth troubleshooting
-- Compartmentalizing the code so that the main Tweet2Map.py script is easier to interpret
-  - Transferred more parsing code to the TweetParse object
-- Improved naming of .csv database files. The **spatial** tag on the filename means that null location data is removed. This was done in order to make it compatible with Geopandas and Shapely workflows. The **raw** includes null data but does not include City location data.
-- Added option to manually fix the name if the code detects an unknown location. This is to prevent incorrect location names being fed into the location database
-- Added option to set the location as invalid from the new location menu
-
-0.9 (February 16, 2019)
-- Fixed parsing logic regarding incidents involving rallyists
-- Fixed parsing logic regarding incidents in Quezon City Elliptical Road
-- Added a `config.ini` file where you can put in the Tweepy API code and configure some settings
-- Added code to prevent the ArcPy script from executing if there is an error in the first .py file
-- Updated timezone of extracted tweets from GMT+0 to GMT+8 to match Manila local time. The database still features a slight time discrepancy due to this. This will be fixed in a future update.
-- Updated time parsing in the Tweetparse class to detect incorrect formats and fix them (EG, 10:18PM will be changed to 10:18 PM). The incorrect formats caused errors when converting the time data to a datetime object.
-
-0.8 (October 23, 2018)
-- Added City column through ArcPy package into script
-- Added .bat script `run_program.bat` to execute scripts in one motion
-- Fixed some bugs when the user would search the database
-- Restructured some of the code
- - Removed nested while loops
-
-0.7 (September 22, 2018)
-- Fixed some bugs with the location parsing
-- Added more words to the `location_string_clean()` function
-- Added more locations to the database
-
-0.6 (September 15, 2018)
-- Created the `tweetParse` class to streamline parts of the code in `Tweet2Map.py`
-- Some small bug fixes to take into account MMDA alerts for rallyists.
-
-0.5
-- Added options on what to do with new locations to streamline parsing
