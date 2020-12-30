@@ -10,7 +10,7 @@ class Tweet2MapDatabaseSQL:
 
     SQL_TABLE = 'INCIDENTS'
 
-    def __init__(self, sql_database_file=None, num_latest_tweets=200, verbose=False):
+    def __init__(self, sql_database_file=None, num_latest_tweets=50, verbose=False):
 
         self.sql_database_file = sql_database_file
 
@@ -49,11 +49,14 @@ class Tweet2MapDatabaseSQL:
         latest_values = list(df.values.flatten())
         return latest_values
 
-    def get_newest_tweet_ids(self):
+    def get_newest_tweet_ids(self, num_latest_tweets=50):
         """Gets the last n Tweets to prevent duplicates when processing new Tweepy data"""
+        
+        if not num_latest_tweets:
+            num_latest_tweets = self.num_latest_tweets
 
         # Get original tweets from existing database
-        df = pd.read_sql_query(f'SELECT * FROM {self.SQL_TABLE} ORDER BY date(Date) DESC LIMIT {self.num_latest_tweets}', self.conn)
+        df = pd.read_sql_query(f'SELECT * FROM {self.SQL_TABLE} ORDER BY date(Date) DESC LIMIT {num_latest_tweets}', self.conn)
         id_list = list(df['Source'])
         # Remove URL and extract just the ID
         id_list = [str(x.replace('https://twitter.com/mmda/status/', '')) for x in id_list]
