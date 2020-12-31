@@ -59,7 +59,7 @@ def Tweet2Map():
 
     # Load SQL Database
     database_sql = Tweet2MapDatabaseSQL(sql_database_file=inc_database_path)
-    recent_tweet_ids = database_sql.get_newest_tweet_ids(count=500)
+    recent_tweet_ids = database_sql.get_newest_tweet_ids(num_latest_tweets=500)
 
     # Write to CSV if arg
     if args['csv_out_path']:

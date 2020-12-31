@@ -16,5 +16,11 @@ setup(
         r'tests': ['*'],
         r'tests.test_data': ['*'],
         r'shapefiles': ['*']
-    }
+    },
+    install_requires=[
+        'tweepy',
+        'geopandas',
+        'pandas',
+        'rtree'
+    ]
 )
