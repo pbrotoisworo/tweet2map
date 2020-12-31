@@ -1,6 +1,7 @@
 import geopandas as gpd
 import pandas as pd
 from src.SpatialJoin import spatial_join
+import os
 
 TESTS_DIR = os.path.dirname(__file__)
 shp_path = os.path.join(TESTS_DIR, 'test_data', 'boundary_ncr.shp')
