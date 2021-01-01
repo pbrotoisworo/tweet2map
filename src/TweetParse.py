@@ -146,7 +146,7 @@ class TweetParse:
         Parse then remove direction text from tweet
         """
         tweet_location = text
-        pattern = re.compile(r'( SB | NB | WB | EB | SB| NB| WB| EB)')
+        # pattern = re.compile(r'( SB | NB | WB | EB | SB| NB| WB| EB)')
         # matches = pattern.finditer(tweet_location)
         # for match in matches:
         tweet_location = tweet_location.replace(' NB', '')

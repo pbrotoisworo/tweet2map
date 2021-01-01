@@ -12,15 +12,14 @@ Tweet2Map is a python script that mines Metro Manila Development Authority (MMDA
 - Spellchecker using the Peter Norvig algorithm to fix typos and wrong spelling of locations and other information
 - Permutations to try different combinations of locations
   - Eg, if the script cannot find EDSA ORTIGAS MRT, it will try EDSA MRT ORTIGAS, and so on
-- Natural Language Processing to replace RegEx (maybe)
-  - Focus primarily on named entity recognition to extract data
+- Natural Language Processing to replace RegEx
 
 # Getting Started
 
 ## Create Your Virtual Environment
 It is recommended that you install a Python 3.8 virtual environment. At minumum a 3.6 environment may still work. Once the environment is installed, install the relevant packages by installing these libraries:
 
-`tweepy pandas geopandas`
+`tweepy pandas geopandas rtree`
 
 Run the `main.py` to initialize and create the config file.
 

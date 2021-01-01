@@ -12,8 +12,20 @@ TESTS_DIR = os.path.dirname(__file__)
 test_tweepy_object = os.path.join(TESTS_DIR, 'test_data', 'tweepy_tweets.pickle')
 with open(test_tweepy_object, 'rb') as handle:
     tweets = pickle.load(handle)
+    
+def test_tweetparse_strip_direction():
+    """
+    Test strip direction method of TweetParse
+    """
+    twt = TweetParse(tweets[59])
+    test_text = 'MMDA ALERT: Vehicular accident at Commonwealth Doña Carmen EB involving taxi and AUV as of 8:25 PM. 1 lane occupied. MMDA on site. #mmda'.upper()
+    
+    actual = twt._strip_direction(text=test_text)
+    expected = 'MMDA ALERT: Vehicular accident at Commonwealth Doña Carmen involving taxi and AUV as of 8:25 PM. 1 lane occupied. MMDA on site. #mmda'.upper()
+    message = f'Assertion of strip direction failed. Expected: "{expected}". Actual: "{actual}"'
+    assert actual == expected, message
 
-def test_TweetParse_scenario1():
+def test_tweetparse_scenario1():
     """
     Test tweet scenario
     """

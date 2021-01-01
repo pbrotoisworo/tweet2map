@@ -5,7 +5,6 @@ import os
 def cache_processing(cache_path, recent_processed_ids, tweets):
     """Cache processing for Tweets"""
     # Download into cache for later processing
-    #TODO: this still adds to cache even if the processing was just run. double check dup checks
     if not os.path.exists(cache_path):
         # If does not exist create PKL file
         # No filtering required because it is already filtered
