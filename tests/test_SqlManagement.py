@@ -5,7 +5,6 @@ import shutil
 import pandas as pd
 import time
 
-global PATH_TEST_INC_DATABASE
 TESTS_DIR = os.path.dirname(__file__)
 PATH_TEMPLATE_INC_DATABASE = os.path.join(TESTS_DIR, 'test_data', 'data.sqlite')
 PATH_TEST_INC_DATABASE = os.path.join(TESTS_DIR, 'test_data', 'data_test.sqlite')
@@ -21,7 +20,8 @@ def inc_database():
     """
     Load an instance of the SQL database manager
     """
-    return Tweet2MapDatabaseSQL(sql_database_file=PATH_TEST_INC_DATABASE, num_latest_tweets=num_latest_tweets, verbose=True)
+    # Setup testing environment
+    yield Tweet2MapDatabaseSQL(sql_database_file=PATH_TEST_INC_DATABASE, num_latest_tweets=num_latest_tweets, verbose=True)
 
 def test_init_row_count(inc_database):
     expected = 100
