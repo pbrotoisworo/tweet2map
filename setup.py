@@ -20,7 +20,6 @@ setup(
     install_requires=[
         'tweepy',
         'geopandas',
-        'pandas',
         'rtree',
         'streamlit',
         'streamlit-folium'

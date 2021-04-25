@@ -1,0 +1,5 @@
+tweepy
+geopandas
+rtree
+streamlit
+streamlit-folium
