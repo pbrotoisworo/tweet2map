@@ -12,7 +12,7 @@ from src.streamlit.dataframe_filter import DatabaseFilter
 
 def main():
 
-    csv_file = 'data_mmda_traffic_spatial.csv'
+    csv_file = r'data\data.csv'
 
     @st.cache
     def load_df(path):
