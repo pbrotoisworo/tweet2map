@@ -21,6 +21,8 @@ setup(
         'tweepy',
         'geopandas',
         'pandas',
-        'rtree'
+        'rtree',
+        'streamlit',
+        'streamlit-folium'
     ]
 )
