@@ -1,0 +1,14 @@
+# conda env create -f <FILE>.yml
+name: tweet2map
+channels:
+  - conda-forge
+  - defaults
+  - anaconda
+dependencies:
+  - python==3.8
+  - geopandas
+  - fiona
+  - pip:
+    - tweepy
+    - streamlit
+    - streamlit-folium

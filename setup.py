@@ -18,7 +18,11 @@ setup(
         r'shapefiles': ['*']
     },
     install_requires=[
+		'shapely==1.7.1',
+		'geos',
+		'descartes',
         'tweepy',
+		'pandas',
         'geopandas',
         'rtree',
         'streamlit',

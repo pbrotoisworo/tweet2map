@@ -1,4 +1,4 @@
-
+import base64
 import json
 import geopandas as gpd
 import pandas as pd
@@ -7,6 +7,7 @@ import streamlit as st
 from streamlit_folium import folium_static
 import folium
 from folium.plugins import HeatMap, MarkerCluster
+import datetime
 
 from src.streamlit.dataframe_filter import DatabaseFilter
 
@@ -18,6 +19,10 @@ def main():
     def load_df(path):
         df = pd.read_csv(path)
         df = df.dropna()
+        df['Datetime'] = df['Date'] + ' ' + df['Time']
+        df['Datetime'] = pd.to_datetime(df['Datetime'], errors='coerce')
+        df = df.drop(['Date', 'Time'], axis=1)
+        df = df[['Datetime'] + [col for col in df.columns if col != 'Datetime']]
         return df
 
     def load_shp(path):
@@ -26,6 +31,16 @@ def main():
         with open('boundary.json') as f:
             json_file = json.load(f)
         return json_file
+    
+    def get_table_download_link(df):
+        """Generates a link allowing the data in a given panda dataframe to be downloaded
+        in:  dataframe
+        out: href string
+        """
+        csv = df.to_csv(index=False)
+        b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
+        href = f'<a href="data:file/csv;base64,{b64}">Download CSV file</a> (Right-click and save as &lt;your_file&gt;.csv)'
+        return href
 
     # Load data
     city_list = (
@@ -61,14 +76,24 @@ def main():
     st.title('Map Viewer')
     
     st.header('Filter Data')
-    max_tail = st.number_input('Number of latest data to show:', value=1000)
+    
     col1, col2 = st.beta_columns(2)
     with col1:
         type_filter = st.multiselect('Type of Incident', type_list)
     with col2:
         city_filter = st.multiselect('City of Incident', city_list)
-
-    df_filter = DatabaseFilter(load_df(csv_file), type_filter, city_filter)
+    df = load_df(csv_file)
+    min_date = df['Datetime'].min()
+    max_date = df['Datetime'].max()
+    
+    col1, col2 = st.beta_columns(2)
+    with col1:
+        mindate_filter = st.date_input("Pick start date", value=min_date, min_value=min_date, max_value=max_date)
+    with col2:
+        maxdate_filter = st.date_input("Pick end date", value=max_date, min_value=min_date, max_value=max_date)
+    max_tail = st.number_input('Number of latest data to show:', value=1000)
+    
+    df_filter = DatabaseFilter(load_df(csv_file), type_filter, city_filter, (mindate_filter, maxdate_filter))
     
     # Load markers
     mc = MarkerCluster(name='Incidents')
@@ -85,14 +110,15 @@ def main():
     st.header('Data')
     st.text(f'Showing {len(df)} incidents')
     st.dataframe(df)
-
+    
+    st.markdown(get_table_download_link(df), unsafe_allow_html=True)
     
     # Populate map
     for item in df.iterrows():
         
         source = item[1]['Source']
         text = item[1]['Tweet']
-        timestamp = item[1]['Date']
+        timestamp = item[1]['Datetime']
         embed = """
         <head>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
@@ -117,6 +143,17 @@ def main():
                                     popup=popup,
                                     clustered_marker=True)).add_to(m)
     
+        # Load boundaries
+    with open(r'shapefiles/boundary_ncr.geojson', 'r') as f:
+        json_file = f.read()
+    geojson = json.loads(json_file)
+    folium.GeoJson(
+        geojson,
+        name='LGU Boundaries'
+    ).add_to(m)
+    
+    # Add layer control
+    folium.LayerControl(position='topright').add_to(m)
     
     # Visualize webmap
     folium_static(m)
