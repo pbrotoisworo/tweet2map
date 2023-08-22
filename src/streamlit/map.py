@@ -86,7 +86,7 @@ def main():
     min_date = df['Datetime'].min()
     max_date = df['Datetime'].max()
     
-    col1, col2 = st.beta_columns(2)
+    col1, col2 = st.columns(2)
     with col1:
         mindate_filter = st.date_input("Pick start date", value=min_date, min_value=min_date, max_value=max_date)
     with col2:
