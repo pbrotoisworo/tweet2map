@@ -77,7 +77,7 @@ def main():
     
     st.header('Filter Data')
     
-    col1, col2 = st.beta_columns(2)
+    col1, col2 = st.columns(2)
     with col1:
         type_filter = st.multiselect('Type of Incident', type_list)
     with col2:
